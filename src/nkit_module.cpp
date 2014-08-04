@@ -24,4 +24,4 @@ void InitAll(Handle<Object> exports)
   Xml2VarBuilderWrapper::Init(exports);
 }
 
-NODE_MODULE(nkit, InitAll)
+NODE_MODULE(nkit4nodejs, InitAll)

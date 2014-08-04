@@ -1,7 +1,7 @@
 {
     "targets": [
         {
-            "target_name": "nkit",
+            "target_name": "nkit4nodejs",
             "sources": [
                 "src/nkit_module.cpp",
                 "src/xml2var_builder_wrapper.cpp",

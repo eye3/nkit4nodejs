@@ -1,6 +1,6 @@
 # Introduction
 
-This is nkit C++ library port to Node.js server.
+nkit4nodejs - is a nkit C++ library port to Node.js server.
 
 # Installation and Requirements
 
@@ -29,10 +29,10 @@ For more information about installing of nkit library, see:
 
     https://github.com/eye3/nkit
 
-To install nkit C++ library port to Node.js, type
+To install nkit4nodejs, type
 
     export NKIT_ROOT=$HOME/env
-    npm install nkit
+    npm install nkit4nodejs
 
 
 # Usage
@@ -86,7 +86,7 @@ Suppose, we have this xml string:
 To create JavaScript object or list of vars from this xml string, we can use 
 following script:
 
-    var nkit = require('nkit');
+    var nkit = require('nkit4nodejs');
     
     // build list-of-lists-of-strings from xml string
     var builder = new nkit.Xml2VarBuilder('

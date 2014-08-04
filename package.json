@@ -1,5 +1,5 @@
 {
-    "name": "nkit",
+    "name": "nkit4nodejs",
     "version": "0.1.0",
     "description": "nkit C++ library port to Node.js",
     "homepage": "https://github.com/eye3/nkit4nodejs",
