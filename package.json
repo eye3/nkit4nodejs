@@ -1,0 +1,29 @@
+{
+    "name": "nkit",
+    "version": "0.1.0",
+    "description": "nkit C++ library port to Node.js",
+    "homepage": "https://github.com/eye3/nkit4nodejs",
+    "author": {
+        "name": "Boris Darchiev",
+        "email": "boris.darchiev@gmail.com",
+        "url": "https://github.com/eye3"
+    },
+    "main": "index.js",
+    "engines": {
+        "node": "0.10.x"
+    },
+    "scripts": {
+        "test": "node test/testnkit.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/eye3/nkit4nodejs.git"
+    },
+    "licenses": [
+        {
+            "type": "Apache-2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "keywords": ["nkit", "xml", "json"]
+}
