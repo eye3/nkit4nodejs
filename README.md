@@ -125,35 +125,15 @@ following script:
 
 Result:
 
-    [
-      [
-        "+122233344550",
-        "+122233344551"
-      ],
-      [
-        "+122233344553",
-        "+122233344554"
-      ]
-    ]
-    [
-      {
-        "birthday": "1980-11-27T20:00:00.000Z",
-        "isMerriedFirstTime": false,
-        "phones": [
-          "+122233344550",
-          "+122233344551"
-        ]
-      },
-      {
-        "birthday": "1979-07-15T20:00:00.000Z",
-        "isMerriedFirstTime": true,
-        "phones": [
-          "+122233344553",
-          "+122233344554"
-        ]
-      }
-    ]
-
+    [ [ '+122233344550', '+122233344551' ],
+      [ '+122233344553', '+122233344554' ] ]
+      
+    [ { birthday: Fri Nov 28 1980 00:00:00 GMT+0400 (MSK),
+        isMerriedFirstTime: false,
+        phones: [ '+122233344550', '+122233344551' ] },
+      { birthday: Mon Jul 16 1979 00:00:00 GMT+0400 (MSK),
+        isMerriedFirstTime: true,
+        phones: [ '+122233344553', '+122233344554' ] } ]
 
 Possible scalar types:
 
