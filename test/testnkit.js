@@ -8,6 +8,9 @@ var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
 var gen = new nkit.Xml2VarBuilder(fieldsMap);
 gen.feed(xmlString);
 var target = gen.end();
+
+console.log(JSON.stringify(target, null, '  '));
+
 var etalon = [ [ '+122233344550', '+122233344551' ],
     [ '+122233344553', '+122233344554' ] ];
 
@@ -21,6 +24,8 @@ var fieldsMap = fs.readFileSync(
 var gen = new nkit.Xml2VarBuilder(fieldsMap);
 gen.feed(xmlString);
 var target = gen.end();
+
+console.log(JSON.stringify(target, null, '  '));
 
 etalon = [
     { birthday: new Date(1980, 10, 28),

@@ -115,7 +115,7 @@ following script:
                 "/birthday": "datetime|1970-01-01|%Y-%m-%d",
                 "/phone -> phones": ["/", "string|defaultString"],
                 "/married/@firstTime -> isMerriedFirstTime":
-                    "string|defaultString"
+                    "boolean"
             }
         ]');
     builder.feed(xmlString); // can be more than one call to
@@ -123,12 +123,45 @@ following script:
     list = builder.end();
     console.log(list);
 
+Result:
+
+    [
+      [
+        "+122233344550",
+        "+122233344551"
+      ],
+      [
+        "+122233344553",
+        "+122233344554"
+      ]
+    ]
+    [
+      {
+        "birthday": "1980-11-27T20:00:00.000Z",
+        "isMerriedFirstTime": false,
+        "phones": [
+          "+122233344550",
+          "+122233344551"
+        ]
+      },
+      {
+        "birthday": "1979-07-15T20:00:00.000Z",
+        "isMerriedFirstTime": true,
+        "phones": [
+          "+122233344553",
+          "+122233344554"
+        ]
+      }
+    ]
+
+
 Possible scalar types:
 
     - string
     - integer
     - number (with floating point)
     - datetime
+    - boolean
     
 Scalar types can be followed by '|' sign and default value
 
@@ -142,4 +175,3 @@ syntax. Default value of datetime must correspond to format string.
 Boris T. Darchiev (boris.darchiev at gmail.com)
 
 On github: https://github.com/eye3
-
