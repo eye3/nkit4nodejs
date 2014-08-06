@@ -18,6 +18,7 @@
 #define VX_V8_HANDLE_VAR_H
 
 #include "v8.h"
+#include "nkit/tools.h"
 #include <string>
 
 namespace vx
@@ -46,6 +47,24 @@ namespace vx
       v8::HandleScope handle_scope;
       object_.Dispose();
       object_ = v8::Persistent<v8::Array>::New(v8::Array::New());
+    }
+
+    void InitAsBoolean(std::string const & value)
+    {
+      v8::HandleScope handle_scope;
+      object_.Dispose();
+      object_ = v8::Persistent<v8::Boolean>::New(v8::Boolean::New(
+        nkit::bool_cast(value)));
+    }
+
+    void InitAsBooleanFormat(std::string const & value, const std::string & )
+    {
+      InitAsBoolean(value);
+    }
+
+    void InitAsBooleanDefault()
+    {
+      InitAsBoolean(nkit::S_FALSE_);
     }
 
     void InitAsString(std::string const & value)
@@ -134,6 +153,7 @@ namespace vx
         InitAsUndefined();
         return;
       }
+      _tm.tm_isdst = 1;
       time_t t = mktime(&_tm);// - nkit::timezone_offset();
 
       v8::HandleScope handle_scope;

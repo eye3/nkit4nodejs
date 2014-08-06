@@ -8,9 +8,14 @@ This module depends on nkit C++ library, which in-turn depends on:
 
     - yajl
     - expat
-    - boost (verstion >= 1.53)
+    - boost (version >= 1.46)
 
 You can find boost, yajl and expat in your OS packages (DEB or RPM).
+For example, on Ubuntu:
+
+    sudo aptitude install libyajl-dev
+    sudo aptitude install libexpat-dev
+    sudo aptitude install libboost-all-dev
 
 To install nkit library, you must type following commands:
 
@@ -24,16 +29,22 @@ To install nkit library, you must type following commands:
     make -C Release-build install
 
 You can change prefix ($HOME/env) to whatever you want.
+You can omit '--prefix=$HOME/env' option if you want to install nkit in system.
 
-For more information about installing of nkit library, see:
+For more information about installing of nkit library, see [here](https://github.com/eye3/nkit).
 
-    https://github.com/eye3/nkit
+Now you can install nkit4nodejs.
 
-To install nkit4nodejs, type
+If you installed nkit C++ library in $HOME/env, then you must set NKIT_ROOT
+environment variable before installing nkit4nodejs:
 
     export NKIT_ROOT=$HOME/env
     npm install nkit4nodejs
 
+If you installed nkit C++ library in system, then you don't need to set
+NKIT_ROOT environment variable, so you can just type:
+
+    npm install nkit4nodejs
 
 # Usage
 
@@ -113,6 +124,7 @@ following script:
     console.log(list);
 
 Possible scalar types:
+
     - string
     - integer
     - number (with floating point)
