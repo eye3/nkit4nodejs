@@ -49,11 +49,14 @@ NKIT_ROOT environment variable, so you can just type:
 # Run
 
 If you installed yajl, expat or boost to custom location (not in the system),
-you mast specify correct LD_LIBRARY_PATH environment variable, for example:
+you must specify correct LD_LIBRARY_PATH environment variable, for example:
  
     export LD_LIBRARY_PATH=$HOME/env/lib:$LD_LIBRARY_PATH
     
-where $HOME/env is an example custom location for libraries.
+where $HOME/env is an example custom location for libraries. In WebStorm you
+must use full paths:
+
+    LD_LIBRARY_PATH=/full/path/to/env/lib
 
 # Usage
 
