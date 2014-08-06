@@ -45,6 +45,15 @@ If you installed nkit C++ library in system, then you don't need to set
 NKIT_ROOT environment variable, so you can just type:
 
     npm install nkit4nodejs
+    
+# Run
+
+If you installed yajl, expat or boost to custom location (not in the system),
+you mast specify correct LD_LIBRARY_PATH environment variable, for example:
+ 
+    export LD_LIBRARY_PATH=$HOME/env/lib:$LD_LIBRARY_PATH
+    
+where $HOME/env is an example custom location for libraries.
 
 # Usage
 
