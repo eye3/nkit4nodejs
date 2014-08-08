@@ -22,12 +22,14 @@
       'include_dirs': [
         '.',
         'nkit/src',
+        'expat-2.1.0/lib',
         'include',
       ],
       'direct_dependent_settings': {
         'include_dirs': [
           '.',
           'nkit/src',
+          'expat-2.1.0/lib',
           'include',
         ],
       },
