@@ -17,11 +17,13 @@
       ],
       'include_dirs': [
         '.',
+        'include',
         'expat-2.1.0/lib',
       ],
       'direct_dependent_settings': {
         'include_dirs': [
           '.',
+          'include',
           'expat-2.1.0/lib',
         ],
         'conditions': [
