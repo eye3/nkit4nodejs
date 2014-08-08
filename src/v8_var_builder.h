@@ -86,7 +86,11 @@ namespace vx
 
     void InitAsInteger(const std::string & value)
     {
+#ifdef _WIN32
+      int32_t i = !value.empty() ? strtol(value.c_str(), NULL, 10) : 0;
+#else
       int64_t i = !value.empty() ? NKIT_STRTOLL(value.c_str(), NULL, 10) : 0;
+#endif
 
       v8::HandleScope handle_scope;
       object_.Dispose();
@@ -133,7 +137,7 @@ namespace vx
       object_.Dispose();
       object_ = v8::Persistent<v8::Number>::New(v8::Number::New(d));
     }
-
+#if !defined(_WIN32) && !defined(_WIN64)
     void InitAsDatetime(const std::string & value)
     {
       _InitAsDatetimeFormat(value, nkit::DATE_TIME_DEFAULT_FORMAT_);
@@ -167,6 +171,7 @@ namespace vx
       object_.Dispose();
       object_ = v8::Persistent<v8::Value>::New(v8::Date::New(0));
     }
+#endif
 
     void InitAsUndefined()
     {
