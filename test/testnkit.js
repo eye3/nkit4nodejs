@@ -19,27 +19,51 @@ if (JSON.stringify(target) !== JSON.stringify(etalon)) {
     process.exit(1);
 }
 
-var gen = new nkit.Xml2VarBuilder(["/person",
+if (process.platform === "win32" || process.platform === "win64") {
+    var gen = new nkit.Xml2VarBuilder(["/person",
+        {
+            "/phone -> phones": ["/", "string"],
+            "/married/@firstTime -> isMerriedFirstTime": "boolean"
+        }
+    ]);
+} else {
+    var gen = new nkit.Xml2VarBuilder(["/person",
         {
             "/birthday": "datetime|1970-01-01|%Y-%m-%d",
             "/phone -> phones": ["/", "string"],
             "/married/@firstTime -> isMerriedFirstTime": "boolean"
         }
     ]);
+}
+
 gen.feed(xmlString);
 var target = gen.end();
 
 console.log(target);
 
-etalon = [
-    { birthday: new Date(1980, 10, 28),
-        isMerriedFirstTime: false,
-        phones: [ '+122233344550', '+122233344551' ] },
+if (process.platform === "win32" || process.platform === "win64") {
+    etalon = [
+        {
+            isMerriedFirstTime: false,
+            phones: [ '+122233344550', '+122233344551' ] },
 
-    { birthday: new Date(1979, 6, 16),
-        isMerriedFirstTime: true,
-        phones: [ '+122233344553', '+122233344554' ] }
-];
+        {
+            isMerriedFirstTime: true,
+            phones: [ '+122233344553', '+122233344554' ] }
+    ];
+} else {
+    etalon = [
+        {
+            birthday: new Date(1980, 10, 28),
+            isMerriedFirstTime: false,
+            phones: [ '+122233344550', '+122233344551' ] },
+
+        {
+            birthday: new Date(1979, 6, 16),
+            isMerriedFirstTime: true,
+            phones: [ '+122233344553', '+122233344554' ] }
+    ];
+}
 
 if (JSON.stringify(target) !== JSON.stringify(etalon)) {
     console.error("#2");

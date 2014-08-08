@@ -2,16 +2,15 @@
 
 nkit4nodejs - is a nkit C++ library port to Node.js server.
 
-# Installation and Requirements
+# Installation
 
-This module depends on Expat library.
-You can find Expat in your OS packages (DEB or RPM).
-For example, on Ubuntu:
+## On Linux
 
-    sudo aptitude install libexpat-dev
+    npm install nkit4nodejs
+    
+## On Windows
 
-Now you can install nkit4nodejs.
-
+    set GYP_MSVS_VERSION=2012
     npm install nkit4nodejs
     
 # Usage
