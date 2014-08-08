@@ -30,18 +30,10 @@
             ],
             "include_dirs": [
                 "deps/nkit/src",
-                "deps/include",
-                "/usr/local/include",
-                "/usr/include",
-                "${EXPAT_INCLUDE_DIR}"
+                "deps/include"
             ],
-            "libraries": [
-                "-L/usr/local/lib",
-                "-L/usr/lib",
-                "-L/usr/lib/x86_64-linux-gnu",
-                "-L${EXPAT_LIBRARY_DIR}",
-                "-lexpat",
-                "-lrt"
+            'dependencies': [
+                'deps/expat-2.1.0/expat.gyp:expat'
             ]
         }
     ]
