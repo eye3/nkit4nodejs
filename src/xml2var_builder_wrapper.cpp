@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-#include <node/node_buffer.h>
+#include <node_buffer.h>
 
 #include "xml2var_builder_wrapper.h"
 
@@ -57,13 +57,20 @@ Xml2VarBuilderWrapper::Xml2VarBuilderWrapper(const Arguments& args)
     char* data = node::Buffer::Data(args[0]);
     size_t length = node::Buffer::Length(args[0]);
 
-    std::string target_spec(data, length);
-    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(target_spec, &error);
+    std::string xml_fields_map(data, length);
+    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
+        xml_fields_map, &error);
   }
   else if (args[0]->IsString())
   {
-    std::string target_spec(*String::Utf8Value(args[0]));
-    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(target_spec, &error);
+    std::string xml_fields_map(*String::Utf8Value(args[0]));
+    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
+        xml_fields_map, &error);
+  }
+  else if (args[0]->IsObject()) {
+    std::string xml_fields_map = vx::v8var_to_json(args[0]);
+    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
+        xml_fields_map, &error);
   }
   else
   {

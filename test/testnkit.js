@@ -3,9 +3,9 @@ var fs = require('fs');
 
 console.log();
 
-var fieldsMap = fs.readFileSync(__dirname + "/data/list_of_lists.json");
 var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
-var gen = new nkit.Xml2VarBuilder(fieldsMap);
+
+var gen = new nkit.Xml2VarBuilder(["/person", ["/phone", "string"]]);
 gen.feed(xmlString);
 var target = gen.end();
 
@@ -19,9 +19,13 @@ if (JSON.stringify(target) !== JSON.stringify(etalon)) {
     process.exit(1);
 }
 
-var fieldsMap = fs.readFileSync(
-        __dirname + "/data/list_of_objects_with_list.json");
-var gen = new nkit.Xml2VarBuilder(fieldsMap);
+var gen = new nkit.Xml2VarBuilder(["/person",
+        {
+            "/birthday": "datetime|1970-01-01|%Y-%m-%d",
+            "/phone -> phones": ["/", "string"],
+            "/married/@firstTime -> isMerriedFirstTime": "boolean"
+        }
+    ]);
 gen.feed(xmlString);
 var target = gen.end();
 

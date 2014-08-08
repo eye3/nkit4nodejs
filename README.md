@@ -4,60 +4,16 @@ nkit4nodejs - is a nkit C++ library port to Node.js server.
 
 # Installation and Requirements
 
-This module depends on nkit C++ library, which in-turn depends on:
-
-    - yajl
-    - expat
-    - boost (version >= 1.46)
-
-You can find boost, yajl and expat in your OS packages (DEB or RPM).
+This module depends on Expat library.
+You can find Expat in your OS packages (DEB or RPM).
 For example, on Ubuntu:
 
-    sudo aptitude install libyajl-dev
     sudo aptitude install libexpat-dev
-    sudo aptitude install libboost-all-dev
-
-To install nkit library, you must type following commands:
-
-    git clone https://github.com/eye3/nkit.git
-    cd nkit
-    ./bootstrap.sh --prefix=$HOME/env --with-boost=/path/to/boost \
-            --boost-version=1.53 \
-            --with-yajl=/path/to/yajl --with-vx --with-expat=/path/to/expat \
-            --with-pic --release
-    make -C Release-build
-    make -C Release-build install
-
-You can change prefix ($HOME/env) to whatever you want.
-You can omit '--prefix=$HOME/env' option if you want to install nkit in system.
-
-For more information about installing of nkit library, see [here](https://github.com/eye3/nkit).
 
 Now you can install nkit4nodejs.
 
-If you installed nkit C++ library in $HOME/env, then you must set NKIT_ROOT
-environment variable before installing nkit4nodejs:
-
-    export NKIT_ROOT=$HOME/env
-    npm install nkit4nodejs
-
-If you installed nkit C++ library in system, then you don't need to set
-NKIT_ROOT environment variable, so you can just type:
-
     npm install nkit4nodejs
     
-# Run
-
-If you installed yajl, expat or boost to custom location (not in the system),
-you must specify correct LD_LIBRARY_PATH environment variable, for example:
- 
-    export LD_LIBRARY_PATH=$HOME/env/lib:$LD_LIBRARY_PATH
-    
-where $HOME/env is an example custom location for libraries. In WebStorm you
-must use full paths:
-
-    LD_LIBRARY_PATH=/full/path/to/env/lib
-
 # Usage
 
 Suppose, we have this xml string:
@@ -112,16 +68,14 @@ following script:
     var nkit = require('nkit4nodejs');
     
     // build list-of-lists-of-strings from xml string
-    var builder = new nkit.Xml2VarBuilder('
-        ["/person",
-            ["/phone", "string|defaultString"]]
-        ');
+    var builder = new nkit.Xml2VarBuilder(
+        ["/person", ["/phone", "string|defaultString"]]);
     builder.feed(xmlString);
     var list = builder.end();
     console.log(list);
     
     // build list-of-objects-with-list from xml string
-    builder = new nkit.Xml2VarBuilder('
+    builder = new nkit.Xml2VarBuilder(
         ["/person",
             {
                 "/birthday": "datetime|1970-01-01|%Y-%m-%d",
@@ -129,7 +83,7 @@ following script:
                 "/married/@firstTime -> isMerriedFirstTime":
                     "boolean"
             }
-        ]');
+        ]);
     builder.feed(xmlString); // can be more than one call to
                              // feed(xmlChunk) method
     list = builder.end();
@@ -151,8 +105,10 @@ Possible scalar types:
 
     - string
     - integer
-    - number (with floating point)
-    - datetime
+    - number    //with floating point
+    - datetime  // Supported on all platforms except MS Windows,
+                // because strptime() function is not supported on this OS.
+                // I'm working on it:)
     - boolean
     
 Scalar types can be followed by '|' sign and default value

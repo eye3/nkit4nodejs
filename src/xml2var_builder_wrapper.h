@@ -17,8 +17,7 @@
 #ifndef XML2VAR_BUILDER_H
 #define XML2VAR_BUILDER_H
 
-#include <node/node.h>
-#include <boost/shared_ptr.hpp>
+#include <node.h>
 
 #include "nkit/vx.h"
 #include "v8_var_builder.h"

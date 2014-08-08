@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-#include <node/node.h>
+#include <node.h>
 #include "xml2var_builder_wrapper.h"
 
 using namespace v8;
