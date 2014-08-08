@@ -26,18 +26,20 @@
                 "src/nkit4nodejs_module.cpp",
                 "src/xml2var_builder_wrapper.cpp",
                 "src/xml2var_builder_wrapper.h",
-                "src/v8var_builder.h"
+                "src/v8_var_builder.h"
             ],
             "include_dirs": [
                 "deps/nkit/src",
                 "deps/yajl/include",
                 "/usr/local/include",
-                "/usr/include"
+                "/usr/include",
+                "${EXPAT_INCLUDE_DIR}"
             ],
             "libraries": [
                 "-L/usr/local/lib",
                 "-L/usr/lib",
                 "-L/usr/lib/x86_64-linux-gnu",
+                "-L${EXPAT_LIBRARY_DIR}",
                 "-lexpat",
                 "-lrt"
             ]
