@@ -1,0 +1,7 @@
+["/person",
+	{
+		"/birthday": "datetime|1970-01-01|%Y-%m-%d",
+		"/phone -> phones": ["/", "string"],
+		"/married/@firstTime -> isMerriedFirstTime": "boolean"
+	}
+]
