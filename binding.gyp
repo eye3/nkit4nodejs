@@ -34,7 +34,27 @@
             ],
             'dependencies': [
                 'deps/expat-2.1.0/expat.gyp:expat'
-            ]
+            ],
+            'configurations': {
+              'Debug': {
+                'defines': [ 'DEBUG', '_DEBUG' ],
+                'msvs_settings': {
+                  'VCCLCompilerTool': {
+                    'RuntimeLibrary': 1, # static debug
+                    'ExceptionHandling': 1,     # /EHsc  doesn't work.
+                  },
+                },
+              },
+              'Release': {
+                'defines': [ 'NDEBUG' ],
+                'msvs_settings': {
+                  'VCCLCompilerTool': {
+                    'RuntimeLibrary': 0, # static release
+                    'ExceptionHandling': 1,     # /EHsc  doesn't work.
+                  },
+                },
+              }
+            },
         }
     ]
 }
