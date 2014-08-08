@@ -30,7 +30,7 @@
             ],
             "include_dirs": [
                 "deps/nkit/src",
-                "deps/yajl/include",
+                "deps/include",
                 "/usr/local/include",
                 "/usr/include",
                 "${EXPAT_INCLUDE_DIR}"
