@@ -107,9 +107,7 @@ Possible scalar types:
     - string
     - integer
     - number    // with floating point
-    - datetime  // Supported on all platforms except MS Windows,
-                // because strptime() function is not supported on this OS.
-                // I'm working on it:)
+    - datetime
     - boolean
     
 Scalar types can be followed by '|' sign and default value
@@ -133,7 +131,6 @@ If you want to change key names, use this notation:
 
 # TODO
 
-    - datetime support on Windows     // strptime function analog for Windows is needed)
     - /path/with/*/sign/in/any/place 
 
 # Author
