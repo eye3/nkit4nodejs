@@ -133,8 +133,8 @@ If you want to change key names, use this notation:
 
 # TODO
 
-    - datetime support on Windows (strptime function analog for Windows is needed)
-    - /path/with/*/sing/in/any/place 
+    - datetime support on Windows     // strptime function analog for Windows is needed)
+    - /path/with/*/sign/in/any/place 
 
 # Author
 
