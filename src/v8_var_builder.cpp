@@ -1,5 +1,5 @@
 #include "nkit/constants.h"
-#include "nkit/logger_brief.h"
+//#include "nkit/logger_brief.h"
 #include "v8_var_builder.h"
 
 namespace vx
@@ -167,7 +167,7 @@ namespace vx
 		char tz_offset_minutes[3];
 		sprintf(tz_offset_minutes, "%02u", static_cast<uint32_t>(tz_offset_in_seconds % 60));
 		tz_offset_minutes[2] = 0;
-		CINFO(tz_offset_hours << " " << tz_offset_minutes);
+		//CINFO(tz_offset_hours << " " << tz_offset_minutes);
 
 		static const char * WEEK_DAYS[7] =
 			{ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
@@ -182,7 +182,7 @@ namespace vx
 		strncpy(date_time_buf+26, &tz_sign, 1);
 		strncpy(date_time_buf+27, tz_offset_hours, 2);
 		strncpy(date_time_buf+29, tz_offset_minutes, 2);
-		CINFO(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH));
+		//CINFO(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH));
 		HandleScope handle_scope;
 		Handle<Value> argv[] =
 			{ String::New(date_time_buf, DATE_TIME_BUFFER_LENGTH) };
