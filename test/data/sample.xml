@@ -6,7 +6,7 @@
 		<phone>+122233344551</phone>
 		<age>33</age>
 		<married firstTime="No">Yes</married>
-		<birthday>1980-11-28</birthday>
+		<birthday>1970-11-28</birthday>
 		<address>
 			<city>New York</city>
 			<street>Park Ave</street>
@@ -26,7 +26,7 @@
 		<phone>+122233344554</phone>
 		<age>34</age>
 		<married firstTime="Yes">Yes</married>
-		<birthday>1979-07-16</birthday>
+		<birthday>1969-07-16</birthday>
 		<address>
 			<city>Moscow</city>
 			<street>Kahovka</street>

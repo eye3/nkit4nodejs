@@ -22,3 +22,7 @@
 
 .idea
 build
+.autotools
+.cproject
+.project
+.settings
