@@ -1,6 +1,23 @@
+/*
+   Copyright 2010-2014 Boris T. Darchiev (boris.darchiev@gmail.com)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+#include <node.h>
+#include "v8_var_builder.h"
 #include "nkit/constants.h"
 //#include "nkit/logger_brief.h"
-#include "v8_var_builder.h"
 
 namespace vx
 {
@@ -8,16 +25,21 @@ namespace vx
 
 	V8VarBuilder::V8VarBuilder()
 	{
+#if !defined(_WIN32) && !defined(_WIN64)
 		HandleScope handle_scope;
 		Handle<Object> global = Context::GetCurrent()->Global();
 		date_constructor_ = Persistent<Function>::New(
 		    Handle<Function>::Cast(global->Get(String::New("Date"))));
+#endif
 	}
 
 	V8VarBuilder::~V8VarBuilder()
 	{
-		date_constructor_.Dispose();
+		HandleScope handle_scope;
 		object_.Dispose();
+#if !defined(_WIN32) && !defined(_WIN64)
+		date_constructor_.Dispose();
+#endif
 	}
 
 	void V8VarBuilder::InitAsDict()
@@ -147,10 +169,6 @@ namespace vx
 			InitAsUndefined();
 			return;
 		}
-		//_tm.tm_isdst = 0;
-		//time_t t = mktime(&_tm); // - nkit::timezone_offset();
-		//GMTIME_R(t, &_tm);
-		//_tm.tm_isdst = 1;
 
 		time_t tz_offset_in_seconds = nkit::timezone_offset() / 60;
 		char tz_sign = '-';

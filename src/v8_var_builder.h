@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-#ifndef VX_V8_HANDLE_VAR_H
-#define VX_V8_HANDLE_VAR_H
+#ifndef VX_V8_VAR_BUILDER_H
+#define VX_V8_VAR_BUILDER_H
 
-#include "v8.h"
-#include "nkit/tools.h"
 #include <string>
+
+#include "nkit/tools.h"
 
 namespace vx
 {
@@ -68,10 +68,12 @@ namespace vx
 
   private:
     type object_;
+#if !defined(_WIN32) && !defined(_WIN64)
     v8::Persistent<v8::Function> date_constructor_;
+#endif
   };
 
   std::string v8var_to_json(const v8::Handle<v8::Value> & var);
 } // namespace vx
 
-#endif // VX_V8_HANDLE_VAR_H
+#endif // VX_V8_VAR_BUILDER_H

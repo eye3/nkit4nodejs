@@ -20,6 +20,7 @@
 #include <node.h>
 
 #include "nkit/vx.h"
+
 #include "v8_var_builder.h"
 
 class Xml2VarBuilderWrapper: public node::ObjectWrap
