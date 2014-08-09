@@ -1,6 +1,8 @@
 # Introduction
 
-nkit4nodejs - is a [nkit](https://github.com/eye3/nkit4nodejs.git) C++ library port to Node.js server.
+nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to Node.js server.
+
+Currently, only xml-to-javascript-conversion functionality is exported to Node.js
 
 # Installation
 
@@ -116,6 +118,23 @@ Scalar types can be followed by '|' sign and default value
 another '|' sign and format string. See 
 [man strptime](http://linux.die.net/man/3/strptime) for datetime formatting
 syntax. Default value of datetime must correspond to format string.
+
+Path in mapping specifications are very simple XPath now. Only
+
+    /element/with/optional/@attribute
+    
+paths are supported.
+    
+JavaScript object keys get their names from the last element name in the path.
+If you want to change key names, use this notation:
+
+    "/path/to/element -> newKeyName": ...
+    "/path/to/element/@attribute -> newKeyName": ...
+
+# TODO
+
+    - datetime support on Windows (strptime function analog for Windows is needed)
+    - /path/with/*/sing/in/any/place 
 
 # Author
 
