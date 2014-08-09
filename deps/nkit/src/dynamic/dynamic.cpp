@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-#include <time.h>
-
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
@@ -514,16 +512,18 @@ namespace nkit
     return result;
   }
 
-#ifndef NKIT_WINNT
   Dynamic Dynamic::DateTimeFromString(const std::string & str,
       const char * format)
   {
-    struct tm _tm = {0,0,0,0,0,0,0,0,0,0,0};
-    if (strptime(str.c_str(), format, &_tm) == NULL)
-      return Dynamic();
+#ifdef NKIT_WINNT
+	struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#else
+	struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+#endif
+	if (NKIT_STRPTIME(str.c_str(), format, &_tm) == NULL)
+	  return Dynamic();
     return DateTimeFromTm(_tm);
   }
-#endif
 
   Dynamic Dynamic::List()
   {

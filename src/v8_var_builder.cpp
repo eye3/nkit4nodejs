@@ -25,21 +25,21 @@ namespace vx
 
 	V8VarBuilder::V8VarBuilder()
 	{
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
 		HandleScope handle_scope;
 		Handle<Object> global = Context::GetCurrent()->Global();
 		date_constructor_ = Persistent<Function>::New(
 		    Handle<Function>::Cast(global->Get(String::New("Date"))));
-#endif
+//#endif
 	}
 
 	V8VarBuilder::~V8VarBuilder()
 	{
 		HandleScope handle_scope;
 		object_.Dispose();
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
 		date_constructor_.Dispose();
-#endif
+//#endif
 	}
 
 	void V8VarBuilder::InitAsDict()
@@ -147,7 +147,7 @@ namespace vx
 		object_ = Persistent<Number>::New(Number::New(d));
 	}
 
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
 	void V8VarBuilder::InitAsDatetime(const std::string & value)
 	{
 		_InitAsDatetimeFormat(value, nkit::DATE_TIME_DEFAULT_FORMAT_);
@@ -214,7 +214,7 @@ namespace vx
 		object_.Dispose();
 		object_ = Persistent<Value>::New(Date::New(0));
 	}
-#endif
+//#endif
 
 	void V8VarBuilder::InitAsUndefined()
 	{

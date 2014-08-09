@@ -15,7 +15,7 @@ namespace nkit
   private:
     struct CompareStrings
     {
-      bool operator ()(char * s1, char * s2)
+      bool operator ()(const char * s1, const char * s2) const
       {
         return strcmp(s1, s2) < 0;
       }

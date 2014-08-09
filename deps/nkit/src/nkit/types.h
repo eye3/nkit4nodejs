@@ -63,24 +63,16 @@
 #  define NKIT_STRTOULL ::strtoull
 #  define NKIT_STRCASECMP  ::strcasecmp
 #  define NKIT_STRNCASECMP  ::strncasecmp
+#  define NKIT_STRPTIME  ::strptime
 
 #elif defined(NKIT_WINNT) && defined(HAVE_STD_CXX_11)
 #  include <cstdint>
-// pass
+
 #elif defined(NKIT_WINNT) && defined(HAVE_BOOST)
 #  include <boost/cstdint.hpp>
-// pass
-#elif defined(NKIT_WINNT)
 
+#elif defined(NKIT_WINNT)
 #  include <stdint.h>
-//  typedef __int8            int8_t;
-//  typedef __int16           int16_t;
-//  typedef __int32           int32_t;
-//  typedef __int64           int64_t;
-//  typedef unsigned __int8   uint8_t;
-//  typedef unsigned __int16  uint16_t;
-//  typedef unsigned __int32  uint32_t;
-//  typedef unsigned __int64  uint64_t;
 
 #endif
 
@@ -90,6 +82,8 @@
 #  include <windows.h>
 #  include <stdlib.h>
 #  include <string.h>
+#  include <time.h>
+#  include "../../3rd/crtmpserver/strptime.h"
 
 #  define NKIT_FORMAT_I8  "%i"
 #  define NKIT_FORMAT_I16 "%i"
@@ -121,6 +115,7 @@
 #  define NKIT_STRTOULL ::_strtoui64
 #  define NKIT_STRCASECMP  ::_stricmp
 #  define NKIT_STRNCASECMP  ::_strnicmp
+#  define NKIT_STRPTIME  ::crtmpserver::strptime
 
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 

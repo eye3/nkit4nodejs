@@ -61,6 +61,7 @@ add_library(${PROJECT_NAME}
             ${CMAKE_CURRENT_SOURCE_DIR}/tools.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/constants.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/version.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/../3rd/crtmpserver/strptime.cpp
             ${LOGGER_IMPL_SOURCES}
             ${VX_SOURCES}
             )

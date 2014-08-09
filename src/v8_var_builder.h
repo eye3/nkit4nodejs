@@ -48,14 +48,14 @@ namespace vx
     void _InitAsFloatFormat(std::string const & value,
         const char * format);
 
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
     void InitAsDatetime(const std::string & value);
     void InitAsDatetimeFormat(const std::string & value,
         const std::string & format);
     void _InitAsDatetimeFormat(const std::string & value,
         const char * format);
     void InitAsDatetimeDefault();
-#endif
+//#endif
 
     void InitAsUndefined();
     void SetDictKeyValue(std::string const & key, type const & var);
@@ -68,9 +68,9 @@ namespace vx
 
   private:
     type object_;
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
     v8::Persistent<v8::Function> date_constructor_;
-#endif
+//#endif
   };
 
   std::string v8var_to_json(const v8::Handle<v8::Value> & var);
