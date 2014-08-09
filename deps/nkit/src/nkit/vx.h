@@ -762,7 +762,7 @@ namespace nkit
         else
           result = BooleanTarget::Create();
       }
-#ifndef NKIT_WINNT
+//#ifndef NKIT_WINNT
       else if (type == DATETIME_TYPE)
       {
         typedef ScalarTarget<VarBuilder,
@@ -776,7 +776,7 @@ namespace nkit
         else
           result = DatetimeTarget::Create();
       }
-#endif
+//#endif
       else
       {
         *error = "Target spec for scalar does not support type '" + type + "'";

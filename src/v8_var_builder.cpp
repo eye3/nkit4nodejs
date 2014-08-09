@@ -162,13 +162,21 @@ namespace vx
 	void V8VarBuilder::_InitAsDatetimeFormat(const std::string & value,
 	    const char * format)
 	{
+#if defined(_WIN32) || defined(_WIN64)
+    struct tm _tm =
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#else
 		struct tm _tm =
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		if (strptime(value.c_str(), format, &_tm) == NULL)
+		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+#endif
+		if (NKIT_STRPTIME(value.c_str(), format, &_tm) == NULL)
 		{
 			InitAsUndefined();
 			return;
 		}
+
+    //CINFO(_tm.tm_year << " " << _tm.tm_mon << " " << _tm.tm_mday
+    //  << " " << _tm.tm_hour << " " << _tm.tm_min << " " << _tm.tm_sec << " " << _tm.tm_isdst);
 
 		time_t tz_offset_in_seconds = nkit::timezone_offset() / 60;
 		char tz_sign = '-';
@@ -192,10 +200,11 @@ namespace vx
 		static const char * MONTHS[12] =
 			{ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
 		    "Nov", "Dec" };
-		static const size_t DATE_TIME_BUFFER_LENGTH = 31;
+		static const size_t DATE_TIME_BUFFER_LENGTH = 32;
 		char date_time_buf[DATE_TIME_BUFFER_LENGTH];
 		strftime(date_time_buf, DATE_TIME_BUFFER_LENGTH, "WWW, %d MMM %Y %H:%M:%S ZHHMM", &_tm);
-		strncpy(date_time_buf, WEEK_DAYS[_tm.tm_wday], 3);
+    //CINFO(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH));
+    strncpy(date_time_buf, WEEK_DAYS[_tm.tm_wday], 3);
 		strncpy(date_time_buf+8, MONTHS[_tm.tm_mon], 3);
 		strncpy(date_time_buf+26, &tz_sign, 1);
 		strncpy(date_time_buf+27, tz_offset_hours, 2);

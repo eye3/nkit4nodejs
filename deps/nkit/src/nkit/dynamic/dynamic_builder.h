@@ -94,7 +94,7 @@ namespace nkit
       }
       object_ = nkit::Dynamic(d);
     }
-#ifndef NKIT_WINNT
+//#ifndef NKIT_WINNT
     void InitAsDatetime(const std::string & value)
     {
       object_ = nkit::Dynamic::DateTimeFromString(value,
@@ -111,7 +111,7 @@ namespace nkit
     {
       object_ = nkit::Dynamic::DateTimeFromTimestamp(0);
     }
-#endif
+//#endif
 
     void InitAsUndefined()
     {
