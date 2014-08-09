@@ -1,10 +1,10 @@
 # Introduction
 
-nkit4nodejs - is a nkit C++ library port to Node.js server.
+nkit4nodejs - is a [nkit](https://github.com/eye3/nkit4nodejs.git) C++ library port to Node.js server.
 
 # Installation
 
-## On Linux
+## On Linux & Mac OS
 
     npm install nkit4nodejs
     
@@ -104,7 +104,7 @@ Possible scalar types:
 
     - string
     - integer
-    - number    //with floating point
+    - number    // with floating point
     - datetime  // Supported on all platforms except MS Windows,
                 // because strptime() function is not supported on this OS.
                 // I'm working on it:)
