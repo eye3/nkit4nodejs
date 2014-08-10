@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/eye3/nkit4nodejs.svg?branch=master)](https://travis-ci.org/eye3/nkit4nodejs)
+
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to Node.js server.
@@ -87,7 +89,7 @@ following scripts.
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
     var target = builder.end();
-    console.log(JSON.stringify(target, null, '  ')); // prints list of strings
+    console.log(JSON.stringify(target, null, '  '));
 
 Result:
 
@@ -104,8 +106,8 @@ Result:
 
     // Here mapping is object, described by set of mappings, each containing 
     // key definition and scalar definition.
-    // Keys are described by "/sub/path -> optionalKeyName".
-    // If optionalKeyName doesn't provided, then last element name in /sub/path 
+    // Keys are described by "/path/to/element -> optionalKeyName".
+    // If optionalKeyName doesn't provided, then last element name in /path/to/element 
     // will be used for key name.
     // Scalar definition may have optional "...|defaultValue"
     var mapping = {
@@ -137,7 +139,7 @@ Result:
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
     var target = builder.end();
-    console.log(JSON.stringify(target, null, '  ')); // prints list of lists of strings
+    console.log(JSON.stringify(target, null, '  '));
 
 Result:
 
@@ -178,7 +180,7 @@ Result:
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
     var target = builder.end();
-    console.log(target); // prints list of objects with lists
+    console.log(target);
     
 Result:
 
@@ -223,6 +225,7 @@ If you want to change key names, use this notation:
 # TODO
 
     - /path/with/*/sign/in/any/place
+    
     - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
       create more then one JavaScript data structures from one xml string:
       
