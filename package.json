@@ -1,7 +1,7 @@
 {
     "name": "nkit4nodejs",
-    "version": "0.1.33",
-    "description": "XML to JSON converter with simple mapping notation",
+    "version": "0.1.34",
+    "description": "XML to JavaScript object (JSON) converter with simple mapping notation",
     "homepage": "https://github.com/eye3/nkit4nodejs",
     "author": {
         "name": "Boris Darchiev",
