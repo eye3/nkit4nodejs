@@ -44,20 +44,9 @@
 #  define NKIT_SNPRINTF(buf, len, ...) \
   ::std::snprintf((buf), (len), __VA_ARGS__)
 
-#  define LOCALTIME_R(now, tm) \
-  do { ::localtime_r(&(now), (tm)); } while(0)
-
-#  define GMTIME_R(now, tm) \
-  do { ::gmtime_r(&(now), (tm)); } while(0)
-
-#  define CTIME_R(now, s, len)                \
-  do                                          \
-  {                                           \
-    const char * _s = ::ctime_r(&(now), (s));       \
-    if (unlikely(!_s)) abort_with_core("ctime_r"); \
-    assert(strlen(_s) < len);                 \
-  }                                           \
-  while(0)
+#  define LOCALTIME_R(now, tm)  (::localtime_r(&(now), (tm)) != NULL)
+#  define GMTIME_R(now, tm)     (::gmtime_r(&(now), (tm)) != NULL)
+#  define CTIME_R(now, s, len)  (::ctime_r(&(now), (s)) != NULL)
 
 #  define NKIT_STRTOLL ::strtoll
 #  define NKIT_STRTOULL ::strtoull
@@ -83,7 +72,7 @@
 #  include <stdlib.h>
 #  include <string.h>
 #  include <time.h>
-#  include "../../3rd/crtmpserver/strptime.h"
+#  include "../../3rd/netbsd/strptime.h"
 
 #  define NKIT_FORMAT_I8  "%i"
 #  define NKIT_FORMAT_I16 "%i"
@@ -102,20 +91,15 @@
 #  define NKIT_SNPRINTF(buf, len, ...) \
   ::sprintf_s((buf), (len), __VA_ARGS__)
 
-#  define LOCALTIME_R(now, tm) \
-  do { ::errno_t e__ = ::localtime_s((tm), &(now)); assert(e__ == 0); } while(0)
-
-#  define GMTIME_R(now, tm) \
-  do { ::errno_t e__ = ::gmtime_s((tm), &(now)); assert(e__ == 0); } while(0)
-
-#  define CTIME_R(now, s, len) \
-  do { ::errno_t e__ = ::ctime_s(s, len, &(now)); assert(e__ == 0); } while(0)
+#  define LOCALTIME_R(now, tm) (::localtime_s((tm), &(now)) == 0)
+#  define GMTIME_R(now, tm)    (::gmtime_s((tm), &(now)) == 0)
+#  define CTIME_R(now, s, len) (ctime_s(s, len, &(now)) == 0)
 
 #  define NKIT_STRTOLL ::_strtoi64
 #  define NKIT_STRTOULL ::_strtoui64
 #  define NKIT_STRCASECMP  ::_stricmp
 #  define NKIT_STRNCASECMP  ::_strnicmp
-#  define NKIT_STRPTIME  ::crtmpserver::strptime
+#  define NKIT_STRPTIME  ::strptime
 
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 

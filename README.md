@@ -2,7 +2,7 @@
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to Node.js server.
 
-Currently, only xml-to-javascript-conversion functionality is exported to Node.js
+Currently, only xml-to-json-conversion functionality is exported to Node.js
 
 # Installation
 
@@ -12,8 +12,16 @@ Currently, only xml-to-javascript-conversion functionality is exported to Node.j
     
 ## On Windows
 
-    set GYP_MSVS_VERSION=2012
+Library compiles on MSVS Express version >= 2012:
+
+    set GYP_MSVS_VERSION=2012 
     npm install nkit4nodejs
+
+or
+
+    set GYP_MSVS_VERSION=2013 
+    npm install nkit4nodejs
+
     
 # Usage
 
@@ -107,7 +115,7 @@ Possible scalar types:
     - string
     - integer
     - number    // with floating point
-    - datetime
+    - datetime  // on Windows - without localization support yet
     - boolean
     
 Scalar types can be followed by '|' sign and default value

@@ -144,7 +144,7 @@ endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/../3rd/crtmpserver/
+  ${CMAKE_CURRENT_SOURCE_DIR}/../3rd/netbsd/
   ${YAJL_INCLUDE_DIR}
   ${Boost_INCLUDE_DIRS}
   ${EXPAT_INCLUDE_DIRS}

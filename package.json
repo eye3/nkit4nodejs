@@ -1,7 +1,7 @@
 {
     "name": "nkit4nodejs",
-    "version": "0.1.32",
-    "description": "nkit C++ library port to Node.js",
+    "version": "0.1.33",
+    "description": "XML to JSON converter with simple mapping notation",
     "homepage": "https://github.com/eye3/nkit4nodejs",
     "author": {
         "name": "Boris Darchiev",
