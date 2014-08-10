@@ -1,6 +1,6 @@
 {
     "name": "nkit4nodejs",
-    "version": "0.1.35",
+    "version": "0.1.36",
     "description": "XML to JavaScript object (JSON) converter with simple mapping notation",
     "homepage": "https://github.com/eye3/nkit4nodejs",
     "author": {
