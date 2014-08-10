@@ -77,38 +77,62 @@ following script:
     var nkit = require('nkit4nodejs');
     
     // build list-of-lists-of-strings from xml string
-    var builder = new nkit.Xml2VarBuilder(
-        ["/person", ["/phone", "string|defaultString"]]);
-    builder.feed(xmlString);
-    var list = builder.end();
-    console.log(list);
+    var mapping = ["/person", ["/phone", "string"]];
+    var gen = new nkit.Xml2VarBuilder(mapping);
+    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    var target = gen.end();
+    console.log(JSON.stringify(target, null, '  ')); // prints list of lists of string
     
-    // build list-of-objects-with-list from xml string
-    builder = new nkit.Xml2VarBuilder(
-        ["/person",
-            {
-                "/birthday": "datetime|1970-01-01|%Y-%m-%d",
-                "/phone -> phones": ["/", "string|defaultString"],
-                "/married/@firstTime -> isMerriedFirstTime":
-                    "boolean"
-            }
-        ]);
-    builder.feed(xmlString); // can be more than one call to
-                             // feed(xmlChunk) method
-    list = builder.end();
-    console.log(list);
+    // build list-of-objects-with-lists from xml string
+    mapping = ["/person",
+        {
+            "/birthday": "datetime|1970-01-01|%Y-%m-%d",
+            "/phone -> phones": ["/", "string"],
+            "/address -> cities": ["/city", "string"], // same as "/address/city -> cities": ["/", "string"]
+            "/married/@firstTime -> isMerriedFirstTime": "boolean"
+        }
+    ];
+    gen = new nkit.Xml2VarBuilder(mapping);
+    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    target = gen.end();
+    console.log(target); // prints list of objects with lists
+    
+    // build object from xml string (last 'person' element will be used)
+    mapping = {
+        "/person/name -> lastPersonName": "string",
+        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean"
+    };
+    gen = new nkit.Xml2VarBuilder(mapping);
+    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    target = gen.end();
+    console.log(JSON.stringify(target, null, '  '));
 
 Result:
 
-    [ [ '+122233344550', '+122233344551' ],
-      [ '+122233344553', '+122233344554' ] ]
-      
-    [ { birthday: Fri Nov 28 1980 00:00:00 GMT+0400 (MSK),
+    [
+      [
+        "+122233344550",
+        "+122233344551"
+      ],
+      [
+        "+122233344553",
+        "+122233344554"
+      ]
+    ]
+    
+    [ { cities: [ 'New York', 'Boston' ],
+        birthday: Sat Nov 28 1970 00:00:00 GMT+0400 (MSK),
         isMerriedFirstTime: false,
         phones: [ '+122233344550', '+122233344551' ] },
-      { birthday: Mon Jul 16 1979 00:00:00 GMT+0400 (MSK),
+      { cities: [ 'Moscow', 'Tula' ],
+        birthday: Wed Jul 16 1969 00:00:00 GMT+0400 (MSK),
         isMerriedFirstTime: true,
         phones: [ '+122233344553', '+122233344554' ] } ]
+        
+    {
+      "lastPersonIsMarriedFirstTime": true,
+      "lastPersonName": "Boris"
+    }
 
 Possible scalar types:
 
