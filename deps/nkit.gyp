@@ -18,7 +18,7 @@
         "nkit/src/logger/rotate_logger.cpp",
         "nkit/src/vx/encodings.cpp",
         "nkit/src/vx/vx.cpp",
-        "nkit/3rd/crtmpserver/strptime.cpp",
+        "nkit/3rd/netbsd/strptime.cpp",
       ],
       'include_dirs': [
         '.',
