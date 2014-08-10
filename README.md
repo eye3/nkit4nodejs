@@ -74,14 +74,70 @@ Suppose, we have this xml string:
 To create JavaScript object or list of vars from this xml string, we can use 
 following scripts.
 
-To build list-of-lists-of-strings from xml string:
+### To build list-of-strings from xml string:
 
     var nkit = require('nkit4nodejs');
+    
+    // Here mapping is list, described by /path/to/element and list item description.
+    // List item here is a 'string' scalar.
+    // Scalar definition contains type name and optional default value.
+    var mapping = ["/person/phone", "string"];
+    //var mapping = ["/person/phone", "string|optionalDefaultValue"];
+    
+    var builder = new nkit.Xml2VarBuilder(mapping);
+    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    var target = builder.end();
+    console.log(JSON.stringify(target, null, '  ')); // prints list of strings
+
+Result:
+
+    [
+      "+122233344550",
+      "+122233344551",
+      "+122233344553",
+      "+122233344554"
+    ]
+    
+### To build simple object from xml string (last 'person' xml element will be used):
+
+    var nkit = require('nkit4nodejs');
+
+    // Here mapping is object, described by set of mappings, each containing 
+    // key definition and scalar definition.
+    // Keys are described by "/sub/path -> optionalKeyName".
+    // If optionalKeyName doesn't provided, then last element name in /sub/path 
+    // will be used for key name.
+    // Scalar definition may have optional "...|defaultValue"
+    var mapping = {
+        "/person/name -> lastPersonName": "string|Captain Nemo",
+        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean|true"
+    };
+    
+    var builder = new nkit.Xml2VarBuilder(mapping);
+    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    var target = builder.end();
+    console.log(JSON.stringify(target, null, '  '));
+
+Result:
+
+    {
+      "lastPersonIsMarriedFirstTime": true,
+      "lastPersonName": "Boris"
+    }
+
+### To build list-of-lists-of-strings from xml string:
+
+    var nkit = require('nkit4nodejs');
+    
+    // Here mapping is list, described by /path/to/element and list item description.
+    // List item is described as 'list' sub-mapping, described by sub-path and
+    // 'string' scalar definition
     var mapping = ["/person", ["/phone", "string"]];
-    var gen = new nkit.Xml2VarBuilder(mapping);
-    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = gen.end();
-    console.log(JSON.stringify(target, null, '  ')); // prints list of lists of string
+    
+    var builder = new nkit.Xml2VarBuilder(mapping);
+    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    var target = builder.end();
+    console.log(JSON.stringify(target, null, '  ')); // prints list of lists of strings
 
 Result:
 
@@ -96,9 +152,19 @@ Result:
       ]
     ]
     
-To build list-of-objects-with-lists from xml string:
+### To build list-of-objects-with-lists from xml string:
 
     var nkit = require('nkit4nodejs');
+    
+    // Here mapping is list, described by /path/to/element and list item description.
+    // List item is described as 'object' sub-mapping.
+    // This 'object' sub-mapping described by set of mappings, each containing 
+    // key definition and sub-mapping or scalar.
+    // Keys are described by "/sub/path -> optionalKeyName".
+    // If optionalKeyName doesn't provided, then last element name in "/sub/path" 
+    // will be used for key name
+    // Scalar definition may have optional "...|defaultValue"
+    // 'datetime' scalar definition MUST contain default value and formatting string
     var mapping = ["/person",
         {
             "/birthday": "datetime|1970-01-01|%Y-%m-%d",
@@ -108,9 +174,10 @@ To build list-of-objects-with-lists from xml string:
             "/married/@firstTime -> isMerriedFirstTime": "boolean"
         }
     ];
-    var gen = new nkit.Xml2VarBuilder(mapping);
-    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = gen.end();
+    
+    var builder = new nkit.Xml2VarBuilder(mapping);
+    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+    var target = builder.end();
     console.log(target); // prints list of objects with lists
     
 Result:
@@ -124,24 +191,7 @@ Result:
         isMerriedFirstTime: true,
         phones: [ '+122233344553', '+122233344554' ] } ]
         
-To build object from xml string (last 'person' element will be used):
-
-    var nkit = require('nkit4nodejs');
-    var mapping = {
-        "/person/name -> lastPersonName": "string",
-        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean"
-    };
-    var gen = new nkit.Xml2VarBuilder(mapping);
-    gen.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = gen.end();
-    console.log(JSON.stringify(target, null, '  '));
-
-Result:
-
-    {
-      "lastPersonIsMarriedFirstTime": true,
-      "lastPersonName": "Boris"
-    }
+### Notes
 
 Possible scalar types:
 
@@ -172,7 +222,17 @@ If you want to change key names, use this notation:
 
 # TODO
 
-    - /path/with/*/sign/in/any/place 
+    - /path/with/*/sign/in/any/place
+    - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
+      create more then one JavaScript data structures from one xml string:
+      
+      var mapping1 = ...;
+      var mapping2 = ...;
+      var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
+      builder.feed(xmlString);
+      var target_list = builder.end();
+      var target1 = target_list[0];
+      var target2 = target_list[1];
 
 # Author
 
