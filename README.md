@@ -80,7 +80,7 @@ following scripts.
 
     var nkit = require('nkit4nodejs');
     
-    // Here mapping is list, described by /path/to/element and list item description.
+    // Here mapping is list, described by '/path/to/element' and list-item-description.
     // List item here is a 'string' scalar.
     // Scalar definition contains type name and optional default value.
     var mapping = ["/person/phone", "string"];
@@ -107,12 +107,13 @@ Result:
     // Here mapping is object, described by set of mappings, each containing 
     // key definition and scalar definition.
     // Keys are described by "/path/to/element -> optionalKeyName".
-    // If optionalKeyName doesn't provided, then last element name in /path/to/element 
-    // will be used for key name.
+    // If optionalKeyName doesn't provided, then last element 
+    // name in '/path/to/element' will be used for key name.
     // Scalar definition may have optional "...|defaultValue"
     var mapping = {
         "/person/name -> lastPersonName": "string|Captain Nemo",
-        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean|true"
+        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime":
+            "boolean|true"
     };
     
     var builder = new nkit.Xml2VarBuilder(mapping);
@@ -131,7 +132,7 @@ Result:
 
     var nkit = require('nkit4nodejs');
     
-    // Here mapping is list, described by /path/to/element and list item description.
+    // Here mapping is list, described by '/path/to/element' and list-item-description.
     // List item is described as 'list' sub-mapping, described by sub-path and
     // 'string' scalar definition
     var mapping = ["/person", ["/phone", "string"]];
@@ -158,12 +159,12 @@ Result:
 
     var nkit = require('nkit4nodejs');
     
-    // Here mapping is list, described by /path/to/element and list item description.
+    // Here mapping is list, described by '/path/to/element' and list-item-description.
     // List item is described as 'object' sub-mapping.
     // This 'object' sub-mapping described by set of mappings, each containing 
     // key definition and sub-mapping or scalar.
     // Keys are described by "/sub/path -> optionalKeyName".
-    // If optionalKeyName doesn't provided, then last element name in "/sub/path" 
+    // If optionalKeyName doesn't provided, then last element name in '/sub/path' 
     // will be used for key name
     // Scalar definition may have optional "...|defaultValue"
     // 'datetime' scalar definition MUST contain default value and formatting string
@@ -229,16 +230,16 @@ If you want to change key names, use this notation:
     - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
       create more then one JavaScript data structures from one xml string:
       
-      var mapping1 = ...;
-      var mapping2 = ...;
-      var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
-      builder.feed(xmlString);
-      var target_list = builder.end();
-      var target1 = target_list[0];
-      var target2 = target_list[1];
+          var mapping1 = ...;
+          var mapping2 = ...;
+          var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
+          builder.feed(xmlString);
+          var target_list = builder.end();
+          var target1 = target_list[0];
+          var target2 = target_list[1];
 
 # Author
 
-Boris T. Darchiev (boris.darchiev at gmail.com)
+Boris T. Darchiev (boris.darchiev@gmail.com)
 
 On github: https://github.com/eye3
