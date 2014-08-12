@@ -8,8 +8,8 @@ Node.js server.
 Currently, only an XML to Javascript object converter and filter exported to 
 Node.js
 
-You can create Javascript lists or objects of such a structure, which is 
-different from the structure of XML source.
+You can create Javascript data structures, which are different from the 
+structure of XML source.
 
 You can explicitly identify those elements and attributes in XML source that you 
 want to use for building JavaScript data structures.
