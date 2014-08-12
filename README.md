@@ -5,8 +5,8 @@
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
 Node.js server.
 
-Currently, only an XML to Javascript object converter and filter exported to 
-Node.js
+Currently, only an XML to Javascript object converter and filter is exported to 
+Node.js from nkit library.
 
 You can create Javascript data structures, which are different from the 
 structure of XML source.
@@ -214,7 +214,7 @@ Result:
         isMerriedFirstTime: true,
         phones: [ '+122233344553', '+122233344554' ] } ]
 
-### To build list from XML-file, reading it chunk by chunk
+### To build list from huge XML files, reading them chunk by chunk
 
     var fs = require('fs');
     var nkit = require('nkit4nodejs');
@@ -231,8 +231,7 @@ Result:
             console.log("Items count: %d", result.length);
         });
 
-
-### Notes
+# Notes
 
 Possible scalar types:
 
