@@ -14,13 +14,13 @@ var mapping = ["/person/phone", "string"];
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-var target = builder.end();
-console.log(JSON.stringify(target, null, '  ')); // prints list of strings
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  ')); // prints list of strings
 
 var etalon = [ '+122233344550', '+122233344551', '+122233344553', '+122233344554' ];
 
-if (JSON.stringify(target) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(target));
+if (JSON.stringify(result) !== JSON.stringify(etalon)) {
+    console.error(JSON.stringify(result));
     console.error(JSON.stringify(etalon));
     console.error("Error #1");
     process.exit(1);
@@ -38,13 +38,14 @@ if (JSON.stringify(target) !== JSON.stringify(etalon)) {
 // Scalar definition may have optional "...|defaultValue"
 var mapping = {
     "/person/name -> lastPersonName": "string|Captain Nemo",
-    "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean|true"
+    "/person/married/@firstTime -> lastPersonIsMarriedFirstTime": "boolean|true",
+    "/person/age": "integer"
 };
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-var target = builder.end();
-console.log(JSON.stringify(target, null, '  '));
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  '));
 
 //------------------------------------------------------------------------------
 // build list-of-lists-of-strings from xml string
@@ -56,14 +57,14 @@ var mapping = ["/person", ["/phone", "string"]];
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-var target = builder.end();
-console.log(JSON.stringify(target, null, '  ')); // prints list of lists of strings
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  ')); // prints list of lists of strings
 
 var etalon = [ [ '+122233344550', '+122233344551' ],
     [ '+122233344553', '+122233344554' ] ];
 
-if (JSON.stringify(target) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(target));
+if (JSON.stringify(result) !== JSON.stringify(etalon)) {
+    console.error(JSON.stringify(result));
     console.error(JSON.stringify(etalon));
     console.error("Error #2");
     process.exit(1);
@@ -93,8 +94,8 @@ var mapping = ["/person",
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-var target = builder.end();
-console.log(target); // prints list of objects with lists
+var result = builder.end();
+console.log(result); // prints list of objects with lists
 
 etalon = [
     {
@@ -110,8 +111,8 @@ etalon = [
         phones: [ '+122233344553', '+122233344554' ] }
 ];
 
-if (JSON.stringify(target) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(target));
+if (JSON.stringify(result) !== JSON.stringify(etalon)) {
+    console.error(JSON.stringify(result));
     console.error(JSON.stringify(etalon));
     console.error("Error #3");
     process.exit(1);

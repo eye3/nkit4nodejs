@@ -8,15 +8,17 @@ Node.js server.
 Currently, only an XML to Javascript object converter and filter is exported to 
 Node.js from nkit library.
 
-You can create Javascript data structures, which are different from the 
-structure of XML source.
-
-You can explicitly identify those elements and attributes in XML source that you 
-want to use for building JavaScript data structures.
-Thus, it's possible to filter out unnecessary XML-data.
-
-You can explicitly define Javascript type of scalar data, fetched from XML source.
-Integers, numbers, strings, datetimes and booleans are supported.
+You can:
+ 
+- create Javascript data structures, which are different from the structure 
+  of XML source.
+  
+- explicitly identify those elements and attributes in XML source that you
+  want to use for building JavaScript data structures.
+  Thus, it's possible to filter out unnecessary XML-data.
+  
+- explicitly define Javascript type of scalar data, fetched from XML source.
+  Integers, numbers, strings, datetimes and booleans are supported.
 
 Conversion is carried out using SAX parser Expat, so it's fast and uses less 
 memory when parsing huge XML files.
@@ -25,6 +27,9 @@ This module faster then any other xml-to-javascript module, written in pure Java
 For example, nkit4nodejs is about 10 times faster than popular 
 [xml2js](https://www.npmjs.org/package/xml2js) module on parsing 
 20Mb XML file (see test/compare.js for comparison code).
+
+Supported not only native Expat XML encodings, but also many others
+(see /deps/nkit/src/vx/encodings.inc)
 
 # Installation
 
@@ -93,9 +98,6 @@ Suppose, we have this xml string:
         </person>
     </any_name>
 
-To create JavaScript object or list of vars from this xml string, we can use 
-following scripts.
-
 ### To build list-of-strings from xml string:
 
     var nkit = require('nkit4nodejs');
@@ -108,8 +110,8 @@ following scripts.
     
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = builder.end();
-    console.log(JSON.stringify(target, null, '  '));
+    var result = builder.end();
+    console.log(JSON.stringify(result, null, '  '));
 
 Result:
 
@@ -133,17 +135,19 @@ Result:
     var mapping = {
         "/person/name -> lastPersonName": "string|Captain Nemo",
         "/person/married/@firstTime -> lastPersonIsMarriedFirstTime":
-            "boolean|true"
+            "boolean|true",
+        "/person/age": "integer"
     };
     
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = builder.end();
-    console.log(JSON.stringify(target, null, '  '));
+    var result = builder.end();
+    console.log(JSON.stringify(result, null, '  '));
 
 Result:
 
     {
+      "age": 34,
       "lastPersonIsMarriedFirstTime": true,
       "lastPersonName": "Boris"
     }
@@ -159,8 +163,8 @@ Result:
     
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = builder.end();
-    console.log(JSON.stringify(target, null, '  '));
+    var result = builder.end();
+    console.log(JSON.stringify(result, null, '  '));
 
 Result:
 
@@ -200,8 +204,8 @@ Result:
     
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var target = builder.end();
-    console.log(target);
+    var result = builder.end();
+    console.log(result);
     
 Result:
 
@@ -262,7 +266,9 @@ If you want to change key names, use this notation:
 
 # TODO
 
-    - /path/with/*/sign/in/any/place
+    - /path/with/*/signs/in/any/place
+    
+    - options: trim, etc.
     
     - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
       create more then one JavaScript data structures from one xml string:
@@ -271,9 +277,9 @@ If you want to change key names, use this notation:
           var mapping2 = ...;
           var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
           builder.feed(xmlString);
-          var target_list = builder.end();
-          var target1 = target_list[0];
-          var target2 = target_list[1];
+          var result_list = builder.end();
+          var result1 = result_list[0];
+          var result2 = result_list[1];
 
 # Author
 
