@@ -272,6 +272,7 @@ If you want to change key names, use this notation:
   create more then one JavaScript data structures from one xml string:
 
 
+
     var mapping1 = ...;
     var mapping2 = ...;
     var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
