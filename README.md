@@ -269,18 +269,17 @@ If you want to change key names, use this notation:
 - /path/with/*/signs/in/any/place
 - options: trim, etc.
 - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
-  create more then one JavaScript data structures from one xml string:
+create more then one JavaScript data structures from one xml string:
 
 
+ var mapping1 = ...;
+ var mapping2 = ...;
+ var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
+ builder.feed(xmlString);
+ var result_list = builder.end();
+ var result1 = result_list[0];
+ var result2 = result_list[1];
 
-    var mapping1 = ...;
-    var mapping2 = ...;
-    var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
-    builder.feed(xmlString);
-    var result_list = builder.end();
-    var result1 = result_list[0];
-    var result2 = result_list[1];
-    
 
 # Author
 
