@@ -28,7 +28,7 @@ For example, nkit4nodejs is about 10 times faster than popular
 [xml2js](https://www.npmjs.org/package/xml2js) module on parsing 
 20Mb XML file (see test/compare.js for comparison code).
 
-Supported not only native Expat XML encodings, but also many others
+Module supports not only native Expat XML encodings, but also many others
 (see /deps/nkit/src/vx/encodings.inc)
 
 # Installation
@@ -266,20 +266,20 @@ If you want to change key names, use this notation:
 
 # TODO
 
-    - /path/with/*/signs/in/any/place
+- /path/with/*/signs/in/any/place
+- options: trim, etc.
+- More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
+  create more then one JavaScript data structures from one xml string:
+
+
+    var mapping1 = ...;
+    var mapping2 = ...;
+    var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
+    builder.feed(xmlString);
+    var result_list = builder.end();
+    var result1 = result_list[0];
+    var result2 = result_list[1];
     
-    - options: trim, etc.
-    
-    - More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
-      create more then one JavaScript data structures from one xml string:
-      
-          var mapping1 = ...;
-          var mapping2 = ...;
-          var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
-          builder.feed(xmlString);
-          var result_list = builder.end();
-          var result1 = result_list[0];
-          var result2 = result_list[1];
 
 # Author
 
