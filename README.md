@@ -194,7 +194,7 @@ Result:
     // 'datetime' scalar definition MUST contain default value and formatting string
     var mapping = ["/person",
         {
-            "/birthday": "datetime|1970-01-01|%Y-%m-%d",
+            "/birthday": "datetime|Fri, 22 Aug 2014 13:59:06 +0000|%a, %d %b %Y %H:%M:%S %z",
             "/phone -> phones": ["/", "string"],
             "/address -> cities": ["/city", "string"],
                 // same as "/address/city -> cities": ["/", "string"]
@@ -241,8 +241,8 @@ Possible scalar types:
 
     - string
     - integer
-    - number    // with floating point
-    - datetime  // on Windows - without localization support yet
+    - number
+    - datetime
     - boolean
     
 Scalar types can be followed by '|' sign and default value
