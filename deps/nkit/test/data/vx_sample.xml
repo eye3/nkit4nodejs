@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <any_name>
 	<person>
-		<name>Jack</name>
 		<phone>+122233344550</phone>
+		<name>Jack</name>
 		<phone>+122233344551</phone>
 		<age>33</age>
 		<married firstTime="No">Yes</married>
-		<birthday>1980-02-28</birthday>
+		<birthday>Wed, 28 Mar 1979 12:13:14 +0000</birthday>
 		<address>
 			<city>New York</city>
 			<street>Park Ave</street>
@@ -21,12 +21,12 @@
 		</address>
 	</person>
 	<person>
-		<name>Boris</name>
 		<phone>+122233344553</phone>
+		<name>Boris</name>
 		<phone>+122233344554</phone>
 		<age>34</age>
 		<married firstTime="Yes">Yes</married>
-		<birthday>1979-05-16</birthday>
+		<birthday>Mon, 31 Aug 1970 02:03:04 +0000</birthday>
 		<address>
 			<city>Moscow</city>
 			<street>Kahovka</street>

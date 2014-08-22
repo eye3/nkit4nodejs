@@ -32,6 +32,18 @@ namespace nkit
     return d_gen->var();
   }
 
+  Dynamic DynamicFromXml(const std::string & xml,
+      const Dynamic & fields_mapping, std::string * const error)
+  {
+    Xml2VarBuilder<DynamicBuilder>::Ptr d_gen = Xml2VarBuilder<
+        DynamicBuilder>::Create(fields_mapping, error);
+    if(!d_gen)
+      return Dynamic();
+    if (!d_gen->Feed(xml.c_str(), xml.length(), true, error))
+      return Dynamic();
+    return d_gen->var();
+  }
+
   Dynamic DynamicFromXmlFile(const std::string & path,
         const std::string & fields_mapping, std::string * const error)
   {

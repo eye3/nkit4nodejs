@@ -59,6 +59,9 @@ namespace nkit
   NKIT_DEFINE_CONST_STRING(S_NULL_, "null")
   NKIT_DEFINE_CONST_STRING(S_NAN_, "NaN")
   NKIT_DEFINE_CONST_STRING(S_DOT_, ".")
+  NKIT_DEFINE_CONST_STRING(S_STAR_, "*")
+  NKIT_DEFINE_CONST_STRING(S_LT_, "<")
+  NKIT_DEFINE_CONST_STRING(S_GT_, ">")
 
   time_t timezone_offset()
   {

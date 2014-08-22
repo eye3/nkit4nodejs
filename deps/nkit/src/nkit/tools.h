@@ -404,7 +404,7 @@ namespace nkit
   class UniqueCombinationGenerator
   {
     static const uint64_t MAX_INT_COUNT = 64;
-    static const uint64_t MAX_POWER_OF_2 = 0x8000000000000000;
+    static const uint64_t MAX_POWER_OF_2 = 0x8000000000000000ll;
 
     static uint64_t max_int_[MAX_INT_COUNT];
     static uint64_t power_of_2_[MAX_INT_COUNT];

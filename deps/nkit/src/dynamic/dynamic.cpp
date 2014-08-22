@@ -516,12 +516,12 @@ namespace nkit
       const char * format)
   {
 #ifdef NKIT_WINNT
-	struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #else
-	struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    struct tm _tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #endif
-	if (NKIT_STRPTIME(str.c_str(), format, &_tm) == NULL)
-	  return Dynamic();
+    if (NKIT_STRPTIME(str.c_str(), format, &_tm) == NULL)
+      return Dynamic();
     return DateTimeFromTm(_tm);
   }
 

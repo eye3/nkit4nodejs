@@ -21,6 +21,7 @@ namespace nkit
 
     bool Feed(const char* chunk, size_t len, bool last, std::string * error)
     {
+      bool result = true;
       if (!XML_Parse(parser_, chunk, len, last))
       {
         XML_Error code = XML_GetErrorCode(parser_);
@@ -33,9 +34,12 @@ namespace nkit
               + nkit::string_cast(XML_GetCurrentColumnNumber(parser_)) + ") "
               + XML_ErrorString(code);
 
-        return false;
+        result = false;
       }
-      return true;
+
+      if (last)
+        Reset();
+      return result;
     }
 
   protected:

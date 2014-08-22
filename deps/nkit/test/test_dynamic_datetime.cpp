@@ -33,7 +33,7 @@ namespace nkit_test
     dt.SetMinute(0);
     std::cout << dt.hours() << '\n';
     std::cout << dt.GetString() << '\n';
-    uint64_t i = 566658777940492288;
+    uint64_t i = 566658777940492288ll;
     uint64_t k = dt.GetUnsignedInteger();
     std::cout << i << '\n';
     std::cout << k << '\n';

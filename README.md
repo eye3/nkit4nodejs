@@ -29,7 +29,7 @@ For example, nkit4nodejs is about 10 times faster than popular
 20Mb XML file (see test/compare.js for comparison code).
 
 Module supports not only native Expat XML encodings, but also many others
-(see /deps/nkit/src/vx/encodings.inc)
+(see /deps/nkit/src/vx/encodings_inc_gen.cpp)
 
 # Installation
 
@@ -107,7 +107,7 @@ Suppose, we have this xml string:
     // Scalar definition contains type name and optional default value.
     var mapping = ["/person/phone", "string"];
     //var mapping = ["/person/phone", "string|optionalDefaultValue"];
-    
+
     var builder = new nkit.Xml2VarBuilder(mapping);
     builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
     var result = builder.end();
@@ -254,9 +254,29 @@ syntax. Default value of datetime must correspond to format string.
 
 Path in mapping specifications are very simple XPath now. Only
 
-    /element/with/optional/@attribute
+    /path/to/element
+    /path/to/element/with/optional/@attribute
     
-paths are supported.
+paths are supported. Also there is a limited support of
+
+    /paths/to/element/with/*/sign
+    
+'*' sign must be used only in the last sub-mapping paths. Examples:
+	
+	1. ["/person", ["/*", "string"]]  // valid
+
+	2. ["/*", ["/address", "string"]] // invalid
+
+	3. ['/person', {
+			"/*": "string",
+			"/age": "integer"
+		}]                            // valid
+
+	4. ['/*', {
+			"/phone": "string",
+			"/age": "integer"
+		}]                            // invalid
+
     
 JavaScript object keys get their names from the last element name in the path.
 If you want to change key names, use this notation:
@@ -266,19 +286,18 @@ If you want to change key names, use this notation:
 
 # TODO
 
-- /path/with/*/signs/in/any/place
-- options: trim, etc
-- More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
-  create more then one JavaScript data structures from one xml string:
-
-
-    var mapping1 = ...;
-    var mapping2 = ...;
-    var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
-    builder.feed(xmlString);
-    var result_list = builder.end();
-    var result1 = result_list[0];
-    var result2 = result_list[1];
+	- options: trim, etc
+	- More then one 'mapping' parameters for nkit.Xml2VarBuilder(...) constructor to
+	  create more then one JavaScript data structures from one xml string:
+	
+	
+	    var mapping1 = ...;
+	    var mapping2 = ...;
+	    var builder = nkit.Xml2VarBuilder(mapping1, mapping2);
+	    builder.feed(xmlString);
+	    var result_list = builder.end();
+	    var result1 = result_list[0];
+	    var result2 = result_list[1];
     
 
 # Author

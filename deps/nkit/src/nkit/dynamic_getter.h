@@ -1124,6 +1124,30 @@ namespace nkit
     return true;
   }
 
+  inline bool get(const Dynamic & var, const std::string & name,
+      uint32_t * const value)
+  {
+    uint64_t tmp;
+    if (!get(var, name, &tmp))
+      return false;
+    if (tmp > MAX_UINT32_VALUE)
+      return false;
+    *value = static_cast<uint32_t>(tmp);
+    return true;
+  }
+
+  inline bool get(const Dynamic & var,const std::string & name,
+      int32_t * const value)
+  {
+    int64_t tmp;
+    if (!get(var, name, &tmp))
+      return false;
+    if (tmp > MAX_INT32_VALUE || tmp < MIN_INT32_VALUE)
+      return false;
+    *value = static_cast<int32_t>(tmp);
+    return true;
+  }
+
   template <typename T>
   void get(const Dynamic & var, const std::string & name,
     T * const value, const T & _default)

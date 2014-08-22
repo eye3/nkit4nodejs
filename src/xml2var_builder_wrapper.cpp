@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+#include "nkit/logger_brief.h"
+
 #include <node_buffer.h>
 
 #include "xml2var_builder_wrapper.h"
@@ -46,10 +48,7 @@ void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
 Xml2VarBuilderWrapper::Xml2VarBuilderWrapper(const Arguments& args)
 {
   if (1 > args.Length())
-  {
-    ThrowException(String::New("Expected arguments"));
-    return;
-  }
+    ThrowException(Exception::RangeError(String::New("Expected arguments")));
 
   std::string error;
   if (node::Buffer::HasInstance(args[0]))
@@ -74,15 +73,12 @@ Xml2VarBuilderWrapper::Xml2VarBuilderWrapper(const Arguments& args)
   }
   else
   {
-    ThrowException(String::New("Wrong type of arguments"));
-    return;
+    ThrowException(
+        Exception::TypeError(String::New("Wrong type of arguments")));
   }
 
   if (!gen_)
-  {
-    ThrowException(String::New(error.c_str()));
-    return;
-  }
+    ThrowException(Exception::Error(String::New(error.c_str())));
 }
 
 Handle<Value> Xml2VarBuilderWrapper::New(const Arguments& args)
@@ -92,8 +88,9 @@ Handle<Value> Xml2VarBuilderWrapper::New(const Arguments& args)
   if (!args.IsConstructCall())
   {
     // Invoked as plain function `Xml2VarBuilder(...)`
-    ThrowException(String::New("Cannot call constructor as function"));
-    return scope.Close(Undefined());
+    return ThrowException(
+        Exception::Error(
+            String::New("Cannot call constructor as function")));
   }
 
   // Invoked as constructor: `new Xml2VarBuilder(...)
@@ -109,10 +106,8 @@ Handle<Value> Xml2VarBuilderWrapper::Feed(const Arguments& args)
   HandleScope scope;
 
   if (1 > args.Length())
-  {
-    ThrowException(String::New("Expected arguments"));
-    return scope.Close(Undefined());
-  }
+    return ThrowException(
+            Exception::RangeError(String::New("Expected arguments")));
 
   Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
       args.This());
@@ -132,16 +127,11 @@ Handle<Value> Xml2VarBuilderWrapper::Feed(const Arguments& args)
     result = obj->gen_->Feed(*utf8_value, utf8_value.length(), false, &error);
   }
   else
-  {
-    ThrowException(String::New("Wrong type of arguments"));
-    return scope.Close(Undefined());
-  }
+    return ThrowException(
+        Exception::TypeError(String::New("Wrong type of arguments")));
 
   if (!result)
-  {
-    ThrowException(String::New(error.c_str()));
-    return scope.Close(Undefined());
-  }
+    return ThrowException(Exception::Error(String::New(error.c_str())));
 
   return scope.Close(Undefined());
 }
@@ -156,10 +146,7 @@ Handle<Value> Xml2VarBuilderWrapper::End(const v8::Arguments& args)
   std::string empty = "";
   std::string error;
   if (!obj->gen_->Feed(empty.c_str(), empty.size(), true, &error))
-  {
-    ThrowException(String::New(error.c_str()));
-    return scope.Close(Undefined());
-  }
+    return ThrowException(Exception::Error(String::New(error.c_str())));
 
   return scope.Close(obj->gen_->var());
 }

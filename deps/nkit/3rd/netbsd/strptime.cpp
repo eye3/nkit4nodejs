@@ -378,7 +378,7 @@ literal:
 			continue;
 
 		case 'Z':
-			tzset();
+			_tzset();
 			if (strncmp((const char *)bp, gmt, 3) == 0) {
 				tm->tm_isdst = 0;
 #ifdef TM_GMTOFF

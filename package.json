@@ -1,7 +1,7 @@
 {
     "name": "nkit4nodejs",
-    "version": "0.1.43",
-    "description": "Simple and fast XML to Javascript object converter and filter. Written in C++ using Expat SAX parser.",
+    "version": "0.1.44",
+    "description": "Simple and fast XML to Javascript object or JSON converter and filter. Written in C++ using Expat SAX parser.",
     "homepage": "https://github.com/eye3/nkit4nodejs",
     "author": {
         "name": "Boris Darchiev",

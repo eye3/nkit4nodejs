@@ -53,6 +53,7 @@
 #  define NKIT_STRCASECMP  ::strcasecmp
 #  define NKIT_STRNCASECMP  ::strncasecmp
 #  define NKIT_STRPTIME  ::strptime
+#  define NKIT_STRDUP  ::strdup
 
 #elif defined(NKIT_WINNT) && defined(HAVE_STD_CXX_11)
 #  include <cstdint>
@@ -100,6 +101,7 @@
 #  define NKIT_STRCASECMP  ::_stricmp
 #  define NKIT_STRNCASECMP  ::_strnicmp
 #  define NKIT_STRPTIME  ::strptime
+#  define NKIT_STRDUP  ::_strdup
 
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 
