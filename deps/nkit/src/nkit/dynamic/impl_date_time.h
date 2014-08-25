@@ -81,9 +81,9 @@ namespace nkit
         uint64_t d(0);
         time_t now;
         ::std::time(&now);
-        struct tm tm;
-        LOCALTIME_R(now, &tm);
-        Set(tm, &d);
+        struct tm _tm;
+        LOCALTIME_R(now, &_tm);
+        Set(_tm, &d);
         Reset(&v, d);
       }
 
@@ -92,18 +92,18 @@ namespace nkit
         uint64_t d(0);
         time_t now;
         ::std::time(&now);
-        struct tm tm;
-        GMTIME_R(now, &tm);
-        Set(tm, &d);
+        struct tm _tm;
+        GMTIME_R(now, &_tm);
+        Set(_tm, &d);
         Reset(&v, d);
       }
 
       static void Create(Dynamic & v, const time_t now)
       {
         uint64_t d(0); NKIT_FORCE_USED(d);
-        struct tm tm;
-        LOCALTIME_R(now, &tm);
-        Set(tm, &d);
+        struct tm _tm;
+        LOCALTIME_R(now, &_tm);
+        Set(_tm, &d);
         Reset(&v, d);
       }
 

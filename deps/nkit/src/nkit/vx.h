@@ -754,7 +754,7 @@ namespace nkit
       return TargetPtr(new ScalarTarget(*this));
     }
 
-    virtual typename T::type const & var()
+    virtual typename T::type const & var() const
     {
       if (unlikely(use_default_value_))
         return default_value_.get();
@@ -772,7 +772,7 @@ namespace nkit
 
   private:
     T default_value_;
-    bool use_default_value_;
+    mutable bool use_default_value_;
     std::string value_;
     std::string format_;
   };

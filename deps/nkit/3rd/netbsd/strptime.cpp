@@ -31,7 +31,10 @@
 
 #include "nkit/types.h"
 
-#ifdef NKIT_WINNT
+#if defined(NKIT_WINNT)
+
+namespace nkit
+{
 
 typedef unsigned int uint;
 
@@ -191,7 +194,7 @@ literal:
 		case 'x':	/* The date, using the locale's format. */
 			new_fmt =_ctloc(d_fmt);
 		    recurse:
-			bp = (const u_char *)strptime((const char *)bp,
+			bp = (const u_char *)::nkit::strptime((const char *)bp,
 							    new_fmt, tm);
 			LEGAL_ALT(ALT_E);
 			continue;
@@ -307,7 +310,7 @@ literal:
 					continue;
 				}
 
-				if (LOCALTIME_R(sse, tm) == NULL)
+				if (!LOCALTIME_R(sse, tm))
 					bp = NULL;
 			}
 			continue;
@@ -378,7 +381,11 @@ literal:
 			continue;
 
 		case 'Z':
+#ifdef NKIT_WINNT
 			_tzset();
+#else
+			tzset();
+#endif
 			if (strncmp((const char *)bp, gmt, 3) == 0) {
 				tm->tm_isdst = 0;
 #ifdef TM_GMTOFF
@@ -458,7 +465,7 @@ literal:
 					tm->TM_GMTOFF = -5 - i;
 #endif
 #ifdef TM_ZONE
-					tm->TM_ZONE = __UNCONST(nast[i]);
+					tm->TM_ZONE = const_cast<char*>(nast[i]);
 #endif
 					bp = ep;
 					continue;
@@ -470,7 +477,7 @@ literal:
 					tm->TM_GMTOFF = -4 - i;
 #endif
 #ifdef TM_ZONE
-					tm->TM_ZONE = __UNCONST(nadt[i]);
+					tm->TM_ZONE = const_cast<char*>(nadt[i]);
 #endif
 					bp = ep;
 					continue;
@@ -602,5 +609,7 @@ find_string(const u_char *bp, int *tgt, const char * const *n1,
 	/* Nothing matched */
 	return NULL;
 }
+
+} // namespace nkit
 
 #endif // NKIT_WINNT

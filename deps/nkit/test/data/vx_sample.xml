@@ -6,7 +6,7 @@
 		<phone>+122233344551</phone>
 		<age>33</age>
 		<married firstTime="No">Yes</married>
-		<birthday>Wed, 28 Mar 1979 12:13:14 +0000</birthday>
+		<birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
 		<address>
 			<city>New York</city>
 			<street>Park Ave</street>
@@ -26,7 +26,7 @@
 		<phone>+122233344554</phone>
 		<age>34</age>
 		<married firstTime="Yes">Yes</married>
-		<birthday>Mon, 31 Aug 1970 02:03:04 +0000</birthday>
+		<birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
 		<address>
 			<city>Moscow</city>
 			<street>Kahovka</street>

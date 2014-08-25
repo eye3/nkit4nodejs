@@ -441,10 +441,8 @@ namespace nkit
           std::string * const error);
     static Dynamic DateTimeFromDefault(const std::string & str,
         std::string * const error);
-//#ifndef NKIT_WINNT
     static Dynamic DateTimeFromString(const std::string & str,
         const char * format);
-//#endif
 
     // create empty DICT
     static Dynamic Dict();

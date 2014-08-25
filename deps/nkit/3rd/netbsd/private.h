@@ -4,8 +4,10 @@
 #define PRIVATE_H
 
 /* NetBSD defaults */
-//#define TM_GMTOFF	tm_gmtoff
-//#define TM_ZONE		tm_zone
+#ifdef NKIT_MACOS
+#define TM_GMTOFF	tm_gmtoff
+#define TM_ZONE		tm_zone
+#endif
 #define STD_INSPIRED	1
 #define HAVE_LONG_DOUBLE 1
 

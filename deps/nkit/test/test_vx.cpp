@@ -139,6 +139,7 @@ namespace nkit_test
         );
 
     CINFO(nkit::json_hr << var);
+    CINFO(nkit::json_hr << etalon);
     NKIT_TEST_ASSERT(var == etalon);
   }
 

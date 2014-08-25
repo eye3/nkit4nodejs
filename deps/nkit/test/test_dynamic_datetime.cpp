@@ -62,6 +62,13 @@ namespace nkit_test
     NKIT_TEST_ASSERT(dt.IsDateTime());
     NKIT_TEST_ASSERT(dt.GetString(FORMAT) == etalon);
 
+    etalon = "Fri, 22 Aug 2014 13:59:06 +0400";
+    FORMAT = "%a, %d %b %Y %H:%M:%S %z";
+    dt = Dynamic::DateTimeFromString(etalon, FORMAT);
+    NKIT_TEST_ASSERT(dt.IsDateTime());
+    NKIT_TEST_ASSERT_WITH_TEXT(dt.GetString(FORMAT) == etalon,
+    		dt.GetString(FORMAT));
+
     std::string wrong_string("2014/01/01 12-13-14");
     dt = Dynamic::DateTimeFromString(wrong_string, FORMAT);
     NKIT_TEST_ASSERT(!dt.IsDateTime());
