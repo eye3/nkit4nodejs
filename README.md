@@ -3,7 +3,7 @@
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
-Node.js server.
+Node.js server. There is the same port to Python - [nkit4py](https://github.com/eye3/nkit4py.git)
 
 Currently, only an XML to Javascript object converter and filter is exported to 
 Node.js from nkit library.
@@ -62,7 +62,7 @@ Suppose, we have this xml string:
 			<phone>+122233344551</phone>
 			<age>33</age>
 			<married firstTime="No">Yes</married>
-			<birthday>Wed, 28 Mar 1979 12:13:14 +0000</birthday>
+			<birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
 			<address>
 				<city>New York</city>
 				<street>Park Ave</street>
@@ -82,7 +82,7 @@ Suppose, we have this xml string:
 			<phone>+122233344554</phone>
 			<age>34</age>
 			<married firstTime="Yes">Yes</married>
-			<birthday>Mon, 31 Aug 1970 02:03:04 +0000</birthday>
+			<birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
 			<address>
 				<city>Moscow</city>
 				<street>Kahovka</street>
