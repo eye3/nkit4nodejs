@@ -596,7 +596,7 @@ namespace nkit
 
     TargetPtr Clone() const
     {
-      ListTarget::Ptr result(new ListTarget);
+      typename ListTarget::Ptr result(new ListTarget);
       ConstIterator it = target_items_.begin(), end = target_items_.end();
       for (; it != end; ++it)
       {
@@ -796,8 +796,8 @@ namespace nkit
 
     static void MoveToChild(PathNode<T> ** current, size_t element_id)
     {
-      std::vector<PathNode<T>::Ptr> & children = (**current).children_;
-      typename std::vector<PathNode<T>::Ptr>::iterator child =
+      std::vector<Ptr> & children = (**current).children_;
+      typename std::vector<Ptr>::iterator child =
           children.begin(), end = children.end();
       for (; child != end; ++child)
       {
@@ -807,8 +807,7 @@ namespace nkit
           return;
         }
       }
-      PathNode<T>::Ptr new_child(
-          new PathNode<T>(*current, element_id));
+      Ptr new_child(new PathNode<T>(*current, element_id));
       children.push_back(new_child);
       *current = new_child.get();
     }

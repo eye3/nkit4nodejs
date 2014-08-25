@@ -29,10 +29,12 @@ namespace nkit
           static_cast<T*>(this)->GetCustomError(error);
         else
           *error = "Parse error at (line:"
-              + nkit::string_cast(XML_GetCurrentLineNumber(parser_))
+              + nkit::string_cast(
+                  static_cast<uint64_t>(XML_GetCurrentLineNumber(parser_)))
               + ", column:"
-              + nkit::string_cast(XML_GetCurrentColumnNumber(parser_)) + ") "
-              + XML_ErrorString(code);
+              + nkit::string_cast(
+                  static_cast<uint64_t>(XML_GetCurrentColumnNumber(parser_)))
+              + ") " + XML_ErrorString(code);
 
         result = false;
       }

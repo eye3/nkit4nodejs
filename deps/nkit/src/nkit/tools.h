@@ -64,7 +64,8 @@ namespace nkit
   std::string get_process_id();
   std::string get_hostname();
   std::string get_username();
-  void rename(const std::string & from, const std::string & to);
+  int64_t rename(const std::string & from, const std::string & to,
+      std::string * error);
 
   //----------------------------------------------------------------------------
   bool bool_cast(const std::string & str);

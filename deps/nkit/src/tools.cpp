@@ -574,13 +574,16 @@ static const time_t __FREQUENCY = 1000000000;
 #endif
   }
 
-  void rename(const std::string & from, const std::string & to)
+  int64_t rename(const std::string & from, const std::string & to,
+      std::string * error)
   {
     if (::std::rename(from.c_str(), to.c_str()) == -1)
     {
-      abort_with_core("RotateLogger rename file error: errno = "
-          + string_cast(errno));
+      *error = strerror(errno);
+      return errno;
     }
+
+    return 0;
   }
 
   bool text_file_to_string(const std::string & path, std::string * out)
