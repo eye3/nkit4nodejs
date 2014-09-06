@@ -226,14 +226,14 @@ console.log(result);
 Result:
 
 ```json
-[ { cities: [ 'New York', 'Boston' ],
-    birthday: Sat Nov 28 1970 00:00:00 GMT+0400 (MSK),
-    isMerriedFirstTime: false,
-    phones: [ '+122233344550', '+122233344551' ] },
-  { cities: [ 'Moscow', 'Tula' ],
-    birthday: Wed Jul 16 1969 00:00:00 GMT+0400 (MSK),
-    isMerriedFirstTime: true,
-    phones: [ '+122233344553', '+122233344554' ] } ]
+[ { "cities": [ "New York", "Boston" ],
+    "birthday": "Sat Nov 28 1970 00:00:00 GMT+0400 (MSK)",
+    "isMerriedFirstTime": false,
+    "phones": [ "+122233344550", "+122233344551" ] },
+  { "cities": [ "Moscow", "Tula" ],
+    "birthday": "Wed Jul 16 1969 00:00:00 GMT+0400 (MSK)",
+    "isMerriedFirstTime": true,
+    "phones": [ "+122233344553", "+122233344554" ] } ]
 ```
 
 ### To build list from huge XML files, reading them chunk by chunk
