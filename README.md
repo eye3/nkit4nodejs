@@ -54,186 +54,206 @@ or
 
 Suppose, we have this xml string:
 
-	<?xml version="1.0"?>
-	<any_name>
-		<person>
-			<phone>+122233344550</phone>
-			<name>Jack</name>
-			<phone>+122233344551</phone>
-			<age>33</age>
-			<married firstTime="No">Yes</married>
-			<birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
-			<address>
-				<city>New York</city>
-				<street>Park Ave</street>
-				<buildingNo>1</buildingNo>
-				<flatNo>1</flatNo>
-			</address>
-			<address>
-				<city>Boston</city>
-				<street>Centre St</street>
-				<buildingNo>33</buildingNo>
-				<flatNo>24</flatNo>
-			</address>
-		</person>
-		<person>
-			<phone>+122233344553</phone>
-			<name>Boris</name>
-			<phone>+122233344554</phone>
-			<age>34</age>
-			<married firstTime="Yes">Yes</married>
-			<birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
-			<address>
-				<city>Moscow</city>
-				<street>Kahovka</street>
-				<buildingNo>1</buildingNo>
-				<flatNo>2</flatNo>
-			</address>
-			<address>
-				<city>Tula</city>
-				<street>Lenina</street>
-				<buildingNo>3</buildingNo>
-				<flatNo>78</flatNo>
-			</address>
-		</person>
-	</any_name>
+```xml
+<?xml version="1.0"?>
+<any_name>
+    <person>
+        <phone>+122233344550</phone>
+        <name>Jack</name>
+        <phone>+122233344551</phone>
+        <age>33</age>
+        <married firstTime="No">Yes</married>
+        <birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
+        <address>
+            <city>New York</city>
+            <street>Park Ave</street>
+            <buildingNo>1</buildingNo>
+            <flatNo>1</flatNo>
+        </address>
+        <address>
+            <city>Boston</city>
+            <street>Centre St</street>
+            <buildingNo>33</buildingNo>
+            <flatNo>24</flatNo>
+        </address>
+    </person>
+    <person>
+        <phone>+122233344553</phone>
+        <name>Boris</name>
+        <phone>+122233344554</phone>
+        <age>34</age>
+        <married firstTime="Yes">Yes</married>
+        <birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
+        <address>
+            <city>Moscow</city>
+            <street>Kahovka</street>
+            <buildingNo>1</buildingNo>
+            <flatNo>2</flatNo>
+        </address>
+        <address>
+            <city>Tula</city>
+            <street>Lenina</street>
+            <buildingNo>3</buildingNo>
+            <flatNo>78</flatNo>
+        </address>
+    </person>
+</any_name>
+```
 
 ### To build list-of-strings from xml string:
 
-    var nkit = require('nkit4nodejs');
-    
-    // Here mapping is list, described by '/path/to/element' and list-item-description.
-    // List item here is a 'string' scalar.
-    // Scalar definition contains type name and optional default value.
-    var mapping = ["/person/phone", "string"];
-    //var mapping = ["/person/phone", "string|optionalDefaultValue"];
+```javascript
+var nkit = require('nkit4nodejs');
 
-    var builder = new nkit.Xml2VarBuilder(mapping);
-    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var result = builder.end();
-    console.log(JSON.stringify(result, null, '  '));
+// Here mapping is list, described by '/path/to/element' and list-item-description.
+// List item here is a 'string' scalar.
+// Scalar definition contains type name and optional default value.
+var mapping = ["/person/phone", "string"];
+//var mapping = ["/person/phone", "string|optionalDefaultValue"];
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  '));
+```
 
 Result:
 
-    [
-      "+122233344550",
-      "+122233344551",
-      "+122233344553",
-      "+122233344554"
-    ]
+```json
+[
+  "+122233344550",
+  "+122233344551",
+  "+122233344553",
+  "+122233344554"
+]
+```
     
 ### To build simple object from xml string (last 'person' xml element will be used):
 
-    var nkit = require('nkit4nodejs');
+```javascript
+var nkit = require('nkit4nodejs');
 
-    // Here mapping is object, described by set of mappings, each containing 
-    // key definition and scalar definition.
-    // Keys are described by "/path/to/element -> optionalKeyName".
-    // If optionalKeyName doesn't provided, then last element 
-    // name in '/path/to/element' will be used for key name.
-    // Scalar definition may have optional "...|defaultValue"
-    var mapping = {
-        "/person/name -> lastPersonName": "string|Captain Nemo",
-        "/person/married/@firstTime -> lastPersonIsMarriedFirstTime":
-            "boolean|true",
-        "/person/age": "integer"
-    };
-    
-    var builder = new nkit.Xml2VarBuilder(mapping);
-    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var result = builder.end();
-    console.log(JSON.stringify(result, null, '  '));
+// Here mapping is object, described by set of mappings, each containing 
+// key definition and scalar definition.
+// Keys are described by "/path/to/element -> optionalKeyName".
+// If optionalKeyName doesn't provided, then last element 
+// name in '/path/to/element' will be used for key name.
+// Scalar definition may have optional "...|defaultValue"
+var mapping = {
+    "/person/name -> lastPersonName": "string|Captain Nemo",
+    "/person/married/@firstTime -> lastPersonIsMarriedFirstTime":
+        "boolean|true",
+    "/person/age": "integer"
+};
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  '));
+```
 
 Result:
 
-    {
-      "age": 34,
-      "lastPersonIsMarriedFirstTime": true,
-      "lastPersonName": "Boris"
-    }
+```json
+{
+  "age": 34,
+  "lastPersonIsMarriedFirstTime": true,
+  "lastPersonName": "Boris"
+}
+```
 
 ### To build list-of-lists-of-strings from xml string:
 
-    var nkit = require('nkit4nodejs');
-    
-    // Here mapping is list, described by '/path/to/element' and list-item-description.
-    // List item is described as 'list' sub-mapping, described by sub-path and
-    // 'string' scalar definition
-    var mapping = ["/person", ["/phone", "string"]];
-    
-    var builder = new nkit.Xml2VarBuilder(mapping);
-    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var result = builder.end();
-    console.log(JSON.stringify(result, null, '  '));
+```javascript
+var nkit = require('nkit4nodejs');
+
+// Here mapping is list, described by '/path/to/element' and list-item-description.
+// List item is described as 'list' sub-mapping, described by sub-path and
+// 'string' scalar definition
+var mapping = ["/person", ["/phone", "string"]];
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+console.log(JSON.stringify(result, null, '  '));
+```
 
 Result:
 
-    [
-      [
-        "+122233344550",
-        "+122233344551"
-      ],
-      [
-        "+122233344553",
-        "+122233344554"
-      ]
-    ]
+```json
+[
+  [
+    "+122233344550",
+    "+122233344551"
+  ],
+  [
+    "+122233344553",
+    "+122233344554"
+  ]
+]
+```
     
 ### To build list-of-objects-with-lists from xml string:
 
-    var nkit = require('nkit4nodejs');
-    
-    // Here mapping is list, described by '/path/to/element' and list-item-description.
-    // List item is described as 'object' sub-mapping.
-    // This 'object' sub-mapping described by set of mappings, each containing 
-    // key definition and sub-mapping or scalar.
-    // Keys are described by "/sub/path -> optionalKeyName".
-    // If optionalKeyName doesn't provided, then last element name in '/sub/path' 
-    // will be used for key name
-    // Scalar definition may have optional "...|defaultValue"
-    // 'datetime' scalar definition MUST contain default value and formatting string
-    var mapping = ["/person",
-        {
-            "/birthday": "datetime|Fri, 22 Aug 2014 13:59:06 +0000|%a, %d %b %Y %H:%M:%S %z",
-            "/phone -> phones": ["/", "string"],
-            "/address -> cities": ["/city", "string"],
-                // same as "/address/city -> cities": ["/", "string"]
-            "/married/@firstTime -> isMerriedFirstTime": "boolean"
-        }
-    ];
-    
-    var builder = new nkit.Xml2VarBuilder(mapping);
-    builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
-    var result = builder.end();
-    console.log(result);
+```javascript
+var nkit = require('nkit4nodejs');
+
+// Here mapping is list, described by '/path/to/element' and list-item-description.
+// List item is described as 'object' sub-mapping.
+// This 'object' sub-mapping described by set of mappings, each containing 
+// key definition and sub-mapping or scalar.
+// Keys are described by "/sub/path -> optionalKeyName".
+// If optionalKeyName doesn't provided, then last element name in '/sub/path' 
+// will be used for key name
+// Scalar definition may have optional "...|defaultValue"
+// 'datetime' scalar definition MUST contain default value and formatting string
+var mapping = ["/person",
+    {
+        "/birthday": "datetime|Fri, 22 Aug 2014 13:59:06 +0000|%a, %d %b %Y %H:%M:%S %z",
+        "/phone -> phones": ["/", "string"],
+        "/address -> cities": ["/city", "string"],
+            // same as "/address/city -> cities": ["/", "string"]
+        "/married/@firstTime -> isMerriedFirstTime": "boolean"
+    }
+];
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+console.log(result);
+```
     
 Result:
 
-    [ { cities: [ 'New York', 'Boston' ],
-        birthday: Sat Nov 28 1970 00:00:00 GMT+0400 (MSK),
-        isMerriedFirstTime: false,
-        phones: [ '+122233344550', '+122233344551' ] },
-      { cities: [ 'Moscow', 'Tula' ],
-        birthday: Wed Jul 16 1969 00:00:00 GMT+0400 (MSK),
-        isMerriedFirstTime: true,
-        phones: [ '+122233344553', '+122233344554' ] } ]
+```json
+[ { cities: [ 'New York', 'Boston' ],
+    birthday: Sat Nov 28 1970 00:00:00 GMT+0400 (MSK),
+    isMerriedFirstTime: false,
+    phones: [ '+122233344550', '+122233344551' ] },
+  { cities: [ 'Moscow', 'Tula' ],
+    birthday: Wed Jul 16 1969 00:00:00 GMT+0400 (MSK),
+    isMerriedFirstTime: true,
+    phones: [ '+122233344553', '+122233344554' ] } ]
+```
 
 ### To build list from huge XML files, reading them chunk by chunk
 
-    var fs = require('fs');
-    var nkit = require('nkit4nodejs');
-    
-    var mapping = ["/person", ["/phone", "string"]];
-    var builder = new nkit.Xml2VarBuilder(mapping);
-    var rstream = fs.createReadStream(xmlFile);
-    rstream
-        .on('data', function (chunk) {
-            builder.feed(chunk);
-        })
-        .on('end', function () {
-            var result = builder.end();
-            console.log("Items count: %d", result.length);
-        });
+```javascript
+var fs = require('fs');
+var nkit = require('nkit4nodejs');
+
+var mapping = ["/person", ["/phone", "string"]];
+var builder = new nkit.Xml2VarBuilder(mapping);
+var rstream = fs.createReadStream(xmlFile);
+rstream
+    .on('data', function (chunk) {
+        builder.feed(chunk);
+    })
+    .on('end', function () {
+        var result = builder.end();
+        console.log("Items count: %d", result.length);
+    });
+```
 
 # Notes
 
