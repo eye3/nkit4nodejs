@@ -358,7 +358,8 @@ namespace nkit
     Ptr CloneWithNewPathKey(const Path & path, const std::string & key) const
     {
       assert(!path.is_mask());
-      return Ptr(new TargetItem(*this, path, key));
+      return Ptr(new TargetItem(*this, path,
+          key_name_.empty() ? key: key_name_));
     }
 
     Ptr Clone() const
@@ -986,8 +987,7 @@ namespace nkit
       current_path_ /= element_id;
       PathNode<T>::MoveToChild(&current_node_, element_id);
 
-      // fill from mask-target-items
-      if (!current_node_->is_filled_from_mask_target_items())
+      if (!mask_target_items_.empty())
       {
         TargetItemVectorIterator it = mask_target_items_.begin(),
             end = mask_target_items_.end();
@@ -995,20 +995,33 @@ namespace nkit
         {
           TargetItemPtr mask_target_item = (*it);
           if (mask_target_item->fool_path() == current_path_)
-          {
-            TargetItemPtr concret_target_item =
-                mask_target_item->CloneWithNewPathKey(current_path_, el);
-            if (!concret_target_item)
-              continue;
-            if (concret_target_item->parent_target())
-              concret_target_item->parent_target()->PutTargetItem(
-                concret_target_item);
-            current_node_->AppendTargetItem(concret_target_item);
-          }
+            mask_target_item->OnEnter(attrs);
         }
-
-        current_node_->MarkFilledFromMaskTargetItems();
       }
+
+//      // fill from mask-target-items
+//      if (!current_node_->is_filled_from_mask_target_items())
+//      {
+//        TargetItemVectorIterator it = mask_target_items_.begin(),
+//            end = mask_target_items_.end();
+//        for (; it != end; ++it)
+//        {
+//          TargetItemPtr mask_target_item = (*it);
+//          if (mask_target_item->fool_path() == current_path_)
+//          {
+//            TargetItemPtr concret_target_item =
+//                mask_target_item->CloneWithNewPathKey(current_path_, el);
+//            if (!concret_target_item)
+//              continue;
+//            if (concret_target_item->parent_target())
+//              concret_target_item->parent_target()->PutTargetItem(
+//                concret_target_item);
+//            current_node_->AppendTargetItem(concret_target_item);
+//          }
+//        }
+//
+//        current_node_->MarkFilledFromMaskTargetItems();
+//      }
 
       current_node_->OnEnter(attrs);
       return true;
@@ -1016,6 +1029,18 @@ namespace nkit
 
     bool OnEndElement(const char * el)
     {
+      if (!mask_target_items_.empty())
+      {
+        TargetItemVectorIterator it = mask_target_items_.begin(),
+            end = mask_target_items_.end();
+        for (; it != end; ++it)
+        {
+          TargetItemPtr mask_target_item = (*it);
+          if (mask_target_item->fool_path() == current_path_)
+            mask_target_item->OnExit(el);
+        }
+      }
+
       current_node_->OnExit(el);
       current_path_.BubbleUp();
       PathNode<T>::MoveToParent(&current_node_);
@@ -1025,6 +1050,19 @@ namespace nkit
     bool OnText(const char * text, int len)
     {
       current_node_->OnText(text, static_cast<size_t>(len));
+
+      if (!mask_target_items_.empty())
+      {
+        TargetItemVectorIterator it = mask_target_items_.begin(),
+            end = mask_target_items_.end();
+        for (; it != end; ++it)
+        {
+          TargetItemPtr mask_target_item = (*it);
+          if (mask_target_item->fool_path() == current_path_)
+            mask_target_item->OnText(text, static_cast<size_t>(len));
+        }
+      }
+
       return true;
     }
 
@@ -1172,9 +1210,9 @@ namespace nkit
       if (!child_target_item)
         return TargetItemPtr();
 
-      if (fool_path.is_mask())
-        child_target_item->SetParentTarget(target.get());
-      else if (!child_target_item->fool_path().is_mask())
+//      if (fool_path.is_mask())
+//        child_target_item->SetParentTarget(target.get());
+//      else if (!child_target_item->fool_path().is_mask())
         target->PutTargetItem(child_target_item);
 
       TargetItemPtr target_item = TargetItem<T>::Create(fool_path,
@@ -1231,9 +1269,9 @@ namespace nkit
 
         child_target_item->SetKey(key);
 
-        if (fool_path.is_mask())
-          child_target_item->SetParentTarget(target.get());
-        else
+//        if (fool_path.is_mask())
+//          child_target_item->SetParentTarget(target.get());
+//        else
           target->PutTargetItem(child_target_item);
       }
 

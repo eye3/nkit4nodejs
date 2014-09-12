@@ -26,7 +26,6 @@
 #  include <unistd.h>
 #  include <pwd.h>
 #  include <string.h>
-#  include "../../3rd/netbsd/strptime.h"
 
 #  define NKIT_FORMAT_I8  "%" PRIi8
 #  define NKIT_FORMAT_I16 "%" PRIi16
@@ -53,11 +52,7 @@
 #  define NKIT_STRTOULL ::strtoull
 #  define NKIT_STRCASECMP  ::strcasecmp
 #  define NKIT_STRNCASECMP  ::strncasecmp
-//#ifdef NKIT_MACOS
-//#  define NKIT_STRPTIME  ::nkit::strptime
-//#else
 #  define NKIT_STRPTIME  ::strptime
-//#endif
 #  define NKIT_STRDUP  ::strdup
 
 #elif defined(NKIT_WINNT) && defined(HAVE_STD_CXX_11)

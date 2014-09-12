@@ -276,33 +276,18 @@ Path in mapping specifications are very simple XPath now. Only
 
     /path/to/element
     /path/to/element/with/optional/@attribute
-    
-paths are supported. Also there is a limited support of
-
     /paths/to/element/with/*/sign
+    /paths/to/element/with/*/sign/with/optional/@attribute
     
-'*' sign must be used only in the last sub-mapping paths. Examples:
-	
-	1. ["/person", ["/*", "string"]]  // valid
-
-	2. ["/*", ["/address", "string"]] // invalid
-
-	3. ['/person', {
-			"/*": "string",
-			"/age": "integer"
-		}]                            // valid
-
-	4. ['/*', {
-			"/phone": "string",
-			"/age": "integer"
-		}]                            // invalid
-
+paths are supported.
     
 JavaScript object keys get their names from the last element name in the path.
 If you want to change key names, use this notation:
 
     "/path/to/element -> newKeyName": ...
     "/path/to/element/@attribute -> newKeyName": ...
+    "/paths/to/element/with/*/sign -> newKeyName": ...
+    "/paths/to/element/with/*/sign/with/optional/@attribute -> newKeyName": ...
 
 # TODO
 
@@ -325,3 +310,5 @@ If you want to change key names, use this notation:
 Boris T. Darchiev (boris.darchiev@gmail.com)
 
 On github: https://github.com/eye3
+
+Any feedback or pull request are welcome!

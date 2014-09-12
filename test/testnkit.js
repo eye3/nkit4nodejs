@@ -15,7 +15,7 @@ var mapping = ["/person/phone", "string"];
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-console.log(JSON.stringify(result, null, '  ')); // prints list of strings
+//console.log(JSON.stringify(result, null, '  ')); // prints list of strings
 
 var etalon = [ '+122233344550',
                '+122233344551',
@@ -49,7 +49,7 @@ var mapping = {
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-console.log(JSON.stringify(result, null, '  '));
+//console.log(JSON.stringify(result, null, '  '));
 
 //------------------------------------------------------------------------------
 // build list-of-lists-of-strings from xml string
@@ -62,7 +62,7 @@ var mapping = ["/person", ["/phone", "string"]];
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-console.log(JSON.stringify(result, null, '  ')); // prints list of lists of strings
+//console.log(JSON.stringify(result, null, '  ')); // prints list of lists of strings
 
 var etalon = [ [ '+122233344550', '+122233344551' ],
     [ '+122233344553', '+122233344554' ] ];
@@ -93,27 +93,30 @@ var mapping = ["/person",
         "/phone -> phones": ["/", "string"],
         "/address -> cities": ["/city", "string"],
             // same as "/address/city -> cities": ["/", "string"]
-        "/married/@firstTime -> isMerriedFirstTime": "boolean"
+        "/married/@firstTime -> isMerriedFirstTime": "boolean",
+        "/photos": ["/*", "string"]
     }
 ];
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-console.log(result); // prints list of objects with lists
+//console.log(result); // prints list of objects with lists
 
 etalon = [
     {
         birthday: new Date(1979, 2, 28, 12, 13, 14),
         isMerriedFirstTime: false,
         phones: [ '+122233344550', '+122233344551' ],
-        cities: [ 'New York', 'Boston' ]
+        cities: [ 'New York', 'Boston' ],
+        photos: ["img1","img2","img3"]
     },
     {
         birthday: new Date(1970, 7, 31, 2, 3, 4),
         isMerriedFirstTime: true,
         phones: [ '+122233344553', '+122233344554' ],
-        cities: [ 'Moscow', 'Tula' ]
+        cities: [ 'Moscow', 'Tula' ],
+        photos: ["img3","img4"]
     }
 ];
 
