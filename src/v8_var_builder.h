@@ -23,6 +23,8 @@
 
 namespace vx
 {
+  std::string v8var_to_json(const v8::Handle<v8::Value> & var);
+
   class V8VarBuilder
   {
   public:
@@ -59,17 +61,14 @@ namespace vx
     void SetDictKeyValue(std::string const & key, type const & var);
     void AppendToList(type const & obj);
 
-    type const & get() const
-    {
-      return object_;
-    }
+    type const & get() const { return object_; }
+    std::string ToString() const { return v8var_to_json(object_); }
 
   private:
     type object_;
     v8::Persistent<v8::Function> date_constructor_;
   };
 
-  std::string v8var_to_json(const v8::Handle<v8::Value> & var);
 } // namespace vx
 
 #endif // VX_V8_VAR_BUILDER_H

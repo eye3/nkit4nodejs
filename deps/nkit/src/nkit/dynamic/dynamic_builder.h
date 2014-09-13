@@ -89,6 +89,11 @@ namespace nkit
       return object_;
     }
 
+    std::string ToString() const
+    {
+      return DynamicToJson(object_);
+    }
+
   private:
     type object_;
   };

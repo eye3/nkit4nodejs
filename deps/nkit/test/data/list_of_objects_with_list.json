@@ -1,6 +1,6 @@
 ["/person", {
    	"/birthday": "datetime|Fri, 22 Aug 2014 13:59:06 +0000|%a, %d %b %Y %H:%M:%S %z",
-    "/phone -> phones": ["/", "string"],
+    "/ -> phones": ["/phone", "string"],
     "/married/@firstTime": "boolean"
     }
 ]

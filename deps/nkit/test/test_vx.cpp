@@ -8,7 +8,7 @@ namespace nkit_test
   using namespace nkit;
 
   //---------------------------------------------------------------------------
-  NKIT_TEST_CASE(vx_wrong_xml)
+  _NKIT_TEST_CASE(vx_wrong_xml)
   {
     Dynamic fields_mapping = DLIST(
         "/person" << DLIST("/*/city" << "string"));
@@ -134,9 +134,9 @@ namespace nkit_test
 
     Dynamic fields_mapping = //DLIST("/person" << DDICT("/*" << "string") );
         DLIST("/person" << DDICT(
-              "/married/@firstTime" << "boolean" <<
-              "/*/photo -> p" << DLIST("/" << "string")
-            )
+                  "/married/@firstTime" << "boolean" <<
+                  "/photos" << DLIST("/*" << "string")
+                )
         );
 
     std::string error;

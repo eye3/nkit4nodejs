@@ -1,4 +1,5 @@
 var nkit = require('../index.js');
+var deep_equal = require('./deep_equal.js');
 var fs = require('fs');
 
 var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
@@ -15,16 +16,15 @@ var mapping = ["/person/phone", "string"];
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-//console.log(JSON.stringify(result, null, '  ')); // prints list of strings
 
 var etalon = [ '+122233344550',
                '+122233344551',
                '+122233344553',
                '+122233344554' ];
 
-if (JSON.stringify(result) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(result));
-    console.error(JSON.stringify(etalon));
+if (!deep_equal.deepEquals(result, etalon)) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #1");
     process.exit(1);
 }
@@ -49,7 +49,6 @@ var mapping = {
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-//console.log(JSON.stringify(result, null, '  '));
 
 //------------------------------------------------------------------------------
 // build list-of-lists-of-strings from xml string
@@ -67,9 +66,9 @@ var result = builder.end();
 var etalon = [ [ '+122233344550', '+122233344551' ],
     [ '+122233344553', '+122233344554' ] ];
 
-if (JSON.stringify(result) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(result));
-    console.error(JSON.stringify(etalon));
+if (!deep_equal.deepEquals(result, etalon)) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #2");
     process.exit(1);
 }
@@ -120,10 +119,49 @@ etalon = [
     }
 ];
 
-if (JSON.stringify(result) !== JSON.stringify(etalon)) {
-    console.error(JSON.stringify(result));
-    console.error(JSON.stringify(etalon));
+if (!deep_equal.deepEquals(result, etalon)) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #3");
+    process.exit(1);
+}
+
+//------------------------------------------------------------------------------
+mapping = ["/person",
+    {
+        "/*": "string"
+    }
+];
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString);
+var result = builder.end();
+
+etalon = [
+  {
+    "name": "Jack",
+    "photos": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
+    "age": "33",
+    "married": "Yes",
+    "phone": "+122233344551",
+    "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
+    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+  },
+  {
+    "name": "Boris",
+    "photos": "\n\t\t\t\n\t\t\t\n\t\t",
+    "age": "34",
+    "married": "Yes",
+    "phone": "+122233344554",
+    "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
+    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+  }
+];
+
+if (!deep_equal.deepEquals(result, etalon)) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error(JSON.stringify(etalon, null, 2));
+    console.error("Error #4");
     process.exit(1);
 }
 

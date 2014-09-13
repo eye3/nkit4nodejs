@@ -123,6 +123,11 @@ namespace nkit
       return p_.get();
     }
 
+    std::string ToString() const
+    {
+      return p_.ToString();
+    }
+
   private:
     Policy p_;
   };
@@ -315,6 +320,12 @@ namespace nkit
       var_builder.SetDictKeyValue(key_name, var());
     }
 
+    void SetOrInsertTo(const char * key_name,
+        Target * parent_target) const
+    {
+      parent_target->var_builder_.SetDictKeyValue(key_name, var());
+    }
+
     void AppendTo(T & var_builder) const
     {
       var_builder.AppendToList(var());
@@ -325,7 +336,10 @@ namespace nkit
       return var_builder_.get();
     }
 
-    virtual std::string ToString() const = 0;
+    virtual std::string ToString() const
+    {
+      return var_builder_.ToString();
+    }
 
   protected:
     Target() {}
@@ -355,13 +369,13 @@ namespace nkit
       return Ptr(new TargetItem(path, target));
     }
 
-    Ptr CloneWithNewPathKey(const Path & path, const std::string & key) const
-    {
-      assert(!path.is_mask());
-      return Ptr(new TargetItem(*this, path,
-          key_name_.empty() ? key: key_name_));
-    }
-
+//    Ptr CloneWithNewPathKey(const Path & path, const std::string & key) const
+//    {
+//      assert(!path.is_mask());
+//      return Ptr(new TargetItem(*this, path,
+//          key_name_.empty() ? key: key_name_));
+//    }
+//
     Ptr Clone() const
     {
       return Ptr(new TargetItem(*this));
@@ -419,6 +433,12 @@ namespace nkit
     void OnExit(const char * el)
     {
       target_->OnExit(el);
+      if (!key_name_.empty())
+      {
+        target_->SetOrInsertTo(key_name_ == S_STAR_? el: key_name_.c_str(),
+                parent_target_);
+        //Clear();
+      }
     }
 
     void OnText(const char * text, size_t len)
@@ -441,21 +461,21 @@ namespace nkit
     }
 
   private:
-    TargetItem(const TargetItem & another, const Path & path,
-        const std::string & key)
-      : path_(path)
-      , key_name_(key)
-      , target_(another.target_->Clone())
-      , parent_target_(another.parent_target_)
-    {}
-
-    TargetItem(const Path & path, const std::string & key_name,
-        TargetPtr target)
-      : path_(path)
-      , key_name_(key_name)
-      , target_(target)
-      , parent_target_(NULL)
-    {}
+//    TargetItem(const TargetItem & another, const Path & path,
+//        const std::string & key)
+//      : path_(path)
+//      , key_name_(key)
+//      , target_(another.target_->Clone())
+//      , parent_target_(another.parent_target_)
+//    {}
+//
+//    TargetItem(const Path & path, const std::string & key_name,
+//        TargetPtr target)
+//      : path_(path)
+//      , key_name_(key_name)
+//      , target_(target)
+//      , parent_target_(NULL)
+//    {}
 
     TargetItem(const Path & path, TargetPtr target)
       : path_(path)
@@ -541,13 +561,13 @@ namespace nkit
 
     void OnEnter() {}
 
-    void OnExit(const char * el)
+    void OnExit(const char * NKIT_UNUSED(el))
     {
       Iterator it = target_items_.begin(), end = target_items_.end();
       for (; it != end; ++it)
       {
         TargetItemPtr target_item = (*it);
-        target_item->SetOrInsertTo(el, Target<T>::var_builder_);
+//        target_item->SetOrInsertTo(el, Target<T>::var_builder_);
         target_item->Clear();
       }
     }
@@ -558,11 +578,11 @@ namespace nkit
     {
       Target<T>::var_builder_.InitAsDict();
     }
-
-    std::string ToString() const
-    {
-      return "object target";
-    }
+//
+//    std::string ToString() const
+//    {
+//      return "object target";
+//    }
 
   private:
     TargetItemVector target_items_;
@@ -649,11 +669,11 @@ namespace nkit
     {
       Target<T>::var_builder_.InitAsList();
     }
-
-    std::string ToString() const
-    {
-      return "list target";
-    }
+//
+//    std::string ToString() const
+//    {
+//      return "list target";
+//    }
 
   private:
     TargetItemVector target_items_;
@@ -748,7 +768,10 @@ namespace nkit
       value_.append(text, len);
     }
 
-    void Clear() {}
+    void Clear()
+    {
+      value_.clear();
+    }
 
     TargetPtr Clone() const
     {
@@ -765,11 +788,11 @@ namespace nkit
         return Target<T>::var_builder_.get();
       }
     }
-
-    std::string ToString() const
-    {
-      return "scalar target";
-    }
+//
+//    std::string ToString() const
+//    {
+//      return "scalar target: " + value_;
+//    }
 
   private:
     T default_value_;
@@ -1299,13 +1322,13 @@ namespace nkit
     {
       TargetItemPtr target_item;
       if (mapping.IsList())
-      target_item = ParseListTargetSpec(parent_target, parent_path,
+        target_item = ParseListTargetSpec(parent_target, parent_path,
           mapping, path_tree, mask_target_items, str2id, error);
       else if (mapping.IsDict())
-      target_item = ParseObjectTargetSpec(parent_target, parent_path,
+        target_item = ParseObjectTargetSpec(parent_target, parent_path,
           mapping, path_tree, mask_target_items, str2id, error);
       else if (mapping.IsString())
-      target_item = ParseScalarTargetSpec(parent_target, parent_path,
+        target_item = ParseScalarTargetSpec(parent_target, parent_path,
           mapping.GetConstString(), path_tree, mask_target_items, error);
       else
       {
@@ -1313,7 +1336,6 @@ namespace nkit
         return TargetItemPtr();
       }
 
-      //CINFO(target_item->ToString());
       return target_item;
     }
 
@@ -1329,10 +1351,10 @@ namespace nkit
 
       TargetItemPtr target_item;
       if (mapping.IsList())
-      target_item = ParseListTargetSpec(NULL, empty_path, mapping,
+        target_item = ParseListTargetSpec(NULL, empty_path, mapping,
           path_tree, mask_target_items, str2id, error);
       else if (mapping.IsDict())
-      target_item = ParseObjectTargetSpec(NULL, empty_path, mapping,
+        target_item = ParseObjectTargetSpec(NULL, empty_path, mapping,
           path_tree, mask_target_items, str2id, error);
       else
       {
@@ -1344,7 +1366,6 @@ namespace nkit
       if (!target_item)
         return TargetPtr();
 
-      //CINFO(target_item->ToString());
       return target_item->target();
     }
 
