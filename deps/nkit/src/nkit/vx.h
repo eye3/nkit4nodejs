@@ -668,6 +668,7 @@ namespace nkit
         const std::string & format)
       : use_default_value_(true)
       , has_default_value_(true)
+      , value_("")
       , format_(format)
     {
       Init();
@@ -680,6 +681,7 @@ namespace nkit
     ScalarTarget(const std::string & default_value)
       : use_default_value_(true)
       , has_default_value_(true)
+      , value_("")
     {
       Init();
       (default_value_.*InitByString)(default_value);
@@ -688,6 +690,7 @@ namespace nkit
     ScalarTarget()
       : use_default_value_(false)
       , has_default_value_(false)
+      , value_("")
     {
       Init();
     }
@@ -704,7 +707,7 @@ namespace nkit
 
     void OnExit(const char * NKIT_UNUSED(el))
     {
-      if (likely(!use_default_value_))
+      if (likely(!must_use_default_value()))
       {
         if (format_.empty())
           (Target<T>::var_builder_.*InitByString)(value_);

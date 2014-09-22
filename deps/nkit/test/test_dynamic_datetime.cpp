@@ -54,7 +54,7 @@ namespace nkit_test
   }
 
   //----------------------------------------------------------------------------
-  _NKIT_TEST_CASE(DynamicDateTimeFromString)
+  NKIT_TEST_CASE(DynamicDateTimeFromString)
   {
     std::string etalon("2014/01/01 12:13:14");
     const char * FORMAT = "%Y/%m/%d %H:%M:%S";

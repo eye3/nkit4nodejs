@@ -8,7 +8,7 @@ namespace nkit_test
   using namespace nkit;
 
   //---------------------------------------------------------------------------
-  _NKIT_TEST_CASE(vx_wrong_xml)
+  NKIT_TEST_CASE(vx_wrong_xml)
   {
     Dynamic fields_mapping = DLIST(
         "/person" << DLIST("/*/city" << "string"));
@@ -206,42 +206,24 @@ namespace nkit_test
   }
 
   //---------------------------------------------------------------------------
-  _NKIT_TEST_CASE(vx_sandbox)
+  NKIT_TEST_CASE(vx_sandbox)
   {
-    std::string xml_path("./data/sample.xml");
+    std::string xml_path("./data/tmp.xml");
     std::string xml;
     NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
         "Could not read file '" + xml_path + "'.");
 
-    Dynamic fields_mapping = DLIST(
-        "/person" << DLIST("/*/city" << "string"));
+    std::string mapping_path("./data/tmp.json");
+    std::string mapping;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(mapping_path,
+            &mapping), "Could not read file '" + mapping_path + "'.");
+
 
     std::string error;
-    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
-    CINFO("!!! " << nkit::json_hr << var);
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
 
-    Dynamic etalon = DLIST(
-           DLIST("New York" << "Boston")
-        << DLIST("Moscow" << "Tula"));
-
-    NKIT_TEST_ASSERT(var == etalon);
-//    std::string xml_path("./data/sample.xml");
-//    std::string xml;
-//    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
-//        "Could not read file '" + xml_path + "'.");
-//
-//    Dynamic fields_mapping = DLIST("/person" <<
-//        DDICT("/birthday" << "datetime|1970-01-01|%Y-%m-%d"
-//            << "/phone -> phones" << DLIST("/" << "string")
-//            << "/married/@firstTime" << "boolean")
-//        );
-//
-//    std::string error;
-//    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
-//    NKIT_TEST_ASSERT_WITH_TEXT(var, error);
-//
-//    CINFO(nkit::json_hr << var);
+    CINFO(nkit::json_hr << var);
   }
 
 } // namespace nkit_test
