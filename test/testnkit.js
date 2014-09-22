@@ -1,8 +1,20 @@
 var nkit = require('../index.js');
-var deep_equal = require('./deep_equal.js');
 var fs = require('fs');
+var assert = require('assert');
+
 
 var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
+
+
+function deepEqual(v1, v2) {
+    try {
+        assert.deepEqual(v1, v2);
+    } catch (AssertionError) {
+        return false;
+    }
+
+    return true;
+}
 
 //------------------------------------------------------------------------------
 // build list-of-strings from xml string
@@ -22,9 +34,9 @@ var etalon = [ '+122233344550',
                '+122233344553',
                '+122233344554' ];
 
-if (!deep_equal.deepEquals(result, etalon)) {
-    console.error(JSON.stringify(result, null, 2));
-    console.error(JSON.stringify(etalon, null, 2));
+if (!deepEqual(result, etalon)) {
+    console.error(JSON.stringify(result));
+    console.error(JSON.stringify(etalon));
     console.error("Error #1");
     process.exit(1);
 }
@@ -61,14 +73,13 @@ var mapping = ["/person", ["/phone", "string"]];
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-//console.log(JSON.stringify(result, null, '  ')); // prints list of lists of strings
 
 var etalon = [ [ '+122233344550', '+122233344551' ],
     [ '+122233344553', '+122233344554' ] ];
 
-if (!deep_equal.deepEquals(result, etalon)) {
-    console.error(JSON.stringify(result, null, 2));
-    console.error(JSON.stringify(etalon, null, 2));
+if (!deepEqual(result, etalon)) {
+    console.error(JSON.stringify(result));
+    console.error(JSON.stringify(etalon));
     console.error("Error #2");
     process.exit(1);
 }
@@ -92,36 +103,32 @@ var mapping = ["/person",
         "/phone -> phones": ["/", "string"],
         "/address -> cities": ["/city", "string"],
             // same as "/address/city -> cities": ["/", "string"]
-        "/married/@firstTime -> isMerriedFirstTime": "boolean",
-        "/photos": ["/*", "string"]
+        "/married/@firstTime -> isMerriedFirstTime": "boolean"
     }
 ];
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
 var result = builder.end();
-//console.log(result); // prints list of objects with lists
 
 etalon = [
     {
         birthday: new Date(1979, 2, 28, 12, 13, 14),
         isMerriedFirstTime: false,
         phones: [ '+122233344550', '+122233344551' ],
-        cities: [ 'New York', 'Boston' ],
-        photos: ["img1","img2","img3"]
+        cities: [ 'New York', 'Boston' ]
     },
     {
         birthday: new Date(1970, 7, 31, 2, 3, 4),
         isMerriedFirstTime: true,
         phones: [ '+122233344553', '+122233344554' ],
-        cities: [ 'Moscow', 'Tula' ],
-        photos: ["img3","img4"]
+        cities: [ 'Moscow', 'Tula' ]
     }
 ];
 
-if (!deep_equal.deepEquals(result, etalon)) {
-    console.error(JSON.stringify(result, null, 2));
-    console.error(JSON.stringify(etalon, null, 2));
+if (!deepEqual(result, etalon)) {
+    console.error(JSON.stringify(result));
+    console.error(JSON.stringify(etalon));
     console.error("Error #3");
     process.exit(1);
 }
@@ -133,35 +140,62 @@ mapping = ["/person",
     }
 ];
 
-var builder = new nkit.Xml2VarBuilder(mapping);
+builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString);
-var result = builder.end();
+result = builder.end();
 
 etalon = [
-  {
-    "name": "Jack",
-    "photos": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
-    "age": "33",
-    "married": "Yes",
-    "phone": "+122233344551",
-    "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
-    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
-  },
-  {
-    "name": "Boris",
-    "photos": "\n\t\t\t\n\t\t\t\n\t\t",
-    "age": "34",
-    "married": "Yes",
-    "phone": "+122233344554",
-    "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
-    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
-  }
+    {
+        "name": "Jack",
+        "photos": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
+        "age": "33",
+        "married": "Yes",
+        "phone": "+122233344551",
+        "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
+        "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+    },
+    {
+        "name": "Boris",
+        "photos": "\n\t\t\t\n\t\t\t\n\t\t",
+        "age": "34",
+        "married": "Yes",
+        "phone": "+122233344554",
+        "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
+        "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+    }
 ];
 
-if (!deep_equal.deepEquals(result, etalon)) {
-    console.error(JSON.stringify(result, null, 2));
-    console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #4");
+if (!deepEqual(result, etalon)) {
+    console.error(JSON.stringify(result));
+    console.error(JSON.stringify(etalon));
+    console.error("Error #3");
+    process.exit(1);
+}
+
+//------------------------------------------------------------------------------
+mapping = ["/person", {
+        "/key_for_default_value": "string|default_value",
+        "/non_existing_key": "string"
+    }
+];
+
+builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString);
+result = builder.end();
+
+etalon = [
+    {
+        "key_for_default_value": "default_value"
+    },
+    {
+        "key_for_default_value": "default_value"
+    }
+];
+
+if (!deepEqual(result, etalon)) {
+    console.error(JSON.stringify(result));
+    console.error(JSON.stringify(etalon));
+    console.error("Error #3");
     process.exit(1);
 }
 

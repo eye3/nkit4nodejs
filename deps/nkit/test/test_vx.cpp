@@ -179,7 +179,34 @@ namespace nkit_test
   }
 
   //---------------------------------------------------------------------------
-  NKIT_TEST_CASE(vx_sandbox)
+  NKIT_TEST_CASE(vx_default_values)
+  {
+    std::string xml_path("./data/sample.xml");
+    std::string xml;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
+        "Could not read file '" + xml_path + "'.");
+
+    std::string mapping_path("./data/default_values.json");
+    std::string mapping;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(mapping_path,
+            &mapping), "Could not read file '" + mapping_path + "'.");
+
+    std::string error;
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
+    NKIT_TEST_ASSERT_WITH_TEXT(var, error);
+
+    Dynamic etalon = DLIST(
+        DDICT("key_for_default_value" << "default_value") <<
+        DDICT("key_for_default_value" << "default_value")
+        );
+
+    CINFO(nkit::json_hr << var);
+    CINFO(nkit::json_hr << etalon);
+    NKIT_TEST_ASSERT(var == etalon);
+  }
+
+  //---------------------------------------------------------------------------
+  _NKIT_TEST_CASE(vx_sandbox)
   {
     std::string xml_path("./data/sample.xml");
     std::string xml;

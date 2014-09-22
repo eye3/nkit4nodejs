@@ -24,11 +24,6 @@ namespace nkit
       p_._InitAsBoolean(value);
     }
 
-    void InitAsBooleanDefault()
-    {
-      p_._InitAsBoolean(nkit::S_FALSE_);
-    }
-
     void InitAsInteger( std::string const & value )
     {
       p_._InitAsInteger(value);
@@ -39,11 +34,6 @@ namespace nkit
       p_._InitAsInteger(value);
     }
 
-    void InitAsIntegerDefault()
-    {
-      p_._InitAsInteger(nkit::S_ZERO_);
-    }
-
     void InitAsString( std::string const & value )
     {
       p_._InitAsString(value);
@@ -52,11 +42,6 @@ namespace nkit
     void InitAsStringFormat( std::string const & value, const std::string & )
     {
       p_._InitAsString(value);
-    }
-
-    void InitAsStringDefault()
-    {
-      p_._InitAsString(nkit::S_EMPTY_);
     }
 
     void InitAsUndefined()
@@ -75,11 +60,6 @@ namespace nkit
       p_._InitAsFloatFormat( value, format.c_str() );
     }
 
-    void InitAsFloatDefault()
-    {
-      p_._InitAsFloatFormat( nkit::S_ZERO_, NKIT_FORMAT_DOUBLE );
-    }
-
     void InitAsDatetime( std::string const & value )
     {
       p_._InitAsDatetimeFormat( value, nkit::DATE_TIME_DEFAULT_FORMAT_ );
@@ -89,11 +69,6 @@ namespace nkit
         std::string const & format )
     {
       p_._InitAsDatetimeFormat( value, format.c_str() );
-    }
-
-    void InitAsDatetimeDefault()
-    {
-      p_._InitAsDatetimeFormat( "", nkit::DATE_TIME_DEFAULT_FORMAT_);
     }
 
     void InitAsList()
@@ -306,7 +281,12 @@ namespace nkit
         NKIT_SHARED_PTR(TargetItem<T>) NKIT_UNUSED(target_item))
     {}
 
-    virtual Ptr Clone() const = 0;
+    //virtual Ptr Clone() const = 0;
+
+    virtual bool must_use_default_value() const
+    {
+      return false;
+    }
 
     void SetOrInsertTo(const std::string & key_name,
         T & var_builder) const
@@ -369,18 +349,11 @@ namespace nkit
       return Ptr(new TargetItem(path, target));
     }
 
-//    Ptr CloneWithNewPathKey(const Path & path, const std::string & key) const
+//    Ptr Clone() const
 //    {
-//      assert(!path.is_mask());
-//      return Ptr(new TargetItem(*this, path,
-//          key_name_.empty() ? key: key_name_));
+//      return Ptr(new TargetItem(*this));
 //    }
 //
-    Ptr Clone() const
-    {
-      return Ptr(new TargetItem(*this));
-    }
-
     ~TargetItem() {}
 
     TargetPtr target() const { return target_; }
@@ -393,6 +366,11 @@ namespace nkit
     Target<T> * parent_target() const
     {
       return parent_target_;
+    }
+
+    bool must_use_default_value() const
+    {
+      return target_->must_use_default_value();
     }
 
     const std::string & key_name() const { return key_name_; }
@@ -437,7 +415,6 @@ namespace nkit
       {
         target_->SetOrInsertTo(key_name_ == S_STAR_? el: key_name_.c_str(),
                 parent_target_);
-        //Clear();
       }
     }
 
@@ -461,22 +438,6 @@ namespace nkit
     }
 
   private:
-//    TargetItem(const TargetItem & another, const Path & path,
-//        const std::string & key)
-//      : path_(path)
-//      , key_name_(key)
-//      , target_(another.target_->Clone())
-//      , parent_target_(another.parent_target_)
-//    {}
-//
-//    TargetItem(const Path & path, const std::string & key_name,
-//        TargetPtr target)
-//      : path_(path)
-//      , key_name_(key_name)
-//      , target_(target)
-//      , parent_target_(NULL)
-//    {}
-
     TargetItem(const Path & path, TargetPtr target)
       : path_(path)
       , target_(target)
@@ -516,15 +477,15 @@ namespace nkit
         target_item->SetParentTarget(this);
     }
 
-    TargetPtr Clone() const
-    {
-      Ptr result(new ObjectTarget);
-      ConstIterator it = target_items_.begin(), end = target_items_.end();
-      for (; it != end; ++it)
-        result->PutTargetItem((*it)->Clone());
-      return result;
-    }
-
+//    TargetPtr Clone() const
+//    {
+//      Ptr result(new ObjectTarget);
+//      ConstIterator it = target_items_.begin(), end = target_items_.end();
+//      for (; it != end; ++it)
+//        result->PutTargetItem((*it)->Clone());
+//      return result;
+//    }
+//
   private:
     ObjectTarget()
     {
@@ -561,13 +522,14 @@ namespace nkit
 
     void OnEnter() {}
 
-    void OnExit(const char * NKIT_UNUSED(el))
+    void OnExit(const char * el)
     {
       Iterator it = target_items_.begin(), end = target_items_.end();
       for (; it != end; ++it)
       {
         TargetItemPtr target_item = (*it);
-//        target_item->SetOrInsertTo(el, Target<T>::var_builder_);
+        if (target_item->must_use_default_value())
+          target_item->SetOrInsertTo(el, Target<T>::var_builder_);
         target_item->Clear();
       }
     }
@@ -578,11 +540,6 @@ namespace nkit
     {
       Target<T>::var_builder_.InitAsDict();
     }
-//
-//    std::string ToString() const
-//    {
-//      return "object target";
-//    }
 
   private:
     TargetItemVector target_items_;
@@ -615,18 +572,18 @@ namespace nkit
       target_item->SetParentTarget(this);
     }
 
-    TargetPtr Clone() const
-    {
-      typename ListTarget::Ptr result(new ListTarget);
-      ConstIterator it = target_items_.begin(), end = target_items_.end();
-      for (; it != end; ++it)
-      {
-        TargetItemPtr target_item = (*it)->Clone();
-        result->PutTargetItem(target_item);
-      }
-      return result;
-    }
-
+//    TargetPtr Clone() const
+//    {
+//      typename ListTarget::Ptr result(new ListTarget);
+//      ConstIterator it = target_items_.begin(), end = target_items_.end();
+//      for (; it != end; ++it)
+//      {
+//        TargetItemPtr target_item = (*it)->Clone();
+//        result->PutTargetItem(target_item);
+//      }
+//      return result;
+//    }
+//
   private:
     ListTarget() {
       Clear();
@@ -669,11 +626,6 @@ namespace nkit
     {
       Target<T>::var_builder_.InitAsList();
     }
-//
-//    std::string ToString() const
-//    {
-//      return "list target";
-//    }
 
   private:
     TargetItemVector target_items_;
@@ -683,8 +635,7 @@ namespace nkit
   template<typename T,
     void (T::*InitByString)(const std::string & value),
     void (T::*InitByStringWithFormat)(const std::string & value,
-        const std::string & format),
-    void (T::*InitByDefault)(void)
+        const std::string & format)
     >
   class ScalarTarget: public Target<T>
   {
@@ -716,6 +667,7 @@ namespace nkit
     ScalarTarget(const std::string & default_value,
         const std::string & format)
       : use_default_value_(true)
+      , has_default_value_(true)
       , format_(format)
     {
       Init();
@@ -727,16 +679,17 @@ namespace nkit
 
     ScalarTarget(const std::string & default_value)
       : use_default_value_(true)
+      , has_default_value_(true)
     {
       Init();
       (default_value_.*InitByString)(default_value);
     }
 
     ScalarTarget()
-      : use_default_value_(true)
+      : use_default_value_(false)
+      , has_default_value_(false)
     {
       Init();
-      (default_value_.*InitByDefault)();
     }
 
     void Init()
@@ -773,30 +726,28 @@ namespace nkit
       value_.clear();
     }
 
-    TargetPtr Clone() const
+    virtual bool must_use_default_value() const
     {
-      return TargetPtr(new ScalarTarget(*this));
+      return has_default_value_ && use_default_value_;
     }
 
+//    TargetPtr Clone() const
+//    {
+//      return TargetPtr(new ScalarTarget(*this));
+//    }
+//
     virtual typename T::type const & var() const
     {
-      if (unlikely(use_default_value_))
+      if (unlikely(must_use_default_value()))
         return default_value_.get();
       else
-      {
-        use_default_value_ = true;
         return Target<T>::var_builder_.get();
-      }
     }
-//
-//    std::string ToString() const
-//    {
-//      return "scalar target: " + value_;
-//    }
 
   private:
     T default_value_;
     mutable bool use_default_value_;
+    mutable bool has_default_value_;
     std::string value_;
     std::string format_;
   };
@@ -1129,8 +1080,7 @@ namespace nkit
       {
         typedef ScalarTarget<T,
             &T::InitAsString,
-            &T::InitAsStringFormat,
-            &T::InitAsStringDefault> StringTarget;
+            &T::InitAsStringFormat> StringTarget;
         if (spec_list.size() >= 2)
           target = StringTarget::Create(spec_list[1]);
         else
@@ -1140,8 +1090,7 @@ namespace nkit
       {
         typedef ScalarTarget<T,
             &T::InitAsInteger,
-            &T::InitAsIntegerFormat,
-            &T::InitAsIntegerDefault> IntegerTarget;
+            &T::InitAsIntegerFormat> IntegerTarget;
         if (spec_list.size() >= 2)
           target = IntegerTarget::Create(spec_list[1]);
         else
@@ -1151,8 +1100,7 @@ namespace nkit
       {
         typedef ScalarTarget<T,
             &T::InitAsFloat,
-            &T::InitAsFloatFormat,
-            &T::InitAsFloatDefault> NumberTarget;
+            &T::InitAsFloatFormat> NumberTarget;
         if (spec_list.size() >= 3)
           target = NumberTarget::Create(spec_list[1], spec_list[2]);
         else if (spec_list.size() >= 2)
@@ -1164,8 +1112,7 @@ namespace nkit
       {
         typedef ScalarTarget<T,
             &T::InitAsBoolean,
-            &T::InitAsBooleanFormat,
-            &T::InitAsBooleanDefault> BooleanTarget;
+            &T::InitAsBooleanFormat> BooleanTarget;
         if (spec_list.size() >= 2)
           target = BooleanTarget::Create(spec_list[1]);
         else
@@ -1175,8 +1122,7 @@ namespace nkit
       {
         typedef ScalarTarget<T,
             &T::InitAsDatetime,
-            &T::InitAsDatetimeFormat,
-            &T::InitAsDatetimeDefault> DatetimeTarget;
+            &T::InitAsDatetimeFormat> DatetimeTarget;
         if (spec_list.size() >= 3)
           target = DatetimeTarget::Create(spec_list[1], spec_list[2]);
         else if (spec_list.size() >= 2)
