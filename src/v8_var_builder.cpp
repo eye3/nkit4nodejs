@@ -15,6 +15,7 @@
 */
 
 #include <node.h>
+#include <nan.h>
 #include "v8_var_builder.h"
 #include "nkit/constants.h"
 
@@ -22,40 +23,44 @@ namespace vx
 {
 	using namespace v8;
 
+  v8::Persistent<v8::Function> V8VarBuilder::date_constructor_;
+
+  void V8VarBuilder::Init()
+  {
+    NanScope();
+    Handle<Object> global = NanGetCurrentContext()->Global();
+    NanAssignPersistent(date_constructor_,
+        Handle<Function>::Cast(global->Get(NanNew("Date"))));
+  }
+
 	V8VarBuilder::V8VarBuilder()
 	{
-		HandleScope handle_scope;
-		Handle<Object> global = Context::GetCurrent()->Global();
-		date_constructor_ = Persistent<Function>::New(
-		    Handle<Function>::Cast(global->Get(String::New("Date"))));
+    NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
 	}
 
 	V8VarBuilder::~V8VarBuilder()
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		date_constructor_.Dispose();
+		NanScope();
+		NanDisposePersistent(object_);
 	}
 
 	void V8VarBuilder::InitAsDict()
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Object>::New(Object::New());
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
 	}
 
 	void V8VarBuilder::InitAsList()
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Array>::New(Array::New());
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew<Array>()));
 	}
 
 	void V8VarBuilder::InitAsBoolean(std::string const & value)
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Boolean>::New(Boolean::New(nkit::bool_cast(value)));
+		NanScope();
+		NanAssignPersistent(object_,
+		        Local<Value>(NanNew(nkit::bool_cast(value))));
 	}
 
 	void V8VarBuilder::InitAsBooleanFormat(std::string const & value,
@@ -71,9 +76,8 @@ namespace vx
 
 	void V8VarBuilder::InitAsString(std::string const & value)
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<String>::New(String::New(value.c_str()));
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew(value.c_str())));
 	}
 
 	void V8VarBuilder::InitAsStringFormat(std::string const & value,
@@ -89,15 +93,10 @@ namespace vx
 
 	void V8VarBuilder::InitAsInteger(const std::string & value)
 	{
-#ifdef _WIN32
 		int32_t i = !value.empty() ? strtol(value.c_str(), NULL, 10) : 0;
-#else
-		int64_t i = !value.empty() ? NKIT_STRTOLL(value.c_str(), NULL, 10) : 0;
-#endif
 
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Number>::New(Number::New(i));
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew(i)));
 	}
 
 	void V8VarBuilder::InitAsIntegerFormat(std::string const & value,
@@ -137,9 +136,8 @@ namespace vx
 				d = 0.0;
 		}
 
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Number>::New(Number::New(d));
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew(d)));
 	}
 
 	void V8VarBuilder::InitAsDatetime(const std::string & value)
@@ -203,52 +201,52 @@ namespace vx
 		strncpy(date_time_buf+27, tz_offset_hours, 2);
 		strncpy(date_time_buf+29, tz_offset_minutes, 2);
 
-		HandleScope handle_scope;
-		Handle<Value> argv[] =
-			{ String::New(date_time_buf, DATE_TIME_BUFFER_LENGTH) };
-		object_.Dispose();
-		object_ = Persistent<Value>::New(date_constructor_->NewInstance(1, argv));
+		NanScope();
+		Local<Value> argv[1] =
+			{ NanNew<String>(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH)) };
+		NanAssignPersistent(object_,
+		        Local<Value>(NanNew(date_constructor_)->NewInstance(1, argv)));
 	}
 
 	void V8VarBuilder::InitAsDatetimeDefault()
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Value>::New(Date::New(0));
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanNew<Date>(0)));
 	}
 
 	void V8VarBuilder::InitAsUndefined()
 	{
-		HandleScope handle_scope;
-		object_.Dispose();
-		object_ = Persistent<Value>::New(Undefined());
+		NanScope();
+		NanAssignPersistent(object_, Local<Value>(NanUndefined()));
 	}
 
 	void V8VarBuilder::SetDictKeyValue(std::string const & key, type const & var)
 	{
-		HandleScope handle_scope;
-		assert(object_->IsObject());
-		Handle<Object> obj = Handle<Object>::Cast(object_);
-		obj->Set(String::New(key.c_str()), var);
+		NanScope();
+    Local<Value> object(NanNew(object_));
+		assert(object->IsObject());
+		Local<Object> obj = Local<Object>::Cast(object);
+		obj->Set(NanNew(key.c_str()), NanNew(var));
 	}
 
-	void V8VarBuilder::AppendToList(type const & obj)
+	void V8VarBuilder::AppendToList(type const & var)
 	{
-		HandleScope handle_scope;
-		assert(object_->IsArray());
-		Handle<Array> arr = Handle<Array>::Cast(object_);
-		arr->Set(arr->Length(), obj);
+		NanScope();
+		Local<Value> object(NanNew(object_));
+		assert(object->IsArray());
+		Local<Array> arr = Local<Array>::Cast(object);
+		arr->Set(arr->Length(), NanNew(var));
 	}
 
 	std::string v8var_to_json(const Handle<Value> & var)
 	{
-		HandleScope handle_scope;
-		Handle<Object> global = Context::GetCurrent()->Global();
-		Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
+		NanScope();
+		Handle<Object> global = NanGetCurrentContext()->Global();
+		Handle<Object> JSON = global->Get(NanNew<String>("JSON"))->ToObject();
 		Handle<Function> JSON_stringify = Handle<Function>::Cast(
-		    JSON->Get(String::New("stringify")));
-		Handle<Value> argv[] =
-		  { var, Null(), String::New("  ") };
+		    JSON->Get(NanNew<String>("stringify")));
+		Handle<Value> argv[3] =
+		  { var, NanNull(), NanNew<String>("  ") };
 		String::Utf8Value ascii(JSON_stringify->Call(JSON, 3, argv));
 		return *ascii;
 	}

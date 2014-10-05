@@ -25,10 +25,12 @@ namespace vx
 {
   std::string v8var_to_json(const v8::Handle<v8::Value> & var);
 
-  class V8VarBuilder
+  class V8VarBuilder: nkit::Uncopyable
   {
   public:
     typedef v8::Persistent<v8::Value> type;
+
+    static void Init();
 
     V8VarBuilder();
     ~V8VarBuilder();
@@ -62,11 +64,14 @@ namespace vx
     void AppendToList(type const & obj);
 
     type const & get() const { return object_; }
-    std::string ToString() const { return v8var_to_json(object_); }
+    std::string ToString() const
+    {
+      return v8var_to_json(NanNew(object_));
+    }
 
   private:
     type object_;
-    v8::Persistent<v8::Function> date_constructor_;
+    static v8::Persistent<v8::Function> date_constructor_;
   };
 
 } // namespace vx

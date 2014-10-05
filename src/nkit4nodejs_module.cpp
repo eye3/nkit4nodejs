@@ -16,12 +16,14 @@
 
 #include <node.h>
 #include "xml2var_builder_wrapper.h"
+#include "v8_var_builder.h"
 
 using namespace v8;
 
-void InitAll(Handle<Object> exports)
+void InitModule(Handle<Object> exports)
 {
   Xml2VarBuilderWrapper::Init(exports);
+  vx::V8VarBuilder::Init();
 }
 
-NODE_MODULE(nkit4nodejs, InitAll)
+NODE_MODULE(nkit4nodejs, InitModule)

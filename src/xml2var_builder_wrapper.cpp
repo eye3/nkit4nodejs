@@ -27,87 +27,64 @@ Persistent<Function> Xml2VarBuilderWrapper::constructor;
 void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
 {
   // Prepare constructor template
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-
-  tpl->SetClassName(String::NewSymbol("Xml2VarBuilder"));
-
+  Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(
+          Xml2VarBuilderWrapper::New);
+  tpl->SetClassName(NanNew("Xml2VarBuilder"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-  // Prototype
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("feed"),
-      FunctionTemplate::New(Feed)->GetFunction());
-
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("end"),
-      FunctionTemplate::New(End)->GetFunction());
-
-  constructor = Persistent<Function>::New(tpl->GetFunction());
-
-  exports->Set(String::NewSymbol("Xml2VarBuilder"), constructor);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "feed", Xml2VarBuilderWrapper::Feed);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "end", Xml2VarBuilderWrapper::End);
+  NanAssignPersistent(constructor, tpl->GetFunction());
+  exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
 }
 
-Xml2VarBuilderWrapper::Xml2VarBuilderWrapper(const Arguments& args)
+NAN_METHOD(Xml2VarBuilderWrapper::New)
 {
-  if (1 > args.Length())
-    ThrowException(Exception::RangeError(String::New("Expected arguments")));
+  NanScope();
 
+  if (!args.IsConstructCall())
+  {
+    // Invoked as plain function `Xml2VarBuilder(...)`
+    return NanThrowError("Can't call constructor as a function");
+  }
+
+  if (1 > args.Length())
+    return NanThrowError("Expected arguments");
+
+  std::string mappings;
   std::string error;
   if (node::Buffer::HasInstance(args[0]))
   {
     char* data = node::Buffer::Data(args[0]);
     size_t length = node::Buffer::Length(args[0]);
-
-    std::string xml_fields_map(data, length);
-    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
-        xml_fields_map, &error);
+    mappings.assign(data, length);
   }
   else if (args[0]->IsString())
-  {
-    std::string xml_fields_map(*String::Utf8Value(args[0]));
-    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
-        xml_fields_map, &error);
-  }
-  else if (args[0]->IsObject()) {
-    std::string xml_fields_map = vx::v8var_to_json(args[0]);
-    gen_ = nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
-        xml_fields_map, &error);
-  }
+    mappings.assign(*String::Utf8Value(args[0]));
+  else if (args[0]->IsObject())
+    mappings.assign(vx::v8var_to_json(args[0]));
   else
-  {
-    ThrowException(
-        Exception::TypeError(String::New("Wrong type of arguments")));
-  }
+    return NanThrowError("Wrong type of arguments");
 
-  if (!gen_)
-    ThrowException(Exception::Error(String::New(error.c_str())));
-}
+  nkit::Xml2VarBuilder<vx::V8VarBuilder>::Ptr builder =
+          nkit::Xml2VarBuilder<vx::V8VarBuilder>::Create(
+      mappings, &error);
 
-Handle<Value> Xml2VarBuilderWrapper::New(const Arguments& args)
-{
-  HandleScope scope;
+  if (!builder)
+    return NanThrowError(error.c_str());
 
-  if (!args.IsConstructCall())
-  {
-    // Invoked as plain function `Xml2VarBuilder(...)`
-    return ThrowException(
-        Exception::Error(
-            String::New("Cannot call constructor as function")));
-  }
-
-  // Invoked as constructor: `new Xml2VarBuilder(...)
-  Xml2VarBuilderWrapper* obj = new Xml2VarBuilderWrapper(args);
+  Xml2VarBuilderWrapper* obj = new Xml2VarBuilderWrapper(builder);
 
   obj->Wrap(args.This());
 
-  return args.This();
+  NanReturnValue(args.This());
 }
 
-Handle<Value> Xml2VarBuilderWrapper::Feed(const Arguments& args)
+NAN_METHOD(Xml2VarBuilderWrapper::Feed)
 {
-  HandleScope scope;
+  NanScope();
 
   if (1 > args.Length())
-    return ThrowException(
-            Exception::RangeError(String::New("Expected arguments")));
+    return NanThrowError("Expected arguments");
 
   Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
       args.This());
@@ -119,34 +96,33 @@ Handle<Value> Xml2VarBuilderWrapper::Feed(const Arguments& args)
     char* data = node::Buffer::Data(args[0]);
     size_t length = node::Buffer::Length(args[0]);
 
-    result = obj->gen_->Feed(data, length, false, &error);
+    result = obj->builder_->Feed(data, length, false, &error);
   }
   else if (args[0]->IsString())
   {
     String::Utf8Value utf8_value(args[0]);
-    result = obj->gen_->Feed(*utf8_value, utf8_value.length(), false, &error);
+    result = obj->builder_->Feed(*utf8_value, utf8_value.length(), false, &error);
   }
   else
-    return ThrowException(
-        Exception::TypeError(String::New("Wrong type of arguments")));
+    return NanThrowTypeError("Wrong type of arguments");
 
   if (!result)
-    return ThrowException(Exception::Error(String::New(error.c_str())));
+    return NanThrowError(error.c_str());
 
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-Handle<Value> Xml2VarBuilderWrapper::End(const v8::Arguments& args)
+NAN_METHOD(Xml2VarBuilderWrapper::End)
 {
-  HandleScope scope;
+  NanScope();
 
   Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
       args.This());
 
   std::string empty = "";
   std::string error;
-  if (!obj->gen_->Feed(empty.c_str(), empty.size(), true, &error))
-    return ThrowException(Exception::Error(String::New(error.c_str())));
+  if (!obj->builder_->Feed(empty.c_str(), empty.size(), true, &error))
+    return NanThrowError(error.c_str());
 
-  return scope.Close(obj->gen_->var());
+  NanReturnValue(obj->builder_->var());
 }

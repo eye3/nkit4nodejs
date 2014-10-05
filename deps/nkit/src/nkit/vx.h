@@ -290,7 +290,7 @@ namespace nkit
 
   //----------------------------------------------------------------------------
   template<typename T>
-  class Target
+  class Target: Uncopyable
   {
   public:
     typedef NKIT_SHARED_PTR(Target<T>) Ptr;
@@ -306,7 +306,7 @@ namespace nkit
         NKIT_SHARED_PTR(TargetItem<T>) NKIT_UNUSED(target_item))
     {}
 
-    virtual Ptr Clone() const = 0;
+    //virtual Ptr Clone() const = 0;
 
     void SetOrInsertTo(const std::string & key_name,
         T & var_builder) const
@@ -376,10 +376,10 @@ namespace nkit
 //          key_name_.empty() ? key: key_name_));
 //    }
 //
-    Ptr Clone() const
-    {
-      return Ptr(new TargetItem(*this));
-    }
+//    Ptr Clone() const
+//    {
+//      return Ptr(new TargetItem(*this));
+//    }
 
     ~TargetItem() {}
 
@@ -516,14 +516,14 @@ namespace nkit
         target_item->SetParentTarget(this);
     }
 
-    TargetPtr Clone() const
-    {
-      Ptr result(new ObjectTarget);
-      ConstIterator it = target_items_.begin(), end = target_items_.end();
-      for (; it != end; ++it)
-        result->PutTargetItem((*it)->Clone());
-      return result;
-    }
+//    TargetPtr Clone() const
+//    {
+//      Ptr result(new ObjectTarget);
+//      ConstIterator it = target_items_.begin(), end = target_items_.end();
+//      for (; it != end; ++it)
+//        result->PutTargetItem((*it)->Clone());
+//      return result;
+//    }
 
   private:
     ObjectTarget()
@@ -615,17 +615,17 @@ namespace nkit
       target_item->SetParentTarget(this);
     }
 
-    TargetPtr Clone() const
-    {
-      typename ListTarget::Ptr result(new ListTarget);
-      ConstIterator it = target_items_.begin(), end = target_items_.end();
-      for (; it != end; ++it)
-      {
-        TargetItemPtr target_item = (*it)->Clone();
-        result->PutTargetItem(target_item);
-      }
-      return result;
-    }
+//    TargetPtr Clone() const
+//    {
+//      typename ListTarget::Ptr result(new ListTarget);
+//      ConstIterator it = target_items_.begin(), end = target_items_.end();
+//      for (; it != end; ++it)
+//      {
+//        TargetItemPtr target_item = (*it)->Clone();
+//        result->PutTargetItem(target_item);
+//      }
+//      return result;
+//    }
 
   private:
     ListTarget() {
@@ -773,10 +773,10 @@ namespace nkit
       value_.clear();
     }
 
-    TargetPtr Clone() const
-    {
-      return TargetPtr(new ScalarTarget(*this));
-    }
+//    TargetPtr Clone() const
+//    {
+//      return TargetPtr(new ScalarTarget(*this));
+//    }
 
     virtual typename T::type const & var() const
     {

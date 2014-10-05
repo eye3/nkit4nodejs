@@ -23,6 +23,7 @@ var etalon = [ '+122233344550',
                '+122233344554' ];
 
 if (!deep_equal.deepEquals(result, etalon)) {
+    console.error(result[0][0][0]);
     console.error(JSON.stringify(result, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #1");

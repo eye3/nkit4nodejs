@@ -19,11 +19,12 @@
 #elif defined(__WATCOMC__)
 #include "watcomconfig.h"
 #elif defined(HAVE_EXPAT_CONFIG_H)
-#include <expat_config.h>
+#include "expat_config.h"
 #endif /* ndef COMPILED_FROM_DSP */
 
 #include "ascii.h"
 #include "expat.h"
+#include "force_used_arg.h"
 
 #ifdef XML_UNICODE
 #define XML_ENCODE_MAX XML_UTF16_ENCODE_MAX
@@ -4915,6 +4916,10 @@ errorProcessor(XML_Parser parser,
                const char *end,
                const char **nextPtr)
 {
+  XML_FORCE_USED(s)
+  XML_FORCE_USED(end)
+  XML_FORCE_USED(nextPtr)
+
   return errorCode;
 }
 

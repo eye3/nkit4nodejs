@@ -12,6 +12,7 @@
             ],
             "include_dirs": [
                 "deps/include",
+                "deps/nan",
                 'deps/nkit/src',
             ],
             'dependencies': [

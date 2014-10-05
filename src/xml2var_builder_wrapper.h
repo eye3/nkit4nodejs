@@ -17,10 +17,9 @@
 #ifndef XML2VAR_BUILDER_H
 #define XML2VAR_BUILDER_H
 
-#include <node.h>
-
+#include <node_object_wrap.h>
+#include <nan.h>
 #include "nkit/vx.h"
-
 #include "v8_var_builder.h"
 
 class Xml2VarBuilderWrapper: public node::ObjectWrap
@@ -29,17 +28,19 @@ public:
   static void Init(v8::Handle<v8::Object> exports);
 
 private:
-  explicit Xml2VarBuilderWrapper(const v8::Arguments& args);
+  explicit Xml2VarBuilderWrapper(nkit::Xml2VarBuilder<vx::V8VarBuilder>::Ptr builder)
+    : builder_(builder)
+  {}
   ~Xml2VarBuilderWrapper()
   {}
 
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Feed(const v8::Arguments& args);
-  static v8::Handle<v8::Value> End(const v8::Arguments& args);
+  static NAN_METHOD(New);
+  static NAN_METHOD(Feed);
+  static NAN_METHOD(End);
 
   static v8::Persistent<v8::Function> constructor;
 
-  nkit::Xml2VarBuilder<vx::V8VarBuilder>::Ptr gen_;
+  nkit::Xml2VarBuilder<vx::V8VarBuilder>::Ptr builder_;
 };
 
 #endif // XML2VAR_BUILDER_H

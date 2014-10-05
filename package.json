@@ -1,35 +1,49 @@
 {
-    "name": "nkit4nodejs",
-    "version": "0.1.55",
-    "description": "Simple and fast XML to Javascript object or JSON converter and filter. Written in C++ using Expat SAX parser.",
-    "homepage": "https://github.com/eye3/nkit4nodejs",
-    "author": {
-        "name": "Boris Darchiev",
-        "email": "boris.darchiev@gmail.com",
-        "url": "https://github.com/eye3"
-    },
-    "main": "index.js",
-    "engines": {
-        "node": "0.10.x"
-    },
-    "scripts": {
-        "test": "node test/testnkit.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/eye3/nkit4nodejs.git"
-    },
-    "licenses": [
-        {
-            "type": "Apache-2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0"
-        }
-    ],
-    "readmeFilename": "README.md",
-    "keywords": ["xml", "js", "object",
-        "convert", "nkit", "sax", "expat",
-        "xml2json", "xml2js", "json", "cpp",
-        "xml to javascript", "xml to js", "xml to json",
-        "xml to object", "xml to list", "nkit4py"
-    ]
+  "name": "nkit4nodejs",
+  "version": "1.0.0",
+  "description": "Fast XML to Javascript object or JSON converter and filter. Written in C++ using Expat SAX parser.",
+  "homepage": "https://github.com/eye3/nkit4nodejs",
+  "author": {
+    "name": "Boris Darchiev",
+    "email": "boris.darchiev@gmail.com",
+    "url": "https://github.com/eye3"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": "0.10.x",
+    "node": "0.11.x"
+  },
+  "scripts": {
+    "test": "node test/testnkit.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eye3/nkit4nodejs.git"
+  },
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "keywords": [
+    "xml",
+    "js",
+    "object",
+    "convert",
+    "nkit",
+    "sax",
+    "expat",
+    "xml2json",
+    "xml2js",
+    "json",
+    "cpp",
+    "xml to javascript",
+    "xml to js",
+    "xml to json",
+    "xml to object",
+    "xml to list",
+    "nkit4py"
+  ]
 }
