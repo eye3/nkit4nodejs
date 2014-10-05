@@ -10,8 +10,7 @@
   },
   "main": "index.js",
   "engines": {
-    "node": "0.10.x",
-    "node": "0.11.x"
+    "node": ">=0.10.x"
   },
   "scripts": {
     "test": "node test/testnkit.js"
