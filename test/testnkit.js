@@ -23,7 +23,6 @@ var etalon = [ '+122233344550',
                '+122233344554' ];
 
 if (!deep_equal.deepEquals(result, etalon)) {
-    console.error(result[0][0][0]);
     console.error(JSON.stringify(result, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #1");
@@ -140,22 +139,24 @@ var result = builder.end();
 
 etalon = [
   {
+    "phone": "+122233344551",
     "name": "Jack",
     "photos": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
     "age": "33",
     "married": "Yes",
-    "phone": "+122233344551",
     "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
-    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
+    "empty": ""
   },
   {
+    "phone": "+122233344554",
     "name": "Boris",
     "photos": "\n\t\t\t\n\t\t\t\n\t\t",
     "age": "34",
     "married": "Yes",
-    "phone": "+122233344554",
     "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
-    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+    "address": "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t",
+    "empty": ""
   }
 ];
 

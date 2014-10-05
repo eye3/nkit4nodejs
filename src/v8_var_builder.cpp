@@ -238,6 +238,11 @@ namespace vx
 		arr->Set(arr->Length(), NanNew(var));
 	}
 
+	std::string V8VarBuilder::ToString() const
+	{
+	    return v8var_to_json(object_);
+	}
+
 	std::string v8var_to_json(const Handle<Value> & var)
 	{
 		NanScope();

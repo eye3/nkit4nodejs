@@ -49,8 +49,12 @@ add_test(compile-all
          ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target compiling)
 set_tests_properties(compile-all PROPERTIES DEPENDS compiling)
 
-add_test(dynamic-auto-test
-    ${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}-build/test/dynamic)
-add_test(logger-auto-test
-    ${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}-build/test/logger)
+add_test(NAME dynamic-auto-test
+    COMMAND ${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}-build/test/dynamic
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/test
+)
+add_test(NAME logger-auto-test
+    COMMAND ${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}-build/test/logger
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/test
+)
 

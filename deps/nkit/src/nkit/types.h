@@ -73,7 +73,7 @@
 #  include <stdlib.h>
 #  include <string.h>
 #  include <time.h>
-#  include "../../3rd/netbsd/strptime.h"
+#  include "strptime.h"
 
 #  define NKIT_FORMAT_I8  "%i"
 #  define NKIT_FORMAT_I16 "%i"

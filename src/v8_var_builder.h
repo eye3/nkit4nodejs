@@ -64,10 +64,7 @@ namespace vx
     void AppendToList(type const & obj);
 
     type const & get() const { return object_; }
-    std::string ToString() const
-    {
-      return v8var_to_json(NanNew(object_));
-    }
+    std::string ToString() const;
 
   private:
     type object_;
