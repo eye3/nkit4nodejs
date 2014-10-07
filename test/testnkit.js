@@ -1,6 +1,7 @@
 var nkit = require('../index.js');
 var deep_equal = require('./deep_equal.js');
 var fs = require('fs');
+var buffer = require('buffer');
 
 var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
 
@@ -11,7 +12,6 @@ var xmlString = fs.readFileSync(__dirname + "/data/sample.xml");
 // description. List item here is a 'string' scalar.
 // Scalar definition contains type name and optional default value.
 var mapping = ["/person/phone", "string"];
-// var mapping = ["/person/phone", "string|optionalDefaultValue"];
 
 var builder = new nkit.Xml2VarBuilder(mapping);
 builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
@@ -29,6 +29,45 @@ if (!deep_equal.deepEquals(result, etalon)) {
     process.exit(1);
 }
 
+//------------------------------------------------------------------------------
+//same but with string
+var mapping = '["/person/phone", "string"]';
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+
+var etalon = [ '+122233344550',
+          '+122233344551',
+          '+122233344553',
+          '+122233344554' ];
+
+if (!deep_equal.deepEquals(result, etalon)) {
+console.error(JSON.stringify(result, null, 2));
+console.error(JSON.stringify(etalon, null, 2));
+console.error("Error #1");
+process.exit(1);
+}
+
+//------------------------------------------------------------------------------
+//same but with buffer
+var mapping = buffer.Buffer('["/person/phone", "string"]');
+
+var builder = new nkit.Xml2VarBuilder(mapping);
+builder.feed(xmlString); // can be more than one call to feed(xmlChunk) method
+var result = builder.end();
+
+var etalon = [ '+122233344550',
+          '+122233344551',
+          '+122233344553',
+          '+122233344554' ];
+
+if (!deep_equal.deepEquals(result, etalon)) {
+console.error(JSON.stringify(result, null, 2));
+console.error(JSON.stringify(etalon, null, 2));
+console.error("Error #1");
+process.exit(1);
+}
 
 //------------------------------------------------------------------------------
 // build simple object from xml string (last 'person' element will be used)

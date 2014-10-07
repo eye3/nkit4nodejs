@@ -37,6 +37,19 @@ void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
   exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
 }
 
+template <typename T>
+void get_buffer_data(const T & buffer, char ** data, size_t * len)
+{
+#if NODE_MINOR_VERSION == 8
+    Local<Object> obj = Local<Object>::Cast(buffer);
+    *data = node::Buffer::Data(obj);
+    *len = node::Buffer::Length(obj);
+#else
+    *data = node::Buffer::Data(buffer);
+    *len = node::Buffer::Length(buffer);
+#endif
+}
+
 NAN_METHOD(Xml2VarBuilderWrapper::New)
 {
   NanScope();
@@ -54,8 +67,9 @@ NAN_METHOD(Xml2VarBuilderWrapper::New)
   std::string error;
   if (node::Buffer::HasInstance(args[0]))
   {
-    char* data = node::Buffer::Data(args[0]);
-    size_t length = node::Buffer::Length(args[0]);
+    char* data;
+    size_t length;
+    get_buffer_data(args[0], &data, &length);
     mappings.assign(data, length);
   }
   else if (args[0]->IsString())
@@ -93,8 +107,9 @@ NAN_METHOD(Xml2VarBuilderWrapper::Feed)
   std::string error = "";
   if (node::Buffer::HasInstance(args[0]))
   {
-    char* data = node::Buffer::Data(args[0]);
-    size_t length = node::Buffer::Length(args[0]);
+    char* data;
+    size_t length;
+    get_buffer_data(args[0], &data, &length);
 
     result = obj->builder_->Feed(data, length, false, &error);
   }
