@@ -33,6 +33,24 @@ Module supports not only native Expat XML encodings, but also many others
 
 # Installation
 
+nkit4nodejs module supports node.js v0.8 - v0.11
+
+This module must be compiled, so you have to install "build essentials":
+
+- for debian compatible linux (Debian, Ubuntu, etc.):
+
+	sudo apt-get install build-essential
+
+- for red hat compatible linux (RHEL, SUSE, CentOS, etc.):
+
+	sudo yum groupinstall "Development Tools"
+
+- for Windows:
+	
+	Install MS Visual Studio 2012 or higher (Express is ok)
+	
+- in Mac OS use XCode & brew
+
 ## On Linux & Mac OS
 
     npm install nkit4nodejs
