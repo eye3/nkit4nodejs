@@ -417,12 +417,12 @@ mapping = ["/person",
     {
         "/photos": ["/*", {
             "/ -> url" : "string",
-            "/width": "integer|0", # element "width" doesn't exist in xml, 
-                                   # but because of default value in scalar-mapping "integer|0"
-                                   # key "width" will be created with this default value
-            "/height": "integer|0" # element "height" doesn't exist in xml, 
-                                   # but because of default value in scalar-mapping "integer|0"
-                                   # key "height" will be created with this default value
+            "/width": "integer|0", // element "width" doesn't exist in xml, 
+                                   // but because of default value in scalar-mapping "integer|0"
+                                   // key "width" will be created with this default value
+            "/height": "integer|0" // element "height" doesn't exist in xml, 
+                                   // but because of default value in scalar-mapping "integer|0"
+                                   // key "height" will be created with this default value
         }],
         "/name": "string"
     }
