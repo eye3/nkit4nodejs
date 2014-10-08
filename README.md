@@ -37,7 +37,7 @@ For example, nkit4nodejs is about 10 times faster than popular
 Module supports not only native Expat XML encodings, but also many others
 (see /deps/nkit/src/vx/encodings_inc_gen.cpp)
 
-### NOTE: API of version 2.0 doesn't compatible with version 1.0. See [Quick Start](/eye3/nkit4nodejs/?#quick-start) for an example.
+### NOTE: API of version 2.0 doesn't compatible with version 1.0. See [Quick Start](https://github.com/eye3/nkit4nodejs.git/?#quick-start) for an example.
 
 # Installation
 
