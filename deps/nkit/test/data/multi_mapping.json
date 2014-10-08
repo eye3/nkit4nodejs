@@ -1,0 +1,9 @@
+{
+	"academy": {
+		"/academy/title": "string",
+		"/academy/link": "string"
+	},
+	"persons": ["/person", {
+		"/*": "string"
+	}]
+}
