@@ -3,7 +3,7 @@
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
-Node.js server. There is the same port to JavaScript - [nkit4nodejs](https://github.com/eye3/nkit4nodejs.git)
+Node.js server. There is the same port to Python - [nkit4py](https://github.com/eye3/nkit4py.git)
 
 Currently, only an XML to Javascript object converter and filter is exported to 
 Node.js from nkit library.
