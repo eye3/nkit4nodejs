@@ -1,6 +1,6 @@
 #include "nkit/test.h"
 #include "nkit/logger_brief.h"
-
+#include "nkit/dynamic/dynamic_builder.h"
 #include "nkit/dynamic_xml.h"
 
 namespace nkit_test
@@ -10,11 +10,11 @@ namespace nkit_test
   //---------------------------------------------------------------------------
   NKIT_TEST_CASE(vx_wrong_xml)
   {
-    Dynamic fields_mapping = DLIST(
+    Dynamic mapping = DLIST(
         "/person" << DLIST("/*/city" << "string"));
 
     std::string error;
-    Dynamic var = DynamicFromXml("xml", fields_mapping, &error);
+    Dynamic var = DynamicFromXml("xml", mapping, &error);
     NKIT_TEST_ASSERT(!var && !error.empty());
   }
 
@@ -57,45 +57,45 @@ namespace nkit_test
   //---------------------------------------------------------------------------
   NKIT_TEST_CASE(vx_list_of_lists)
   {
-    CINFO(__FILE__);
+    //CINFO(__FILE__);
     std::string xml_path("./data/sample.xml");
     std::string xml;
     NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
         "Could not read file '" + xml_path + "'.");
 
-    Dynamic fields_mapping = DLIST(
+    Dynamic mapping = DLIST(
         "/person" << DLIST("/phone" << "string"));
 
     std::string error;
-    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
 
     Dynamic etalon = DLIST(
            DLIST("+122233344550" << "+122233344551")
         << DLIST("+122233344553" << "+122233344554"));
-    CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << var);
     NKIT_TEST_ASSERT(var == etalon);
   }
 
   //---------------------------------------------------------------------------
   NKIT_TEST_CASE(vx_list)
   {
-    CINFO(__FILE__);
+    //CINFO(__FILE__);
     std::string xml_path("./data/sample.xml");
     std::string xml;
     NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
         "Could not read file '" + xml_path + "'.");
 
-    Dynamic fields_mapping = DLIST("/person/phone" << "string");
+    Dynamic mapping = DLIST("/person/phone" << "string");
 
     std::string error;
-    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
 
     Dynamic etalon = DLIST(
            "+122233344550" << "+122233344551"
         << "+122233344553" << "+122233344554");
-    CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << var);
     NKIT_TEST_ASSERT(var == etalon);
   }
 
@@ -107,32 +107,32 @@ namespace nkit_test
     NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
         "Could not read file '" + xml_path + "'.");
 
-    Dynamic fields_mapping = DLIST(
+    Dynamic mapping = DLIST(
         "/person" << DLIST("/*/city" << "string"));
 
     std::string error;
-    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
-    CINFO(nkit::json_hr << var);
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
+    //CINFO(nkit::json_hr << var);
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
 
     Dynamic etalon = DLIST(
            DLIST("New York" << "Boston")
         << DLIST("Moscow" << "Tula"));
 
-    CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << var);
     NKIT_TEST_ASSERT(var == etalon);
   }
 
   //---------------------------------------------------------------------------
   NKIT_TEST_CASE(vx_list_of_objects_with_mask)
   {
-    CINFO(__FILE__);
+    //CINFO(__FILE__);
     std::string xml_path("./data/sample.xml");
     std::string xml;
     NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
         "Could not read file '" + xml_path + "'.");
 
-    Dynamic fields_mapping = //DLIST("/person" << DDICT("/*" << "string") );
+    Dynamic mapping = //DLIST("/person" << DDICT("/*" << "string") );
         DLIST("/person" << DDICT(
                   "/married/@firstTime" << "boolean" <<
                   "/photos" << DLIST("/*" << "string")
@@ -140,9 +140,9 @@ namespace nkit_test
         );
 
     std::string error;
-    Dynamic var = DynamicFromXml(xml, fields_mapping, &error);
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
-    CINFO(nkit::json_hr << var);
+   // CINFO(nkit::json_hr << var);
   }
 
   //---------------------------------------------------------------------------
@@ -173,8 +173,8 @@ namespace nkit_test
             << "firstTime" << true)
         );
 
-    CINFO(nkit::json_hr << var);
-    CINFO(nkit::json_hr << etalon);
+    //CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << etalon);
     NKIT_TEST_ASSERT(var == etalon);
   }
 
@@ -200,13 +200,167 @@ namespace nkit_test
         DDICT("key_for_default_value" << "default_value")
         );
 
-    CINFO(nkit::json_hr << var);
-    CINFO(nkit::json_hr << etalon);
+    //CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << etalon);
     NKIT_TEST_ASSERT(var == etalon);
   }
 
   //---------------------------------------------------------------------------
-  NKIT_TEST_CASE(vx_sandbox)
+  NKIT_TEST_CASE(vx_without_trim)
+  {
+    std::string xml_path("./data/sample.xml");
+    std::string xml;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
+        "Could not read file '" + xml_path + "'.");
+
+    std::string mapping_path("./data/persons_with_star.json");
+    std::string mapping;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(mapping_path,
+            &mapping), "Could not read file '" + mapping_path + "'.");
+
+    std::string options;
+    std::string options_path("./data/options_no_trim.json");
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(options_path,
+            &options), "Could not read file '" + options_path + "'.");
+
+    std::string error;
+    Dynamic var = DynamicFromXml(xml, options, mapping, &error);
+    NKIT_TEST_ASSERT_WITH_TEXT(var, error);
+
+    Dynamic etalon = DLIST(
+        DDICT(
+            "name" << "Jack" <<
+            "photos" << "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t" <<
+            "age" << "33" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344551" <<
+            "birthday" << "Wed, 28 Mar 1979 12:13:14 +0300" <<
+            "address" << "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+            ) <<
+        DDICT(
+            "name" << "Boris" <<
+            "photos" << "\n\t\t\t\n\t\t\t\n\t\t" <<
+            "age" << "34" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344554" <<
+            "birthday" << "Mon, 31 Aug 1970 02:03:04 +0300" <<
+            "address" << "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t"
+            )
+        );
+
+    //CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << etalon);
+    NKIT_TEST_ASSERT(var == etalon);
+  }
+
+  //---------------------------------------------------------------------------
+  NKIT_TEST_CASE(vx_with_trim)
+  {
+    std::string xml_path("./data/sample.xml");
+    std::string xml;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
+        "Could not read file '" + xml_path + "'.");
+
+    std::string mapping_path("./data/persons_with_star.json");
+    std::string mapping;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(mapping_path,
+            &mapping), "Could not read file '" + mapping_path + "'.");
+
+    std::string options;
+    std::string options_path("./data/options_trim.json");
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(options_path,
+            &options), "Could not read file '" + options_path + "'.");
+
+    std::string error;
+    Dynamic var = DynamicFromXml(xml, options, mapping, &error);
+    NKIT_TEST_ASSERT_WITH_TEXT(var, error);
+
+    Dynamic etalon = DLIST(
+        DDICT(
+            "name" << "Jack" <<
+            "photos" << "" <<
+            "age" << "33" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344551" <<
+            "birthday" << "Wed, 28 Mar 1979 12:13:14 +0300" <<
+            "address" << ""
+            ) <<
+        DDICT(
+            "name" << "Boris" <<
+            "photos" << "" <<
+            "age" << "34" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344554" <<
+            "birthday" << "Mon, 31 Aug 1970 02:03:04 +0300" <<
+            "address" << ""
+            )
+        );
+
+    //CINFO(nkit::json_hr << var);
+    //CINFO(nkit::json_hr << etalon);
+    NKIT_TEST_ASSERT(var == etalon);
+  }
+
+  //---------------------------------------------------------------------------
+  NKIT_TEST_CASE(vx_multi_mappings)
+  {
+    std::string xml_path("./data/sample.xml");
+    std::string xml;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(xml_path, &xml),
+        "Could not read file '" + xml_path + "'.");
+
+    std::string mapping_path("./data/multi_mapping.json");
+    std::string mapping;
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(mapping_path,
+            &mapping), "Could not read file '" + mapping_path + "'.");
+
+    std::string options;
+    std::string options_path("./data/options_trim.json");
+    NKIT_TEST_ASSERT_WITH_TEXT(nkit::text_file_to_string(options_path,
+            &options), "Could not read file '" + options_path + "'.");
+
+    std::string error;
+    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+        DynamicBuilder>::Create(options, mapping, &error);
+    NKIT_TEST_ASSERT_WITH_TEXT(builder, error);
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        builder->Feed(xml.c_str(), xml.length(), true, &error), error);
+
+    Dynamic academy = builder->var("academy");
+    Dynamic persons = builder->var("persons");
+
+    Dynamic academy_etalon = DDICT(
+              "link" << "http://www.damsdelhi.com/dams.php"
+          <<  "title" << "Delhi Academy Of Medical Sciences"
+        );
+
+    Dynamic persons_etalon = DLIST(
+        DDICT(
+            "name" << "Jack" <<
+            "photos" << "" <<
+            "age" << "33" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344551" <<
+            "birthday" << "Wed, 28 Mar 1979 12:13:14 +0300" <<
+            "address" << ""
+            ) <<
+        DDICT(
+            "name" << "Boris" <<
+            "photos" << "" <<
+            "age" << "34" <<
+            "married" << "Yes" <<
+            "phone" << "+122233344554" <<
+            "birthday" << "Mon, 31 Aug 1970 02:03:04 +0300" <<
+            "address" << ""
+            )
+        );
+
+    NKIT_TEST_ASSERT(academy == academy_etalon);
+    NKIT_TEST_ASSERT(persons == persons_etalon);
+  }
+
+  //---------------------------------------------------------------------------
+  _NKIT_TEST_CASE(vx_sandbox)
   {
     std::string xml_path("./data/tmp.xml");
     std::string xml;

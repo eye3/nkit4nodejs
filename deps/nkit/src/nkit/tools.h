@@ -22,6 +22,7 @@
 #include <locale>
 
 #include <nkit/types.h>
+#include <nkit/ctools.h>
 #include <nkit/detail/push_options.h>
 
 #define NKIT_STATIC_ASSERT__(expr, message, line) \
@@ -45,8 +46,6 @@
 #  define NKIT_UNUSED(v)
 #endif
 
-#define NKIT_FORCE_USED(v) (void)v;
-
 #if defined(NKIT_HAS_LIKELY)
 #  define likely(expr)  __builtin_expect(!!(expr), 1)
 #  define unlikely(expr)  __builtin_expect(!!(expr), 0)
@@ -58,6 +57,7 @@
 
 namespace nkit
 {
+  extern const std::string WHITE_SPACES;
   //----------------------------------------------------------------------------
   void abort_with_core(const std::string & error);
 
@@ -163,6 +163,12 @@ namespace nkit
       StringVector * dst);
   bool simple_split(const std::string & src, const std::string & delimeter,
       std::string * key, std::string * value);
+  std::string ltrim(const std::string & src,
+      const std::string & white_spaces);
+  std::string rtrim(const std::string & src,
+      const std::string & white_spaces);
+  std::string trim(const std::string & src,
+      const std::string & white_spaces);
 
   bool starts_with(const std::string & what, const std::string & with);
   bool starts_with(const std::string & what, const char * with);

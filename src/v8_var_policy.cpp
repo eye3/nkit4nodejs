@@ -16,16 +16,16 @@
 
 #include <node.h>
 #include <nan.h>
-#include "v8_var_builder.h"
+#include "v8_var_policy.h"
 #include "nkit/constants.h"
 
-namespace vx
+namespace nkit
 {
 	using namespace v8;
 
-  v8::Persistent<v8::Function> V8VarBuilder::date_constructor_;
+  v8::Persistent<v8::Function> V8VarPolicy::date_constructor_;
 
-  void V8VarBuilder::Init()
+  void V8VarPolicy::Init()
   {
     NanScope();
     Handle<Object> global = NanGetCurrentContext()->Global();
@@ -33,65 +33,54 @@ namespace vx
         Handle<Function>::Cast(global->Get(NanNew("Date"))));
   }
 
-	V8VarBuilder::V8VarBuilder()
+	V8VarPolicy::V8VarPolicy(const detail::Options & options)
+    : options_(options)
 	{
     NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
 	}
 
-	V8VarBuilder::~V8VarBuilder()
+	V8VarPolicy::~V8VarPolicy()
 	{
 		NanScope();
 		NanDisposePersistent(object_);
 	}
 
-	void V8VarBuilder::InitAsDict()
+	void V8VarPolicy::InitAsDict()
 	{
 		NanScope();
 		NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
 	}
 
-	void V8VarBuilder::InitAsList()
+	void V8VarPolicy::InitAsList()
 	{
 		NanScope();
 		NanAssignPersistent(object_, Local<Value>(NanNew<Array>()));
 	}
 
-	void V8VarBuilder::InitAsBoolean(std::string const & value)
+  void V8VarPolicy::ListCheck() const
+  {
+    assert(object_->IsArray());
+  }
+
+  void V8VarPolicy::DictCheck() const
+  {
+    assert(object_->IsObject());
+  }
+
+	void V8VarPolicy::InitAsBoolean(std::string const & value)
 	{
 		NanScope();
 		NanAssignPersistent(object_,
 		        Local<Value>(NanNew(nkit::bool_cast(value))));
 	}
 
-	void V8VarBuilder::InitAsBooleanFormat(std::string const & value,
-	    const std::string &)
-	{
-		InitAsBoolean(value);
-	}
-
-	void V8VarBuilder::InitAsBooleanDefault()
-	{
-		InitAsBoolean(nkit::S_FALSE_);
-	}
-
-	void V8VarBuilder::InitAsString(std::string const & value)
+	void V8VarPolicy::InitAsString(std::string const & value)
 	{
 		NanScope();
 		NanAssignPersistent(object_, Local<Value>(NanNew(value.c_str())));
 	}
 
-	void V8VarBuilder::InitAsStringFormat(std::string const & value,
-	    const std::string &)
-	{
-		InitAsString(value);
-	}
-
-	void V8VarBuilder::InitAsStringDefault()
-	{
-		InitAsString(nkit::S_EMPTY_);
-	}
-
-	void V8VarBuilder::InitAsInteger(const std::string & value)
+	void V8VarPolicy::InitAsInteger(const std::string & value)
 	{
 		int32_t i = !value.empty() ? strtol(value.c_str(), NULL, 10) : 0;
 
@@ -99,34 +88,7 @@ namespace vx
 		NanAssignPersistent(object_, Local<Value>(NanNew(i)));
 	}
 
-	void V8VarBuilder::InitAsIntegerFormat(std::string const & value,
-	    const std::string &)
-	{
-		InitAsInteger(value);
-	}
-
-	void V8VarBuilder::InitAsIntegerDefault()
-	{
-		InitAsInteger(nkit::S_ZERO_);
-	}
-
-	void V8VarBuilder::InitAsFloat(const std::string & value)
-	{
-		_InitAsFloatFormat(value, NKIT_FORMAT_DOUBLE);
-	}
-
-	void V8VarBuilder::InitAsFloatFormat(std::string const & value,
-	    const std::string & format)
-	{
-		_InitAsFloatFormat(value, format.c_str());
-	}
-
-	void V8VarBuilder::InitAsFloatDefault()
-	{
-		_InitAsFloatFormat(nkit::S_ZERO_, NKIT_FORMAT_DOUBLE);
-	}
-
-	void V8VarBuilder::_InitAsFloatFormat(std::string const & value,
+	void V8VarPolicy::InitAsFloatFormat(std::string const & value,
 	    const char * format)
 	{
 		double d(0.0);
@@ -140,18 +102,7 @@ namespace vx
 		NanAssignPersistent(object_, Local<Value>(NanNew(d)));
 	}
 
-	void V8VarBuilder::InitAsDatetime(const std::string & value)
-	{
-		_InitAsDatetimeFormat(value, nkit::DATE_TIME_DEFAULT_FORMAT_);
-	}
-
-	void V8VarBuilder::InitAsDatetimeFormat(const std::string & value,
-	    const std::string & format)
-	{
-		_InitAsDatetimeFormat(value, format.c_str());
-	}
-
-	void V8VarBuilder::_InitAsDatetimeFormat(const std::string & value,
+	void V8VarPolicy::InitAsDatetimeFormat(const std::string & value,
 	    const char * format)
 	{
 #if defined(_WIN32) || defined(_WIN64)
@@ -208,19 +159,13 @@ namespace vx
 		        Local<Value>(NanNew(date_constructor_)->NewInstance(1, argv)));
 	}
 
-	void V8VarBuilder::InitAsDatetimeDefault()
-	{
-		NanScope();
-		NanAssignPersistent(object_, Local<Value>(NanNew<Date>(0)));
-	}
-
-	void V8VarBuilder::InitAsUndefined()
+	void V8VarPolicy::InitAsUndefined()
 	{
 		NanScope();
 		NanAssignPersistent(object_, Local<Value>(NanUndefined()));
 	}
 
-	void V8VarBuilder::SetDictKeyValue(std::string const & key, type const & var)
+	void V8VarPolicy::SetDictKeyValue(std::string const & key, type const & var)
 	{
 		NanScope();
     Local<Value> object(NanNew(object_));
@@ -229,7 +174,7 @@ namespace vx
 		obj->Set(NanNew(key.c_str()), NanNew(var));
 	}
 
-	void V8VarBuilder::AppendToList(type const & var)
+	void V8VarPolicy::AppendToList(type const & var)
 	{
 		NanScope();
 		Local<Value> object(NanNew(object_));
@@ -238,7 +183,7 @@ namespace vx
 		arr->Set(arr->Length(), NanNew(var));
 	}
 
-	std::string V8VarBuilder::ToString() const
+	std::string V8VarPolicy::ToString() const
 	{
 	    return v8var_to_json(NanNew(object_));
 	}

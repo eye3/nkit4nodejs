@@ -39,30 +39,63 @@ namespace nkit
   }
 
   //----------------------------------------------------------------------------
-  bool is_white_space(char ch)
+  const std::string WHITE_SPACES(" \n\t\r");
+
+  bool is_white_space(char ch, const std::string & white_spaces)
   {
-    return ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r';
+    return strchr(white_spaces.c_str(), ch) != NULL;
+    //return ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r';
   }
 
   //----------------------------------------------------------------------------
   size_t skip_space_forward(const char * src, size_t pos,
-      const size_t size)
+      const size_t size, const std::string & white_spaces = WHITE_SPACES)
   {
-    while ((pos < size) && is_white_space(src[pos]))
+    while ((pos < size) && is_white_space(src[pos], white_spaces))
       ++pos;
     return pos;
   }
 
   //----------------------------------------------------------------------------
-  size_t skip_space_backward(const char* src, size_t pos)
+  size_t skip_space_backward(const char* src, size_t pos,
+      const std::string & white_spaces = WHITE_SPACES)
   {
-    while (is_white_space(src[pos]))
+    while (is_white_space(src[pos], white_spaces))
     {
       if (pos == 0)
         break;
       --pos;
     }
     return pos;
+  }
+
+  //----------------------------------------------------------------------------
+  std::string ltrim(const std::string & str, const std::string & white_spaces)
+  {
+    size_t size = str.size();
+    size_t first_pos = skip_space_forward(str.c_str(), 0, size, white_spaces);
+    if (first_pos >= size)
+      return S_EMPTY_;
+    return str.substr(first_pos, size - first_pos);
+  }
+
+  //----------------------------------------------------------------------------
+  std::string rtrim(const std::string & str, const std::string & white_spaces)
+  {
+    size_t size = str.size();
+    size_t last_pos = skip_space_backward(str.c_str(), size-1, white_spaces);
+    return str.substr(0, last_pos + 1);
+  }
+
+  //----------------------------------------------------------------------------
+  std::string trim(const std::string & str, const std::string & white_spaces)
+  {
+    size_t size = str.size();
+    size_t first_pos = skip_space_forward(str.c_str(), 0, size, white_spaces);
+    if (first_pos >= size)
+      return S_EMPTY_;
+    size_t last_pos = skip_space_backward(str.c_str(), size-1, white_spaces);
+    return str.substr(first_pos, last_pos - first_pos + 1);
   }
 
   //----------------------------------------------------------------------------

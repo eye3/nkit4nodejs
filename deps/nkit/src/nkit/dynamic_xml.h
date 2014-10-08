@@ -22,11 +22,26 @@
 namespace nkit
 {
   Dynamic DynamicFromXml(const std::string & xml,
-      const Dynamic & fields_mapping, std::string * const error);
+      const Dynamic & options,
+      const Dynamic & mapping,
+      std::string * const error);
   Dynamic DynamicFromXml(const std::string & xml,
-      const std::string & fields_mapping, std::string * const error);
+      const Dynamic & mapping,
+      std::string * const error);
+  Dynamic DynamicFromXml(const std::string & xml,
+      const std::string & options,
+      const std::string & mapping,
+      std::string * const error);
+  Dynamic DynamicFromXml(const std::string & xml,
+      const std::string & mapping,
+      std::string * const error);
   Dynamic DynamicFromXmlFile(const std::string & path,
-      const std::string & fields_mapping, std::string * const error);
+      const std::string & options,
+      const std::string & mapping,
+      std::string * const error);
+  Dynamic DynamicFromXmlFile(const std::string & path,
+      const std::string & mapping,
+      std::string * const error);
 } // namespace nkit
 
 

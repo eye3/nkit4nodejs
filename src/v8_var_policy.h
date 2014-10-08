@@ -20,57 +20,44 @@
 #include <string>
 
 #include "nkit/tools.h"
+#include "nkit/vx.h"
 
-namespace vx
+namespace nkit
 {
   std::string v8var_to_json(const v8::Handle<v8::Value> & var);
 
-  class V8VarBuilder: nkit::Uncopyable
+  class V8VarPolicy: Uncopyable
   {
   public:
     typedef v8::Persistent<v8::Value> type;
 
     static void Init();
 
-    V8VarBuilder();
-    ~V8VarBuilder();
+    V8VarPolicy(const detail::Options & options);
+    ~V8VarPolicy();
     void InitAsDict();
     void InitAsList();
     void InitAsBoolean(std::string const & value);
-    void InitAsBooleanFormat(std::string const & value, const std::string & );
-    void InitAsBooleanDefault();
     void InitAsString(std::string const & value);
-    void InitAsStringFormat(std::string const & value, const std::string & );
-    void InitAsStringDefault();
     void InitAsInteger(const std::string & value);
-    void InitAsIntegerFormat(std::string const & value, const std::string & );
-    void InitAsIntegerDefault();
-    void InitAsFloat(const std::string & value);
     void InitAsFloatFormat(std::string const & value,
-        const std::string & format);
-    void InitAsFloatDefault();
-    void _InitAsFloatFormat(std::string const & value,
         const char * format);
-
-    void InitAsDatetime(const std::string & value);
     void InitAsDatetimeFormat(const std::string & value,
-        const std::string & format);
-    void _InitAsDatetimeFormat(const std::string & value,
         const char * format);
-    void InitAsDatetimeDefault();
-
     void InitAsUndefined();
     void SetDictKeyValue(std::string const & key, type const & var);
     void AppendToList(type const & obj);
 
     type const & get() const { return object_; }
     std::string ToString() const;
+    void ListCheck() const;
+    void DictCheck() const;
 
   private:
     type object_;
+    const detail::Options & options_;
     static v8::Persistent<v8::Function> date_constructor_;
   };
-
-} // namespace vx
+} // namespace nkit
 
 #endif // VX_V8_VAR_BUILDER_H

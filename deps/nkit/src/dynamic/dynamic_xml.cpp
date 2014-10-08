@@ -21,31 +21,55 @@
 namespace nkit
 {
   Dynamic DynamicFromXml(const std::string & xml,
-        const std::string & fields_mapping, std::string * const error)
+      const std::string & options,
+      const std::string & mapping,
+      std::string * const error)
   {
-    Xml2VarBuilder<DynamicBuilder>::Ptr d_gen = Xml2VarBuilder<
-        DynamicBuilder>::Create(fields_mapping, error);
-    if(!d_gen)
+    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+        DynamicBuilder>::Create(options, error);
+    if(!builder)
       return Dynamic();
-    if (!d_gen->Feed(xml.c_str(), xml.length(), true, error))
+    if (!builder->AddMapping(S_EMPTY_, mapping, error))
       return Dynamic();
-    return d_gen->var();
+    if (!builder->Feed(xml.c_str(), xml.length(), true, error))
+      return Dynamic();
+    return builder->var(S_EMPTY_);
   }
 
   Dynamic DynamicFromXml(const std::string & xml,
-      const Dynamic & fields_mapping, std::string * const error)
+      const std::string & mapping,
+      std::string * const error)
   {
-    Xml2VarBuilder<DynamicBuilder>::Ptr d_gen = Xml2VarBuilder<
-        DynamicBuilder>::Create(fields_mapping, error);
-    if(!d_gen)
+    return DynamicFromXml(xml, "{}", mapping, error);
+  }
+
+  Dynamic DynamicFromXml(const std::string & xml,
+      const Dynamic & mapping,
+      std::string * const error)
+  {
+    return DynamicFromXml(xml, D_NONE, mapping, error);
+  }
+
+  Dynamic DynamicFromXml(const std::string & xml,
+      const Dynamic & options,
+      const Dynamic & mapping,
+      std::string * const error)
+  {
+    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+        DynamicBuilder>::Create(options, error);
+    if(!builder)
       return Dynamic();
-    if (!d_gen->Feed(xml.c_str(), xml.length(), true, error))
+    if (!builder->AddMapping(S_EMPTY_, mapping, error))
       return Dynamic();
-    return d_gen->var();
+    if (!builder->Feed(xml.c_str(), xml.length(), true, error))
+      return Dynamic();
+    return builder->var(S_EMPTY_);
   }
 
   Dynamic DynamicFromXmlFile(const std::string & path,
-        const std::string & fields_mapping, std::string * const error)
+        const std::string & options,
+        const std::string & mapping,
+        std::string * const error)
   {
     std::string xml;
     if (!path.empty() && !text_file_to_string(path, &xml))
@@ -60,6 +84,6 @@ namespace nkit
       return Dynamic();
     }
 
-    return DynamicFromXml(xml, fields_mapping, error);
+    return DynamicFromXml(xml, options, mapping, error);
   }
 } // namespace nkit

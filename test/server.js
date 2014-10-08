@@ -1,14 +1,13 @@
 var nkit = require('../index.js');
 var fs = require('fs');
 
-var mapping = '["/person", \
-{ \
-    "/birthday": "datetime|1970-01-01|%Y-%m-%d",          \
-    "/phone -> phones": ["/", "string"],                  \
-    "/address -> cities": ["/city", "string"],            \
-    "/married/@firstTime -> isMerriedFirstTime": "boolean"\
-} \
-]';
+var mapping = ["/person",
+{
+    "/birthday": "datetime|1970-01-01|%Y-%m-%d",
+    "/phone -> phones": ["/", "string"],
+    "/address -> cities": ["/city", "string"],
+    "/married/@firstTime -> isMerriedFirstTime": "boolean"
+}];
 
 var xml_path = __dirname + "/data/sample.xml";
 
@@ -19,9 +18,9 @@ http.createServer(function (req, res) {
         if(xml_err)
             throw xml_err;
 
-        var gen = new nkit.Xml2VarBuilder(mapping);
+        var gen = new nkit.Xml2VarBuilder({"": mapping});
         gen.feed(xml_text);
-        var target = gen.end();
+        var target = gen.end()[""];
         for (var i in target)
             var item = target[i];
 
