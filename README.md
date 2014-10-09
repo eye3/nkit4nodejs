@@ -44,6 +44,8 @@ Module supports not only native Expat XML encodings, but also many others
 
 ## Requirements
 
+nkit4nodejs module supports node.js v0.8 - v0.11
+
 nkit4nodejs module must be compiled, so you have to install "build essentials"
 (if not yet):
 
@@ -497,6 +499,25 @@ rstream
         var result = builder.end()["any_name"];
         console.log("Items count: %d", result.length);
     });
+```
+
+## If you want some JSON
+
+Just wrap the result object in a call to JSON.stringify:
+
+```javascript
+var nkit = require('nkit4nodejs');
+
+var builder = new nkit.Xml2VarBuilder({"phones": ["/person/phone", "string"]});
+builder.feed(xmlString);
+var phones = builder.end()["phones"];
+
+// print json
+console.error(JSON.stringify(phones));
+
+// pretty print
+console.error(JSON.stringify(phones, null, 2));
+
 ```
 
 # Options
