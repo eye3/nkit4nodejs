@@ -23,7 +23,7 @@
 #  define NKIT_MACOS 1
 #  define NKIT_POSIX_PLATFORM 1
 #  define NKIT_PTHREAD 1
-#elif defined(__linux__) || defined(linux)
+#elif defined(__linux__) || defined(linux) || defined(__CYGWIN__)
 #  define NKIT_POSIX_PLATFORM 1
 #  define NKIT_PTHREAD 1
 #elif defined(_WIN32) || defined(_WIN64)

@@ -22,7 +22,7 @@
 #if defined(NKIT_POSIX_PLATFORM)
 #  define __STDC_FORMAT_MACROS 1
 #  include <inttypes.h>
-#  include <cstdio>
+#  include <stdio.h>
 #  include <unistd.h>
 #  include <pwd.h>
 #  include <string.h>
@@ -42,7 +42,7 @@
   ::sscanf(buf, __VA_ARGS__)
 
 #  define NKIT_SNPRINTF(buf, len, ...) \
-  ::std::snprintf((buf), (len), __VA_ARGS__)
+  ::snprintf((buf), (len), __VA_ARGS__)
 
 #  define LOCALTIME_R(now, tm)  (::localtime_r(&(now), (tm)) != NULL)
 #  define GMTIME_R(now, tm)     (::gmtime_r(&(now), (tm)) != NULL)

@@ -4,7 +4,7 @@
 #include "nkit/tools.h"
 #include "expat.h"
 
-#include "nkit/detail/encodings.h"
+#include "nkit/transcode.h"
 
 namespace nkit
 {
@@ -98,13 +98,17 @@ namespace nkit
       char enc_name[0x100], *p = enc_name;
       while( p != enc_name + 0x100 && *name ) *p++ = (char)*name++;
       if( *name )
-      return XML_STATUS_ERROR;
+        return XML_STATUS_ERROR;
       *p = 0;
 #else
       const char * enc_name = name;
 #endif
 
-      return find_encoding(enc_name, info) ? XML_STATUS_OK : XML_STATUS_ERROR;
+      const Transcoder * tr = Transcoder::Find(enc_name);
+      if (!tr)
+        return XML_STATUS_ERROR;
+      tr->FillExpatEncodingInfo(info->map);
+      return XML_STATUS_OK;
     }
 
   private:

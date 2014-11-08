@@ -62,6 +62,7 @@ namespace nkit
   NKIT_DEFINE_CONST_STRING(S_STAR_, "*")
   NKIT_DEFINE_CONST_STRING(S_LT_, "<")
   NKIT_DEFINE_CONST_STRING(S_GT_, ">")
+  NKIT_DEFINE_CONST_STRING(S_UTF_8_, "UTF-8")
 
   time_t timezone_offset()
   {

@@ -16,6 +16,10 @@
 
 #include <string.h>
 #include <errno.h>
+#include <stdio.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <limits>
 #include <cstdio>
@@ -607,26 +611,134 @@ static const time_t __FREQUENCY = 1000000000;
 #endif
   }
 
-  int64_t rename(const std::string & from, const std::string & to,
+  bool copy_file(const std::string & from, const std::string & to,
       std::string * error)
   {
-    if (::std::rename(from.c_str(), to.c_str()) == -1)
+    char buf[BUFSIZ];
+    size_t size;
+
+    FILE * source = std::fopen(from.c_str(), "r");
+    if (!source)
     {
       *error = strerror(errno);
-      return errno;
+      return false;
     }
 
-    return 0;
+    FILE * dest = std::fopen(to.c_str(), "w");
+    if (!dest)
+    {
+      *error = strerror(errno);
+      return false;
+    }
+
+    while ((size = std::fread(buf, 1, BUFSIZ, source)) > 0)
+      std::fwrite(buf, 1, size, dest);
+
+    std::fclose(source);
+    std::fclose(dest);
+
+    return true;
   }
 
-  bool text_file_to_string(const std::string & path, std::string * out)
+  bool rename_file(const std::string & from, const std::string & to,
+      std::string * error)
   {
-    std::ifstream is(path.c_str(), std::ios::in);
-    if (!is)
+    if (std::rename(from.c_str(), to.c_str()) != 0)
+    {
+      *error = strerror(errno);
       return false;
-    char buf[1024];
-    while (is.read(buf, sizeof(buf)).gcount() > 0)
-      out->append(buf, static_cast<size_t>(is.gcount()));
+    }
+
+    return true;
+  }
+
+  bool move_file(const std::string & from, const std::string & to,
+      std::string * error)
+  {
+    std::string tmp;
+    if (!rename_file(from, to, &tmp))
+    {
+      if (!copy_file(from, to, error))
+        return false;
+      if (!delete_file(from, error))
+      {
+        delete_file(to, &tmp);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool delete_file(const std::string & path, std::string * error)
+  {
+    if (std::remove(path.c_str()) != 0)
+    {
+      *error = strerror(errno);
+      return false;
+    }
+
+    return true;
+  }
+
+  bool is_path_exists(const std::string & path, PathType * pt)
+  {
+    struct stat info;
+    if (stat(path.c_str(), &info) == -1)
+      return false;
+    if (info.st_mode & S_IFDIR)
+      *pt = PATH_DIR;
+    else if (info.st_mode & S_IFREG)
+      *pt = PATH_FILE;
+    else
+      *pt = PATH_UNKNOWN;
+    return true;
+  }
+
+  bool path_is_file(const std::string & path)
+  {
+    PathType pt;
+    return is_path_exists(path, &pt) && pt == PATH_FILE;
+  }
+
+  bool path_is_dir(const std::string & path)
+  {
+    PathType pt;
+    return is_path_exists(path, &pt) && pt == PATH_DIR;
+  }
+
+  bool text_file_to_string(const std::string & path, std::string * out,
+      std::string * error)
+  {
+    FILE * source = std::fopen(path.c_str(), "r");
+    if (!source)
+    {
+      *error = strerror(errno);
+      return false;
+    }
+
+    char buf[BUFSIZ];
+    size_t size;
+
+    while ((size = std::fread(buf, 1, BUFSIZ, source)) > 0)
+      out->append(buf, size);
+
+    std::fclose(source);
+    return true;
+  }
+
+  bool string_to_text_file(const std::string & path, const std::string & str,
+      std::string * error)
+  {
+    FILE * dest = std::fopen(path.c_str(), "w");
+    if (!dest)
+    {
+      *error = strerror(errno);
+      return false;
+    }
+
+    std::fwrite(str.c_str(), 1, str.size(), dest);
+    std::fclose(dest);
     return true;
   }
 

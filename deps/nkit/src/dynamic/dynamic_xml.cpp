@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-#include "nkit/vx.h"
+#include "nkit/xml2var.h"
 #include "nkit/dynamic/dynamic_builder.h"
 #include "nkit/dynamic_xml.h"
 
@@ -72,11 +72,8 @@ namespace nkit
         std::string * const error)
   {
     std::string xml;
-    if (!path.empty() && !text_file_to_string(path, &xml))
-    {
-      *error = "Could not open file: '" + path + "'";
+    if (!path.empty() && !text_file_to_string(path, &xml, error))
       return Dynamic();
-    }
 
     if (xml.empty())
     {

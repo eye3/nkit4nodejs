@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <any_name>
-	<academy>
+	<academy vip="Yes">
 		<title>Delhi Academy Of Medical Sciences</title>
 		<link>http://www.damsdelhi.com/dams.php</link>
 	</academy>
@@ -15,7 +15,7 @@
 		</photos>
 		<age>33</age>
 		<married firstTime="No">Yes</married>
-		<birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
+		<birthday>Wed, 28 Mar 1979 12:13:14</birthday>
 		<address>
 			<city>New York</city>
 			<street>Park Ave</street>
@@ -39,7 +39,7 @@
 		</photos>
 		<age>34</age>
 		<married firstTime="Yes">Yes</married>
-		<birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
+		<birthday>Mon, 31 Aug 1970 02:03:04</birthday>
 		<address>
 			<city>Moscow</city>
 			<street>Kahovka</street>

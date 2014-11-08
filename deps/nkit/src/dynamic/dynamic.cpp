@@ -21,6 +21,7 @@
 #include "nkit/dynamic.h"
 #include "nkit/logger.h"
 #include "nkit/tools.h"
+#include "nkit/transcode.h"
 
 namespace nkit
 {
@@ -196,6 +197,7 @@ namespace nkit
   {
     detail::FillOperations();
     NKIT_FORCE_USED(timezone_offset());
+    Transcoder::Build();
   }
 
   // copy constructor
@@ -366,6 +368,11 @@ namespace nkit
     Dynamic result;
     detail::Impl<detail::UNSIGNED_INTEGER>::Create(result, v);
     return result;
+  }
+
+  Dynamic Dynamic::UInt64(const Dynamic & v)
+  {
+    return Dynamic::UInt64(v.GetUnsignedInteger());
   }
 
   Dynamic::Dynamic(const double v)
@@ -594,17 +601,10 @@ namespace nkit
     return *this;
   }
 
-  Dynamic & Dynamic::ConvertToUINT()
+  Dynamic & Dynamic::ConvertToUInt64()
   {
-    if (!IsInteger())
+    if (!IsUnsignedInteger())
       *this = Dynamic::UInt64(GetUnsignedInteger());
-    return *this;
-  }
-
-  Dynamic Dynamic::ConvertToUINT() const
-  {
-    if (!IsInteger())
-      return Dynamic::UInt64(GetUnsignedInteger());
     return *this;
   }
 

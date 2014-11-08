@@ -540,7 +540,7 @@ options = {
     "white_spaces": " \t\n\r"
 }
 
-var builder = new nkit.Xml2VarBuilder(mappings);
+var builder = new nkit.Xml2VarBuilder(options, mappings);
 builder.feed(xmlString);
 var result = builder.end();
 

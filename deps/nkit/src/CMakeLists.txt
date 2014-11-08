@@ -43,8 +43,7 @@ endif()
 if (EXPAT_FOUND)
     set(VX_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic_xml.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/vx/vx.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/vx/encodings.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/xml/xml2var.cpp
         )
 else()
     set(VX_SOURCES "")
@@ -61,6 +60,7 @@ add_library(${PROJECT_NAME}
             ${CMAKE_CURRENT_SOURCE_DIR}/tools.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/constants.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/version.cpp
+	        ${CMAKE_CURRENT_SOURCE_DIR}/encoding/transcode.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/../3rd/netbsd/strptime.cpp
             ${LOGGER_IMPL_SOURCES}
             ${VX_SOURCES}

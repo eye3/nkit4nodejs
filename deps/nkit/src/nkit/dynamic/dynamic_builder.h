@@ -2,7 +2,7 @@
 #define NKIT_VX_DYNAMIC_BUILDER_H
 
 #include "nkit/dynamic_json.h"
-#include "nkit/vx.h"
+#include "nkit/xml2var.h"
 
 namespace nkit
 {

@@ -20,7 +20,7 @@
 #include <string>
 
 #include "nkit/tools.h"
-#include "nkit/vx.h"
+#include "nkit/xml2var.h"
 
 namespace nkit
 {

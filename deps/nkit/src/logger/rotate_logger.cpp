@@ -184,21 +184,21 @@ namespace nkit
     file_stream_.close();
 
     std::string error;
-    int64_t error_code = 0;
+    bool moved = false;
     if (unlikely(strftime(iso_time, sizeof(iso_time),
           "%Y-%m-%dT%H%M%S", &ti) == 0))
     {
-      error_code = rename(
+      moved = move_file(
           file_path_, file_path_ + "." + string_cast((uint64_t)now), &error);
     }
     else
     {
       std::string ssuffix(suffix ? ("-" + string_cast(suffix)) : "");
-      error_code = rename(
+      moved = move_file(
           file_path_, file_path_ + "." + iso_time + ssuffix, &error);
     }
 
-    if (error_code != 0)
+    if (!moved)
       abort_with_core("Could not rotate log file: " + error);
 
     file_stream_.open(file_path_.c_str(), std::fstream::app);

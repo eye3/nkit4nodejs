@@ -16,8 +16,8 @@
         "nkit/src/dynamic/dynamic_table_index_comparators.cpp",
         "nkit/src/dynamic/dynamic_xml.cpp",
         "nkit/src/logger/rotate_logger.cpp",
-        "nkit/src/vx/encodings.cpp",
-        "nkit/src/vx/vx.cpp",
+        "nkit/src/encoding/transcode.cpp",
+        "nkit/src/xml/xml2var.cpp",
         "nkit/3rd/netbsd/strptime.cpp",
       ],
       'include_dirs': [

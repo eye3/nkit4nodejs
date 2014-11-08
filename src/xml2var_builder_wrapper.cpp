@@ -36,6 +36,7 @@ namespace nkit
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     NODE_SET_PROTOTYPE_METHOD(tpl, "feed", Xml2VarBuilderWrapper::Feed);
     NODE_SET_PROTOTYPE_METHOD(tpl, "end", Xml2VarBuilderWrapper::End);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "get", Xml2VarBuilderWrapper::Get);
     NanAssignPersistent(constructor, tpl->GetFunction());
     exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
   }
@@ -148,6 +149,39 @@ namespace nkit
       return NanThrowError(error.c_str());
 
     NanReturnUndefined();
+  }
+
+  //------------------------------------------------------------------------------
+  NAN_METHOD(Xml2VarBuilderWrapper::Get)
+  {
+    NanScope();
+
+    if (1 > args.Length())
+      return NanThrowError("Expected arguments");
+
+    Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
+        args.This());
+
+    Local<Value> result;
+    std::string error;
+    if (node::Buffer::HasInstance(args[0]))
+    {
+      char* str;
+      size_t length;
+      get_buffer_data(args[0], &str, &length);
+      std::string mapping_name(str, length);
+      result = NanNew(obj->builder_->var(mapping_name));
+    }
+    else if (args[0]->IsString())
+    {
+      String::Utf8Value utf8_value(args[0]);
+      std::string mapping_name(*utf8_value, utf8_value.length());
+      result = NanNew(obj->builder_->var(mapping_name));
+    }
+    else
+      return NanThrowTypeError("Wrong type of arguments");
+
+    NanReturnValue(result);
   }
 
   //------------------------------------------------------------------------------

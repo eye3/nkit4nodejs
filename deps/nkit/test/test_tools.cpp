@@ -5,6 +5,55 @@ namespace nkit_test
   using namespace nkit;
 
   //---------------------------------------------------------------------------
+  void _copy_file(const std::string & content)
+  {
+    std::string error;
+    std::string text;
+    static const std::string SRC_FILE("./data/src.txt");
+    static const std::string DST_FILE("./data/dst.txt");
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        string_to_text_file(SRC_FILE, content, &error), error);
+    NKIT_TEST_ASSERT(path_is_file(SRC_FILE));
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        copy_file(SRC_FILE, DST_FILE, &error), error);
+    NKIT_TEST_ASSERT(path_is_file(DST_FILE));
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        text_file_to_string(DST_FILE, &text, &error), error);
+    NKIT_TEST_EQ(text, content);
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        delete_file(DST_FILE, &error), error);
+    NKIT_TEST_ASSERT(!path_is_file(DST_FILE));
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        delete_file(SRC_FILE, &error), error);
+  }
+
+  NKIT_TEST_CASE(tools_copy_file)
+  {
+    std::string tmp("0132465798"), etalon;
+    _copy_file(tmp);
+
+    tmp = std::string(BUFSIZ-1, 1);
+    tmp[BUFSIZ-34] = 2;
+    _copy_file(tmp);
+
+    tmp = std::string(BUFSIZ, 1);
+    tmp[BUFSIZ-34] = 2;
+    _copy_file(tmp);
+
+    tmp = std::string(BUFSIZ+1, 1);
+    tmp[BUFSIZ-34] = 2;
+    _copy_file(tmp);
+
+    tmp = std::string(2*BUFSIZ, 1);
+    tmp[BUFSIZ-34] = 2;
+    _copy_file(tmp);
+
+    tmp = std::string(2*BUFSIZ+100000, 1);
+    tmp[BUFSIZ-34] = 2;
+    _copy_file(tmp);
+  }
+
+  //---------------------------------------------------------------------------
   NKIT_TEST_CASE(tools_bool_cast)
   {
     NKIT_TEST_ASSERT(bool_cast("Yes"));

@@ -207,7 +207,14 @@ res = builder.end()["map_name"];
 if (!deep_equal.deepEquals(res, etalon)) {
     console.error(JSON.stringify(res, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #1");
+    console.error("Error #1.1");
+    process.exit(1);
+}
+
+if (!deep_equal.deepEquals(res, builder.get("map_name"))) {
+    console.error(JSON.stringify(res, null, 2));
+    console.error(JSON.stringify(builder.get("map_name"), null, 2));
+    console.error("Error #1.2");
     process.exit(1);
 }
 
@@ -256,7 +263,7 @@ etalon = [
 if (!deep_equal.deepEquals(res, etalon)) {
     console.error(JSON.stringify(res, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #4");
+    console.error("Error #4.1");
     process.exit(1);
 }
 

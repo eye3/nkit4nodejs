@@ -20,6 +20,8 @@
 ## 4) CLANG/VS 2008 compiler/linker flags
 ##
 
+set(CMAKE_LEGACY_CYGWIN_WIN32 0 CACHE INTERNAL "CMAKE_LEGACY_CYGWIN_WIN32=0")
+
 cmake_minimum_required(VERSION 2.8)
 
 project(nkit)
@@ -46,13 +48,21 @@ enable_testing()
 
 ### entry
 
-message(STATUS "YAJL_ROOT: " $ENV{YAJL_ROOT})
-message(STATUS "USE_VX: " $ENV{USE_VX})
-message(STATUS "EXPAT_ROOT: " $ENV{EXPAT_ROOT})
-
 if (NOT DEFINED YAJL_ROOT AND DEFINED ENV{YAJL_ROOT})
-    set(YAJL_ROOT $ENV{YAJL_ROOT})
+    set(YAJL_ROOT $ENV{YAJL_ROOT} CACHE INTERNAL "yajl root")
 endif()
+
+if (NOT DEFINED USE_VX AND DEFINED ENV{USE_VX})
+    set(USE_VX $ENV{USE_VX} CACHE INTERNAL "use vx")
+endif()
+
+if (NOT DEFINED EXPAT_ROOT AND DEFINED ENV{EXPAT_ROOT})
+    set(EXPAT_ROOT $ENV{EXPAT_ROOT} CACHE INTERNAL "expat root")
+endif()
+
+message(STATUS "YAJL_ROOT: " ${YAJL_ROOT})
+message(STATUS "USE_VX: " ${USE_VX})
+message(STATUS "EXPAT_ROOT: " ${EXPAT_ROOT})
 
 find_package(Yajl 2.0.4 REQUIRED)
 
@@ -80,18 +90,14 @@ if (NOT DEFINED USE_REF_COUNT_PTR)
         if (DEFINED BOOST_ROOT)
             message(STATUS "Searching custom Boost library at ${BOOST_ROOT}")
         endif()
-        find_package(Boost ${BOOST_VERSION} REQUIRED COMPONENTS system)
+        if (DEFINED CYGWIN)
+	    find_package(Boost ${BOOST_VERSION} REQUIRED COMPONENTS system.dll)
+        else()
+	    find_package(Boost ${BOOST_VERSION} REQUIRED COMPONENTS system)
+        endif()
         set(HAVE_BOOST 1 CACHE INTERNAL "boost found")
         set(USE_BOOST 1 CACHE INTERNAL "use boost in nkit backend")
     endif()
-endif()
-
-if (NOT DEFINED USE_VX AND DEFINED ENV{USE_VX})
-    set(USE_VX $ENV{USE_VX})
-endif()
-
-if (NOT DEFINED EXPAT_ROOT AND DEFINED ENV{EXPAT_ROOT})
-    set(EXPAT_ROOT $ENV{EXPAT_ROOT})
 endif()
 
 if (DEFINED USE_VX)
@@ -99,11 +105,11 @@ if (DEFINED USE_VX)
         if (WIN32 OR WIN64)
             set(EXPAT_INCLUDE_DIRS "${EXPAT_ROOT}/include/expat")
             set(EXPAT_LIBRARIES "${EXPAT_ROOT}/lib/libexpat.lib")
-            set(EXPAT_FOUND 1)
+            set(EXPAT_FOUND 1 CACHE INTERNAL "use expat in nkit backend")
         else()
             set(EXPAT_INCLUDE_DIRS "${EXPAT_ROOT}/include")
             set(EXPAT_LIBRARIES "${EXPAT_ROOT}/lib/libexpat.a")
-            set(EXPAT_FOUND 1)
+            set(EXPAT_FOUND 1 CACHE INTERNAL "use expat in nkit backend")
         endif()
     else()
         find_package(EXPAT REQUIRED)
@@ -111,8 +117,8 @@ if (DEFINED USE_VX)
 endif()
 
 
-set(NKIT_VERSION_MAJOR 0)
-set(NKIT_VERSION_MINOR 9)
+set(NKIT_VERSION_MAJOR 1)
+set(NKIT_VERSION_MINOR 0)
 set(NKIT_VERSION_MICRO 0)
 set(NKIT_VERSION_BUILD 0)
 set(NKIT_VERSION "${NKIT_VERSION_MAJOR}.${NKIT_VERSION_MINOR}.${NKIT_VERSION_MICRO}.${NKIT_VERSION_BUILD}")

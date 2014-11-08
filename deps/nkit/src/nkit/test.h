@@ -21,6 +21,7 @@
 #include <string>
 
 #include "nkit/tools.h"
+#include "nkit/dynamic_json.h"
 
 namespace nkit
 {
@@ -28,27 +29,75 @@ namespace nkit
   {
     namespace detail
     {
+      // -----------------------------------------------------------------------
       class AssertError: public std::exception
       {
       public:
         AssertError(const std::string & file, uint32_t line,
             const std::string & text)
         {
-          text_ = file + ":" + nkit::string_cast(line) + ": error: " + text + "\n";
+          text_ = file + ":" + nkit::string_cast(line) + ": error: " + text +
+              "\n";
         }
         AssertError(const std::string & file, uint32_t line,
             const std::string & text1, const std::string & text2)
         {
           text_ = file + ":" + nkit::string_cast(line) + ": error: " + text1 +
-              + ": " + text2 + "\n";
+              ": " + text2 + "\n";
         }
-        ~AssertError() throw ()
+
+        ~AssertError() throw () {}
+        const char* what() const throw () { return text_.c_str(); }
+
+      private:
+        std::string text_;
+      };
+
+      // -----------------------------------------------------------------------
+      class EqualError: public std::exception
+      {
+      public:
+      template <typename T1, typename T2>
+        static void Throw(const std::string & file, uint32_t line,
+            const T1 & v1, const T2 & v2)
         {
+          std::stringstream tmp;
+          tmp << nkit::json_hr
+            << file << ":" << line
+            << ": error: Not equal:\nLEFT OPERAND:\n" << v1
+            << "\nRIGHT OPERAND:\n" << v2 << "\n";
+          throw EqualError(tmp.str());
         }
-        const char* what() const throw ()
+
+        ~EqualError() throw () {}
+        const char* what() const throw () { return text_.c_str(); }
+
+      private:
+        EqualError(const std::string & text) : text_(text) {}
+
+      private:
+        std::string text_;
+      };
+
+      // -----------------------------------------------------------------------
+      class AbortWithError: public std::exception
+      {
+      public:
+        AbortWithError(const std::string & file, uint32_t line,
+            const std::string & text)
         {
-          return text_.c_str();
+          text_ = file + ":" + nkit::string_cast(line) + ": error: " + text +
+              "\n";
         }
+        AbortWithError(const std::string & file, uint32_t line,
+            const std::string & text1, const std::string & text2)
+        {
+          text_ = file + ":" + nkit::string_cast(line) + ": error: " + text1 +
+              ": " + text2 + "\n";
+        }
+
+        ~AbortWithError() throw () {}
+        const char* what() const throw () { return text_.c_str(); }
 
       private:
         std::string text_;
@@ -66,15 +115,18 @@ namespace nkit
 #ifdef NKIT_TEST_FATAL_ERRORS
 
 #define NKIT_TEST_ASSERT(a) if (!(a)) \
-  nkit::abort_with_core(#a)
+    throw nkit::test::detail::AbortWithError(__FILE__, __LINE__, #a)
 
 #define NKIT_TEST_ASSERT_WITH_TEXT(a, s) if (!(a)) \
-    nkit::abort_with_core(#a + (s))
+    throw nkit::test::detail::AbortWithError(__FILE__, __LINE__, #a, (s))
 
 #else
 
 #define NKIT_TEST_ASSERT(a) if (!(a)) \
   throw nkit::test::detail::AssertError(__FILE__, __LINE__, #a)
+
+#define NKIT_TEST_EQ(a, b) if ((a) != (b)) \
+  nkit::test::detail::EqualError::Throw(__FILE__, __LINE__, (a), (b))
 
 #define NKIT_TEST_ASSERT_WITH_TEXT(a, s) if (!(a)) \
   throw nkit::test::detail::AssertError(__FILE__, __LINE__, #a, (s))

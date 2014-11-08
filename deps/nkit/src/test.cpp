@@ -14,11 +14,11 @@
    limitations under the License.
 */
 
+#include <string>
+
 #include "nkit/dynamic.h"
 #include "nkit/logger.h"
 #include "nkit/test.h"
-
-#include <iostream>
 
 namespace nkit
 {
@@ -60,6 +60,12 @@ namespace nkit
           f();
           NKIT_LOG_INFO(console_logger << name << "() is passed.");
           --error_count;
+        }
+        catch(const nkit::test::detail::AbortWithError & e)
+        {
+          NKIT_LOG_ERROR(console_logger << "\n\n" << name << "(): " << e.what()
+              << "\n");
+          exit(1);
         }
         catch(const std::exception & e)
         {

@@ -1,4 +1,5 @@
-["/person", {
+[
+"/person", {
    	"/key_for_default_value": "string|default_value",
     "/non_existing_key": "string"
     }

@@ -54,6 +54,7 @@ namespace nkit
   NKIT_DECLARE_CONST_STRING(S_STAR_)
   NKIT_DECLARE_CONST_STRING(S_LT_)
   NKIT_DECLARE_CONST_STRING(S_GT_)
+  NKIT_DECLARE_CONST_STRING(S_UTF_8_)
 
   time_t timezone_offset();
 }  // namespace nkit

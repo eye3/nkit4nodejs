@@ -409,6 +409,7 @@ namespace nkit
     explicit Dynamic(const uint64_t v);
 
     static Dynamic UInt64(const uint64_t v);
+    static Dynamic UInt64(const Dynamic & v);
 
     // BOOL
     explicit Dynamic(const bool v);
@@ -591,12 +592,9 @@ namespace nkit
       *out = GetUnsignedInteger();
     }
 
-    // converters
-    Dynamic ConvertToUINT() const;
-
     // in-place converters
     Dynamic & ConvertToDateTime();
-    Dynamic & ConvertToUINT();
+    Dynamic & ConvertToUInt64();
     Dynamic & ConvertToMongodbOID();
 
     // getters
@@ -612,6 +610,7 @@ namespace nkit
     operator const std::string & () const { return GetConstString(); }
     operator int64_t() const { return GetSignedInteger(); }
     operator uint64_t() const { return GetUnsignedInteger(); }
+    operator double() const { return GetFloat(); }
     operator bool() const;
 
     // compare operators
@@ -717,7 +716,7 @@ namespace nkit
     Dynamic & Update(const Dynamic & hash);
     void GetKeys(StringSet * const keys) const;
 
-    HashConstIterator begin_h() const;
+    HashConstIterator begin_h() const; // TODO: rename this methods & iterator
     HashConstIterator end_h() const;
     HashConstIterator FindByKey(const std::string & s) const;
 

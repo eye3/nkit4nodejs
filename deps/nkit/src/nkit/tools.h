@@ -25,14 +25,18 @@
 #include <nkit/ctools.h>
 #include <nkit/detail/push_options.h>
 
-#define NKIT_STATIC_ASSERT__(expr, message, line) \
-  typedef char static_assertion_##message##line[(expr)?1:-1]
+#if HAVE_STD_CXX_11
+# define NKIT_STATIC_ASSERT(expr, message) static_assert(expr, #message)
+#else
+# define NKIT_STATIC_ASSERT__(expr, message, line) \
+		typedef char static_assertion_##message##line[(expr)?1:-1]
 
-#define NKIT_STATIC_ASSERT_(expr, message, line) \
-  NKIT_STATIC_ASSERT__(expr, message, line)
+# define NKIT_STATIC_ASSERT_(expr, message, line) \
+		NKIT_STATIC_ASSERT__(expr, message, line)
 
-#define NKIT_STATIC_ASSERT(expr, message) \
-  NKIT_STATIC_ASSERT_(expr, message, __LINE__)
+# define NKIT_STATIC_ASSERT(expr, message) \
+		NKIT_STATIC_ASSERT_(expr, message, __LINE__)
+#endif
 
 #if defined(__GNUC__)
 #  define NKIT_UNUSED(v) v __attribute__ ((unused))
@@ -64,7 +68,26 @@ namespace nkit
   std::string get_process_id();
   std::string get_hostname();
   std::string get_username();
-  int64_t rename(const std::string & from, const std::string & to,
+  bool copy_file(const std::string & from, const std::string & to,
+      std::string * error);
+  bool move_file(const std::string & from, const std::string & to,
+      std::string * error);
+  bool delete_file(const std::string & path, std::string * error);
+
+  enum PathType
+  {
+    PATH_UNKNOWN = 0,
+    PATH_FILE,
+    PATH_DIR
+  };
+
+  bool is_path_exists(const std::string & path, PathType * pt);
+  bool path_is_file(const std::string & path);
+  bool path_is_dir(const std::string & path);
+
+  bool text_file_to_string(const std::string & path, std::string * out,
+      std::string * error);
+  bool string_to_text_file(const std::string & path, const std::string & str,
       std::string * error);
 
   //----------------------------------------------------------------------------
@@ -175,8 +198,6 @@ namespace nkit
   bool ends_with(const std::string & what, const std::string & with);
   bool ends_with(const std::string & what, const char * with);
 
-  bool text_file_to_string(const std::string & path, std::string * out);
-
   //----------------------------------------------------------------------------
   template<typename T>
   void join(const T & container, const std::string & delimiter,
@@ -223,9 +244,9 @@ namespace nkit
 
   //----------------------------------------------------------------------------
   template<typename charT>
-  struct iequal
+  struct icharequal
   {
-    iequal( const std::locale& loc ) : loc_(loc) {}
+    icharequal( const std::locale & loc ) : loc_(loc) {}
     bool operator()(charT ch1, charT ch2)
     {
         return std::tolower(ch1, loc_) == std::tolower(ch2, loc_);
@@ -239,14 +260,26 @@ namespace nkit
   // find substring (case insensitive)
   template<typename T>
   typename T::size_type stristr(const T& str1, const T& str2,
-      const std::locale& loc = std::locale())
+      const std::locale & loc = std::locale())
   {
     typename T::const_iterator it = std::search(str1.begin(), str1.end(),
-        str2.begin(), str2.end(), iequal<typename T::value_type>(loc));
+        str2.begin(), str2.end(), icharequal<typename T::value_type>(loc));
     if (it != str1.end())
       return it - str1.begin();
     else
       return T::npos;
+  }
+
+  //----------------------------------------------------------------------------
+  // compare strings (case insensitive)
+  template<typename T>
+  bool istrequal(const T& str1, const T& str2,
+          const std::locale & loc = std::locale())
+  {
+    if (str1.size() != str2.size())
+      return false;
+    return std::equal(str1.begin(), str1.end(),
+        str2.begin(), icharequal<typename T::value_type>(loc));
   }
 
   //----------------------------------------------------------------------------
@@ -484,5 +517,14 @@ namespace nkit
 
 #define NKIT_CHECK_OR_DIE(expr, message) \
   if (unlikely(!(expr))) nkit::abort_with_core((message));
+
+// UTF tools
+// String length:
+// - utf8:  1 character has max. 6 Bytes  plus 1 Byte  NULL-terminator.
+// - utf16: 1 character has max. 2 Shorts plus 1 Short NULL-terminator.
+
+bool    utf16_to_utf8(char *utf8, const uint16_t *utf16, uint8_t *shorts_read);
+bool    utf8_to_utf16(uint16_t *utf16, const char *utf8, uint8_t *bytes_read);
+uint8_t utf8_bytes(char first_utf8_byte);
 
 #endif // __NKIT__TOOLS__H__

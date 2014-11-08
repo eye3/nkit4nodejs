@@ -19,7 +19,7 @@
 
 #include <node_object_wrap.h>
 #include <nan.h>
-#include "nkit/vx.h"
+#include "nkit/xml2var.h"
 #include "v8_var_policy.h"
 
 namespace nkit
@@ -41,6 +41,7 @@ namespace nkit
 
     static NAN_METHOD(New);
     static NAN_METHOD(Feed);
+    static NAN_METHOD(Get);
     static NAN_METHOD(End);
 
     static v8::Persistent<v8::Function> constructor;
