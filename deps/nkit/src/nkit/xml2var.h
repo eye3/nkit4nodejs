@@ -116,7 +116,7 @@ namespace nkit
       p_.InitAsUndefined();
     }
 
-    static type GetUndefined()
+    static const type & GetUndefined()
     {
       return Policy::GetUndefined();
     }
@@ -1070,7 +1070,7 @@ namespace nkit
       return ret;
     }
 
-    typename T::type var(const std::string & target_name) const
+    const typename T::type & var(const std::string & target_name) const
     {
       typename RootTargets::const_iterator
         found = root_targets_.find(target_name),

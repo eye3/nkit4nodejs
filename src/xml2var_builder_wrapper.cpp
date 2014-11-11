@@ -191,7 +191,7 @@ namespace nkit
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
         args.This());
 
-    Local<Value> result;
+    Local<Object> result;
     std::string error;
     if (node::Buffer::HasInstance(args[0]))
     {
@@ -199,13 +199,15 @@ namespace nkit
       size_t length;
       get_buffer_data(args[0], &str, &length);
       std::string mapping_name(str, length);
-      result = NanNew(obj->builder_->var(mapping_name));
+      result = Local<Object>::Cast(
+          NanNew<Value>(obj->builder_->var(mapping_name)));
     }
     else if (args[0]->IsString())
     {
       String::Utf8Value utf8_value(args[0]);
       std::string mapping_name(*utf8_value, utf8_value.length());
-      result = NanNew(obj->builder_->var(mapping_name));
+      result = Local<Object>::Cast(
+          NanNew<Value>(obj->builder_->var(mapping_name)));
     }
     else
       return NanThrowTypeError("Expected mapping name: String or Buffer");

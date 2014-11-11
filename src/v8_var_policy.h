@@ -91,8 +91,9 @@ namespace nkit
         , pos_(END)
       {
         NanAssignPersistent(dict_, v8::Local<v8::Object>::Cast(dict));
-        NanAssignPersistent(keys_, dict_->GetOwnPropertyNames());
-        size_ = keys_->Length();
+        NanAssignPersistent(keys_,
+            NanNew(dict_)->GetOwnPropertyNames());
+        size_ = NanNew(keys_)->Length();
         if (size_ > 0)
         {
           pos_ = 0;
@@ -127,10 +128,10 @@ namespace nkit
 
       ~DictConstIterator()
       {
-        dict_.Dispose();
-        keys_.Dispose();
-        key_.Dispose();
-        value_.Dispose();
+        NanDisposePersistent(dict_);
+        NanDisposePersistent(keys_);
+        NanDisposePersistent(key_);
+        NanDisposePersistent(value_);
       }
 
       void FetchKeyValue()
@@ -138,8 +139,8 @@ namespace nkit
         if (pos_ == END)
           return;
 
-        NanAssignPersistent(key_, keys_->Get(pos_));
-        NanAssignPersistent(value_, dict_->Get(key_));
+        NanAssignPersistent(key_, NanNew(keys_)->Get(pos_));
+        NanAssignPersistent(value_, NanNew(dict_)->Get(NanNew(key_)));
       }
 
       bool operator != (const DictConstIterator & another)
@@ -161,19 +162,18 @@ namespace nkit
         if (pos_ == END)
           return S_EMPTY_;
 
-        NanScope();
-        v8::String::Utf8Value tmp(key_);
+        v8::String::Utf8Value tmp(NanNew(key_));
         std::string ret(*tmp, tmp.length());
         return ret;
       }
 
       type second() const
       {
-        NanScope();
+        NanEscapableScope();
         if (unlikely(pos_ == END))
-          NanReturnValue(v8::Local<v8::Value>(NanUndefined()));
+          return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
         else
-          NanReturnValue(NanNew(value_));
+          return NanEscapeScope(NanNew(value_));
       }
 
       v8::Persistent<v8::Object> dict_;
@@ -199,7 +199,7 @@ namespace nkit
         , pos_(0)
       {
         NanAssignPersistent(list_, v8::Local<v8::Array>::Cast(list));
-        size_ = list_->Length();
+        size_ = NanNew(list_)->Length();
       }
 
       ListConstIterator(const ListConstIterator & copy)
@@ -220,7 +220,7 @@ namespace nkit
 
       ~ListConstIterator()
       {
-        list_.Dispose();
+        NanDisposePersistent(list_);
       }
 
       bool operator != (const ListConstIterator & another)
@@ -237,11 +237,11 @@ namespace nkit
 
       type value() const
       {
-        NanScope();
+        NanEscapableScope();
         if (unlikely(pos_ == END))
-          NanReturnValue(v8::Local<v8::Value>(NanUndefined()));
+          return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
         else
-          NanReturnValue(list_->Get(pos_));
+          return NanEscapeScope(NanNew(list_)->Get(pos_));
       }
 
       v8::Persistent<v8::Array> list_;
@@ -277,14 +277,14 @@ namespace nkit
 
     static type Second(const DictConstIterator & it)
     {
-      NanScope();
-      NanReturnValue(it.second());
+      NanEscapableScope();
+      return NanEscapeScope(it.second());
     }
 
     static type Value(const ListConstIterator & it)
     {
-      NanScope();
-      NanReturnValue(it.value());
+      NanEscapableScope();
+      return NanEscapeScope(it.value());
     }
 
     static bool IsList(const type & data)
@@ -354,14 +354,14 @@ namespace nkit
     static type GetByKey(const type & data, const std::string & _key,
         bool * found)
     {
-      NanScope();
+      NanEscapableScope();
       v8::Local<v8::Object> dict = v8::Local<v8::Object>::Cast(data);
       v8::Local<v8::String> key = NanNew(_key.c_str());
       *found = dict->HasOwnProperty(key);
       if (likely(*found))
-        NanReturnValue(dict->Get(NanNew(key)));
+        return NanEscapeScope(dict->Get(NanNew(key)));
       else
-        NanReturnValue(v8::Local<v8::Value>(NanUndefined()));
+        return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
     }
 
     static v8::Persistent<v8::Function> date_constructor_;

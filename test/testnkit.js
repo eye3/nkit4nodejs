@@ -219,7 +219,7 @@ if (!deep_equal.deepEquals(res, builder.get("map_name"))) {
 }
 
 // -----------------------------------------------------------------------------
-data = {
+data = [{
     "$": {"p1": "v1 < > & \" '", "p2": "v2"},
     "_": "Hello world",
     "int": 1,
@@ -234,10 +234,25 @@ data = {
         "sub_string": "text < > & \" '",
         "sub_list": [[1], 2, 3]
     }
-};
+},{
+    "$": {"p1": "v1 < > & \" '", "p2": "v2"},
+    "_": "Hello world",
+    "int": 1,
+    "float": 1.123456789,
+    "cdata": "text < > & \" '",
+    "list": [[1, 2.333], 2, 3],
+    "datetime": new Date(1979, 1, 28, 12, 13, 14),
+    "dict": {
+        "$": {"a1": "V1", "a2": "V2"},
+        "sub_int": 1,
+        "sub_float": 1.11234567891234,
+        "sub_string": "text < > & \" '",
+        "sub_list": [[1], 2, 3]
+    }
+}];
 
 options = {
-    "rootname": "ROOT",
+//    "rootname": "ROOT",
     "itemname": "item",
     "xmldec": {
         "version": "1.0",

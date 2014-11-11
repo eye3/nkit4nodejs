@@ -238,7 +238,7 @@ namespace nkit
         {
           builder.BeginElement(
                   use_item_name ? item_name :
-                          options_->item_name_ + string_cast(counter),
+                          options_->item_name_, // + string_cast(counter),
                   T::Value(it), out);
           if (!Convert("", T::Value(it), builder, out, error))
             return false;
