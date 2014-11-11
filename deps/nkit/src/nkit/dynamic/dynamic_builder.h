@@ -3,24 +3,32 @@
 
 #include "nkit/dynamic_json.h"
 #include "nkit/xml2var.h"
+#include "nkit/var2xml.h"
 
 namespace nkit
 {
-  class DynamicPolicy
+  class DynamicBuilderPolicy
   {
   private:
-    friend class VarBuilder<DynamicPolicy>;
+    friend class VarBuilder<DynamicBuilderPolicy>;
 
+  public:
     typedef Dynamic type;
 
-    DynamicPolicy(const detail::Options & options)
+    static const type & GetUndefined()
+    {
+      return D_NONE;
+    }
+
+  private:
+    DynamicBuilderPolicy(const detail::Options & options)
       : object_()
       //, options_(options)
     {
       NKIT_FORCE_USED(options);
     }
 
-    ~DynamicPolicy() {}
+    ~DynamicBuilderPolicy() {}
 
     void InitAsBoolean( std::string const & value )
     {
@@ -105,7 +113,105 @@ namespace nkit
     //const detail::Options & options_;
   };
 
-  typedef VarBuilder<DynamicPolicy> DynamicBuilder;
+  typedef VarBuilder<DynamicBuilderPolicy> DynamicBuilder;
+
+  //----------------------------------------------------------------------------
+  struct DynamicReaderPolicy
+  {
+    typedef Dynamic type;
+    typedef Dynamic::DictConstIterator DictConstIterator;
+    typedef Dynamic::ListConstIterator ListConstIterator;
+
+    static DictConstIterator begin_d(const Dynamic & data)
+    {
+      return data.begin_d();
+    }
+
+    static DictConstIterator end_d(const Dynamic & data)
+    {
+      return data.end_d();
+    }
+
+    static ListConstIterator begin_l(const Dynamic & data)
+    {
+      return data.begin_l();
+    }
+
+    static ListConstIterator end_l(const Dynamic & data)
+    {
+      return data.end_l();
+    }
+
+    static std::string First(const DictConstIterator & it)
+    {
+      return it->first;
+    }
+
+    static Dynamic Second(const DictConstIterator & it)
+    {
+      return it->second;
+    }
+
+    static const Dynamic & Value(const ListConstIterator & it)
+    {
+      return *it;
+    }
+
+    static bool IsList(const Dynamic & data)
+    {
+      return data.IsList();
+    }
+
+    static bool IsDict(const Dynamic & data)
+    {
+      return data.IsDict();
+    }
+
+    static bool IsString(const Dynamic & data)
+    {
+      return data.IsString();
+    }
+
+    static bool IsFloat(const Dynamic & data)
+    {
+      return data.IsFloat();
+    }
+
+    static bool IsDateTime(const Dynamic & data)
+    {
+      return data.IsDateTime();
+    }
+
+    static std::string GetString(const Dynamic & data)
+    {
+      return data.GetString();
+    }
+
+    static std::string GetStringAsDateTime(const Dynamic & data,
+            const std::string & format)
+    {
+      return data.GetString(format.c_str());
+    }
+
+    static std::string GetStringAsFloat(const Dynamic & data,
+            size_t precision)
+    {
+      return string_cast(data.GetFloat(), precision);
+    }
+
+    static Dynamic GetByKey(const Dynamic & data, const std::string & key,
+        bool * found)
+    {
+      const Dynamic * ret = NULL;
+      *found = data.Get(key, &ret);
+      if (*found)
+        return *ret;
+      else
+        return Dynamic();
+    }
+  };
+
+  typedef Var2XmlConverter<DynamicReaderPolicy> Dynamic2XmlConverter;
 
 } // namespace nkit
 

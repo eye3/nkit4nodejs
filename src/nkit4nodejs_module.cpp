@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#include <nan.h>
 #include <node.h>
 #include "xml2var_builder_wrapper.h"
 #include "v8_var_policy.h"
@@ -25,7 +26,7 @@ namespace nkit
   void InitModule(Handle<Object> exports)
   {
     Xml2VarBuilderWrapper::Init(exports);
-    nkit::V8VarPolicy::Init();
+    nkit::V8BuilderPolicy::Init();
   }
 
 }  // namespace nkit

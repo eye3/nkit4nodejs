@@ -1,9 +1,16 @@
 {
   'target_defaults': {
-    'default_configuration': 'Debug',
+    'default_configuration': 'Release',
     'configurations': {
       'Debug': {
         'defines': [ 'DEBUG', '_DEBUG' ],
+        'conditions': [
+          ['OS!="win"',{
+            'cflags': [
+              '-std=gnu++0x',
+            ],
+          }],
+        ],
         'msvs_settings': {
           'VCCLCompilerTool': {
             'RuntimeLibrary': 1, # static debug
@@ -13,6 +20,13 @@
       },
       'Release': {
         'defines': [ 'NDEBUG' ],
+        'conditions': [
+          ['OS=="win"', {
+            'cflags': [
+              '-std=gnu++0x',
+            ],
+          }],
+        ],
         'msvs_settings': {
           'VCCLCompilerTool': {
             'RuntimeLibrary': 0, # static release

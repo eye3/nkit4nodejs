@@ -20,26 +20,12 @@
 
 #include "xml2var_builder_wrapper.h"
 
+#include "nkit/xml2var.h"
+#include "nkit/var2xml.h"
+
 namespace nkit
 {
   using namespace v8;
-
-  Persistent<Function> Xml2VarBuilderWrapper::constructor;
-
-  //------------------------------------------------------------------------------
-  void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
-  {
-    // Prepare constructor template
-    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(
-            Xml2VarBuilderWrapper::New);
-    tpl->SetClassName(NanNew("Xml2VarBuilder"));
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "feed", Xml2VarBuilderWrapper::Feed);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "end", Xml2VarBuilderWrapper::End);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "get", Xml2VarBuilderWrapper::Get);
-    NanAssignPersistent(constructor, tpl->GetFunction());
-    exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
-  }
 
   //------------------------------------------------------------------------------
   template <typename T>
@@ -73,6 +59,49 @@ namespace nkit
     else
       return false;
     return true;
+  }
+
+  //------------------------------------------------------------------------------
+  NAN_METHOD(var2xml)
+  {
+    NanScope();
+
+    std::string options("{}");
+    if (1 > args.Length())
+      return NanThrowError("Expected JavaScript structure"
+          " and/or options object");
+    else if (2 <= args.Length())
+    {
+      if (!parse_object(args[1], &options))
+        return NanThrowError("Options parameter must be JSON-string or Object");
+    }
+
+    std::string ret, error;
+    if (!V8ToXmlConverter::Process(options, args[0], &ret, &error))
+      return NanThrowError(error.c_str());
+
+    NanReturnValue(NanNewBufferHandle(ret.c_str(), ret.size()));
+  }
+
+  //------------------------------------------------------------------------------
+  Persistent<Function> Xml2VarBuilderWrapper::constructor;
+
+  //------------------------------------------------------------------------------
+  void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
+  {
+    // Prepare constructor template
+    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(
+            Xml2VarBuilderWrapper::New);
+    tpl->SetClassName(NanNew("Xml2VarBuilder"));
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "feed", Xml2VarBuilderWrapper::Feed);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "end", Xml2VarBuilderWrapper::End);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "get", Xml2VarBuilderWrapper::Get);
+    NanAssignPersistent(constructor, tpl->GetFunction());
+    exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
+    exports->Set(NanNew("var2xml"),
+        NanNew<FunctionTemplate>(var2xml)->GetFunction());
+
   }
 
   //------------------------------------------------------------------------------
@@ -121,7 +150,7 @@ namespace nkit
     NanScope();
 
     if (1 > args.Length())
-      return NanThrowError("Expected arguments");
+      return NanThrowError("Expected String or Buffer parameter");
 
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
         args.This());
@@ -143,7 +172,7 @@ namespace nkit
           *utf8_value, utf8_value.length(), false, &error);
     }
     else
-      return NanThrowTypeError("Wrong type of arguments");
+      return NanThrowTypeError("Expected String or Buffer parameter");
 
     if (!result)
       return NanThrowError(error.c_str());
@@ -157,7 +186,7 @@ namespace nkit
     NanScope();
 
     if (1 > args.Length())
-      return NanThrowError("Expected arguments");
+      return NanThrowError("Expected mapping name: String or Buffer");
 
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
         args.This());
@@ -179,7 +208,7 @@ namespace nkit
       result = NanNew(obj->builder_->var(mapping_name));
     }
     else
-      return NanThrowTypeError("Wrong type of arguments");
+      return NanThrowTypeError("Expected mapping name: String or Buffer");
 
     NanReturnValue(result);
   }

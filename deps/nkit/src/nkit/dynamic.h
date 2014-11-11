@@ -388,8 +388,8 @@ namespace nkit
     static MongodbOIDType MONGODB_OID_MARKER;
     struct NoneType { NoneType() {} };
     static NoneType NONE_MARKER;
-    typedef DynamicVector::const_iterator ArrayConstIterator;
-    typedef StringDynamicMap::const_iterator HashConstIterator;
+    typedef DynamicVector::const_iterator ListConstIterator;
+    typedef StringDynamicMap::const_iterator DictConstIterator;
 
   public: // methods
     //--------------------------------------------------------------------------
@@ -693,8 +693,8 @@ namespace nkit
     void Join(const std::string & delimiter, const std::string & prefix,
         const std::string & postfix, std::string * const out) const;
 
-    ArrayConstIterator begin_l() const;
-    ArrayConstIterator end_l() const;
+    ListConstIterator begin_l() const;
+    ListConstIterator end_l() const;
 
     // DICT specific
     Dynamic & operator[](const char * const key);
@@ -716,9 +716,9 @@ namespace nkit
     Dynamic & Update(const Dynamic & hash);
     void GetKeys(StringSet * const keys) const;
 
-    HashConstIterator begin_h() const; // TODO: rename this methods & iterator
-    HashConstIterator end_h() const;
-    HashConstIterator FindByKey(const std::string & s) const;
+    DictConstIterator begin_d() const; // TODO: rename this methods & iterator
+    DictConstIterator end_d() const;
+    DictConstIterator FindByKey(const std::string & s) const;
 
     // TABLE specific
     class TableIterator

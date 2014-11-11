@@ -784,20 +784,20 @@ namespace nkit
       return false;
   }
 
-  Dynamic::ArrayConstIterator Dynamic::begin_l() const
+  Dynamic::ListConstIterator Dynamic::begin_l() const
   {
     if (IsList())
-      return Dynamic::ArrayConstIterator(detail::Impl<detail::LIST>::Begin(*this));
+      return Dynamic::ListConstIterator(detail::Impl<detail::LIST>::Begin(*this));
     else
-      return Dynamic::ArrayConstIterator();
+      return Dynamic::ListConstIterator();
   }
 
-  Dynamic::ArrayConstIterator Dynamic::end_l() const
+  Dynamic::ListConstIterator Dynamic::end_l() const
   {
     if (IsList())
-      return Dynamic::ArrayConstIterator(detail::Impl<detail::LIST>::End(*this));
+      return Dynamic::ListConstIterator(detail::Impl<detail::LIST>::End(*this));
     else
-      return Dynamic::ArrayConstIterator();
+      return Dynamic::ListConstIterator();
   }
 
   void Dynamic::PushBack(const Dynamic & item)
@@ -1016,28 +1016,28 @@ namespace nkit
     else
       return false;
   }
-  Dynamic::HashConstIterator Dynamic::begin_h() const
+  Dynamic::DictConstIterator Dynamic::begin_d() const
   {
     if (IsDict())
       return detail::Impl<detail::DICT>::Begin(*this);
     else
-      return Dynamic::HashConstIterator();
+      return Dynamic::DictConstIterator();
   }
 
-  Dynamic::HashConstIterator Dynamic::end_h() const
+  Dynamic::DictConstIterator Dynamic::end_d() const
   {
     if (IsDict())
       return detail::Impl<detail::DICT>::End(*this);
     else
-      return Dynamic::HashConstIterator();
+      return Dynamic::DictConstIterator();
   }
 
-  Dynamic::HashConstIterator Dynamic::FindByKey(const std::string & key) const
+  Dynamic::DictConstIterator Dynamic::FindByKey(const std::string & key) const
   {
     if (IsDict())
       return detail::Impl<detail::DICT>::Find(*this, key);
     else
-      return Dynamic::HashConstIterator();
+      return Dynamic::DictConstIterator();
   }
 /*
   bool Dynamic::SaveTo(StringMap * const out) const

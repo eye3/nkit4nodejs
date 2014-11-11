@@ -19,12 +19,11 @@
 
 #include <node_object_wrap.h>
 #include <nan.h>
-#include "nkit/xml2var.h"
 #include "v8_var_policy.h"
 
 namespace nkit
 {
-  typedef VarBuilder<V8VarPolicy> V8VarBuilder;
+  typedef VarBuilder<V8BuilderPolicy> V8VarBuilder;
 
   class Xml2VarBuilderWrapper: public node::ObjectWrap
   {

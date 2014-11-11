@@ -5,11 +5,10 @@
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
 Node.js server. There is the same port to Python - [nkit4py](https://github.com/eye3/nkit4py.git)
 
-Currently, only an XML to Javascript object converter and filter is exported to 
-Node.js from nkit library.
+With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
-With nkit4nodejs module you can:
- 
+### With XML-to-JavaScript-Data possibilities you can:
+
 - Create JavaScript data structures, which are different from the structure 
   of XML source.
   
@@ -19,9 +18,10 @@ With nkit4nodejs module you can:
   want to use for building JavaScript data structures.
   Thus, it's possible to filter out unnecessary XML-data.
   
-- Explicitly define Javascript type of scalar (primitive) data,
-  fetched from XML source.
+- Explicitly define Javascript type of scalar (primitive) data, fetched from XML source.
   Integers, numbers, strings, datetimes and booleans are supported.
+  
+- Control progress of chunked download of big XML string and cancel this download
 
 - With extra options you can tune some aspects of conversion:
 	- trim strings
@@ -36,9 +36,19 @@ JavaScript. For example, nkit4nodejs is about 10 times faster than popular
 20Mb XML file (see test/compare.js for comparison code).
 
 Module supports not only native Expat XML encodings, but also many others
-(see /deps/nkit/src/vx/encodings_inc_gen.cpp)
+(see /deps/nkit/src/encoding/langs.inc)
 
-### NOTE: API of nkit4nodejs version 2.0 doesn't compatible with version 1.0. See [Quick Start](https://github.com/eye3/nkit4nodejs.git/?#quick-start) for an example.
+### With JavaScript-Data-to-XML possibilities you can:
+
+- Define root element name of result xml string
+- Define item element name for lists
+- Define encoding of result xml string
+- Pretty print with custom indentation and newline characters
+- Define special object key name for attributes
+- Define special object key name for text
+- Define which element of result xml string must contain CDATA section
+- Define precision for float numbers
+- Define format for Date objects
 
 # Installation
 
@@ -80,7 +90,7 @@ or
     npm install nkit4nodejs
 
     
-# Usage
+# XML to JavaScript Data conversion
 
 Suppose, we have this xml string:
 
@@ -520,7 +530,7 @@ console.error(JSON.stringify(phones, null, 2));
 
 ```
 
-# Options
+## Options
 
 With options you can tune some aspects of conversion:
  
@@ -556,7 +566,7 @@ Following options are supported:
 new line, carriage return and space.
 
 
-# Notes
+## Notes
 
 Possible scalar types:
 
@@ -587,6 +597,52 @@ If you want to change key names, use this notation:
 
     "/path/to/element -> newKeyName": ...
     "/path/to/element/@attribute -> newKeyName": ...
+
+# JavaScript Data XML to conversion
+
+## Quick start
+
+```javascript
+var nkit = require('nkit4nodejs');
+
+data = {
+    "$": {"p1": "v1 < > & \" '", "p3": "v3"},
+    "_": "Hello world",
+    "int": 1,
+    "float": 1.123456789,
+    "cdata": "text < > & \" '",
+    "list": [[1, 2.333], 2, 3],
+    "datetime": new Date(1979, 1, 28, 12, 13, 14),
+    "dict": {
+        "$": {"a1": "V1", "a2": "V2"},
+        "sub_int": 1,
+        "sub_float": 1.11234567891234,
+        "sub_string": "text < > & \" '",
+        "sub_list": [[1], 2, 3]
+    }
+};
+
+options = {
+    "rootname": "ROOT",
+    "itemname": "item",
+    "xmldec": {
+        "version": "1.0",
+        "encoding": "UTF-8",
+        "standalone": true
+    },
+    "pretty": {
+        "indent": "  ",
+        "newline": "\n"
+    },
+    "attrkey": "$",
+    "textkey": "_",
+    "cdata": ["cdata", "float"],
+    "float_precision": 10,
+    "date_time_format": "%Y-%m-%d %H:%M:%S %z"
+};
+
+console.log(nkit.var2xml(data, options).toString());
+```
 
 # Author
 

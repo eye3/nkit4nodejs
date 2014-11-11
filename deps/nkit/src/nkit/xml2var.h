@@ -116,6 +116,11 @@ namespace nkit
       p_.InitAsUndefined();
     }
 
+    static type GetUndefined()
+    {
+      return Policy::GetUndefined();
+    }
+
     void InitAsFloat( std::string const & value )
     {
       p_.InitAsFloatFormat( value, NKIT_FORMAT_DOUBLE );
@@ -420,11 +425,6 @@ namespace nkit
       return Ptr(new TargetItem(path, target));
     }
 
-//    Ptr Clone() const
-//    {
-//      return Ptr(new TargetItem(*this));
-//    }
-//
     ~TargetItem() {}
 
     TargetPtr target() const { return target_; }
@@ -548,15 +548,6 @@ namespace nkit
         target_item->SetParentTarget(this);
     }
 
-//    TargetPtr Clone() const
-//    {
-//      Ptr result(new ObjectTarget);
-//      ConstIterator it = target_items_.begin(), end = target_items_.end();
-//      for (; it != end; ++it)
-//        result->PutTargetItem((*it)->Clone());
-//      return result;
-//    }
-//
   private:
     ObjectTarget(const detail::Options::Ptr & options)
       : Target<T>(options)
@@ -631,7 +622,6 @@ namespace nkit
 
   private:
     TargetItemVector target_items_;
-    //const detail::Options::Ptr options_;
   };
 
   //----------------------------------------------------------------------------
@@ -661,18 +651,6 @@ namespace nkit
       target_item->SetParentTarget(this);
     }
 
-//    TargetPtr Clone() const
-//    {
-//      typename ListTarget::Ptr result(new ListTarget);
-//      ConstIterator it = target_items_.begin(), end = target_items_.end();
-//      for (; it != end; ++it)
-//      {
-//        TargetItemPtr target_item = (*it)->Clone();
-//        result->PutTargetItem(target_item);
-//      }
-//      return result;
-//    }
-//
   private:
     ListTarget(const detail::Options::Ptr & options)
       : Target<T>(options)
@@ -849,11 +827,6 @@ namespace nkit
       return has_default_value_ && use_default_value_;
     }
 
-//    TargetPtr Clone() const
-//    {
-//      return TargetPtr(new ScalarTarget(*this));
-//    }
-//
     virtual typename T::type const & var() const
     {
       if (unlikely(must_use_default_value()))
@@ -1097,19 +1070,15 @@ namespace nkit
       return ret;
     }
 
-    typename T::type const & var(const std::string & target_name) const
+    typename T::type var(const std::string & target_name) const
     {
       typename RootTargets::const_iterator
         found = root_targets_.find(target_name),
         not_found = root_targets_.end();
-      if (found == not_found)
-      {
-        T builder(options_);
-        builder.InitAsUndefined(); // TODO: write static method T::GetUndefined()
-        return builder.get();
-      }
-
-      return found->second->var();
+      if (unlikely(found == not_found))
+        return T::GetUndefined();
+      else
+        return found->second->var();
     }
 
   private:
@@ -1147,30 +1116,6 @@ namespace nkit
             mask_target_item->OnEnter(attrs);
         }
       }
-
-//      // fill from mask-target-items
-//      if (!current_node_->is_filled_from_mask_target_items())
-//      {
-//        TargetItemVectorIterator it = mask_target_items_.begin(),
-//            end = mask_target_items_.end();
-//        for (; it != end; ++it)
-//        {
-//          TargetItemPtr mask_target_item = (*it);
-//          if (mask_target_item->fool_path() == current_path_)
-//          {
-//            TargetItemPtr concret_target_item =
-//                mask_target_item->CloneWithNewPathKey(current_path_, el);
-//            if (!concret_target_item)
-//              continue;
-//            if (concret_target_item->parent_target())
-//              concret_target_item->parent_target()->PutTargetItem(
-//                concret_target_item);
-//            current_node_->AppendTargetItem(concret_target_item);
-//          }
-//        }
-//
-//        current_node_->MarkFilledFromMaskTargetItems();
-//      }
 
       current_node_->OnEnter(attrs);
       return true;
@@ -1356,9 +1301,6 @@ namespace nkit
       if (!child_target_item)
         return TargetItemPtr();
 
-//      if (fool_path.is_mask())
-//        child_target_item->SetParentTarget(target.get());
-//      else if (!child_target_item->fool_path().is_mask())
         target->PutTargetItem(child_target_item);
 
       TargetItemPtr target_item = TargetItem<T>::Create(fool_path,
@@ -1416,9 +1358,6 @@ namespace nkit
 
         child_target_item->SetKey(key);
 
-//        if (fool_path.is_mask())
-//          child_target_item->SetParentTarget(target.get());
-//        else
           target->PutTargetItem(child_target_item);
       }
 
@@ -1507,7 +1446,7 @@ namespace nkit
     bool first_node_;
     String2IdMap str2id_;
     TargetItemVector mask_target_items_;
-  };
+  }; // Xml2VarBuilder
 
 } // namespace nkit
 

@@ -1,4 +1,5 @@
 #include "nkit/xml2var.h"
+#include "nkit/var2xml.h"
 
 namespace nkit
 {
@@ -7,6 +8,9 @@ namespace nkit
     const bool Options::TRIM_DEFAULT = false;
     const bool Options::UNICODE_DEFAULT = true;
   }
+
+  const size_t Var2XmlOptions::DEFAULT_FLOAT_PRECISION = 2;
+
   //----------------------------------------------------------------------------
   std::ostream & operator <<(std::ostream & stream, const Path & path)
   {

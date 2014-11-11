@@ -28,6 +28,9 @@ namespace nkit
   extern const char * GMT_FORMAT_;               // "%a, %d %b %Y %H:%M:%S GMT"
   extern const char * Y_m_d_H_M_S_;              // "%Y-%m-%d %H:%M:%S"
   extern const char * DATE_TIME_DEFAULT_FORMAT_; // "%Y-%m-%d %H:%M:%S"
+  extern const std::string S_DATE_TIME_DEFAULT_FORMAT_;
+
+  extern const std::string S_FLOAT_DEFAULT_;
 
   extern uint64_t MAX_UINT64_VALUE;
   extern uint32_t MAX_UINT32_VALUE;

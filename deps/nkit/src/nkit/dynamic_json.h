@@ -213,7 +213,7 @@ namespace nkit
     template<typename T>
     bool write_dict(const Dynamic & v, T * t)
     {
-      Dynamic::HashConstIterator h_it, end_h;
+      Dynamic::DictConstIterator h_it, end_d;
       size_t size = v.size();
       if (unlikely(size == 0))
       {
@@ -223,7 +223,7 @@ namespace nkit
       {
         __NKIT__WRITE__JSON__("{", t);
 
-        h_it = v.begin_h();
+        h_it = v.begin_d();
         for (; size > 1; ++h_it, --size)
         {
           if (unlikely(!write_dict_item(h_it->first, h_it->second, t)))
@@ -251,7 +251,7 @@ namespace nkit
       else
       {
         __NKIT__WRITE__JSON__("[", t);
-        Dynamic::ArrayConstIterator a = v.begin_l();
+        Dynamic::ListConstIterator a = v.begin_l();
         for (; size > 1; ++a, --size)
         {
           if (unlikely(!DynamicToJson(*a, t)))
