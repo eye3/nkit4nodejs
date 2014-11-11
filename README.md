@@ -491,8 +491,9 @@ Value of persons:
 ]
 ```
 
-	
 ## Building data structures from big XML source, reading it chunk by chunk
+
+You can use builder.get(mapping_name) method to get currently constructed data.
 
 ```javascript
 var fs = require('fs');
@@ -504,6 +505,9 @@ var rstream = fs.createReadStream(xmlFile);
 rstream
     .on('data', function (chunk) {
         builder.feed(chunk);
+        var list = builder.get("any_name"); // get currently constructed list
+        console.log(list.length);
+        //list.splice(0); // uncomment this to clear list every time
     })
     .on('end', function () {
         var result = builder.end()["any_name"];
