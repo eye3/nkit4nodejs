@@ -602,7 +602,7 @@ If you want to change key names, use this notation:
     "/path/to/element -> newKeyName": ...
     "/path/to/element/@attribute -> newKeyName": ...
 
-# JavaScript Data XML to conversion
+# JavaScript Data to XML conversion
 
 ## Quick start
 
