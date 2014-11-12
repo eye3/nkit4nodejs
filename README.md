@@ -709,9 +709,11 @@ Sub-options:
 - **textkey**: any string for Object key name, that holds text for element. Default '_';
 - **cdata**: array of key names whose values mast be print to XML string as CDATA;
 - **float_precision**: for float numbers - number of symbols after '.' to be printed;
-- **date_time_format**: format string of Date objects;
-- **bool_true**: representation for 'true' boolean value;
-- **bool_false**: representation for 'false' boolean value; 
+- **date_time_format**: format string of Date objects.
+See [man strftime](http://www.cplusplus.com/reference/ctime/strftime/?kw=strftime) for datetime formatting syntax.
+Default "%Y-%m-%d %H:%M:%S";
+- **bool_true**: representation for 'true' boolean value. Default '1';
+- **bool_false**: representation for 'false' boolean value. Default '0';
 
 
 # Author
