@@ -1,5 +1,34 @@
 [![Build Status](https://travis-ci.org/eye3/nkit4nodejs.svg?branch=master)](https://travis-ci.org/eye3/nkit4nodejs)
 
+
+
+<!-- toc -->
+
+* [Introduction](#introduction)
+    * [With XML-to-JavaScript-data possibilities you can:](#with-xml-to-javascript-data-possibilities-you-can)
+    * [With JavaScript-Data-to-XML possibilities you can:](#with-javascript-data-to-xml-possibilities-you-can)
+* [Installation](#installation)
+  * [Requirements](#requirements)
+  * [On Linux & Mac OS](#on-linux-mac-os)
+  * [On Windows](#on-windows)
+* [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
+  * [Quick start](#quick-start)
+  * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
+  * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
+  * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
+  * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
+  * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
+  * [If you want some JSON](#if-you-want-some-json)
+  * [Options](#options)
+  * [Notes](#notes)
+* [JavaScript Data to XML conversion](#javascript-data-to-xml-conversion)
+  * [Quick start](#quick-start)
+  * [Options](#options)
+* [Author](#author)
+
+<!-- toc stop -->
+
+
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
