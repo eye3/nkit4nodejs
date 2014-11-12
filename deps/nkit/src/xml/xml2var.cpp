@@ -10,6 +10,7 @@ namespace nkit
   }
 
   const size_t Var2XmlOptions::DEFAULT_FLOAT_PRECISION = 2;
+  const std::string Var2XmlOptions::ITEM_NAME_DEFAULT = "item";
   const std::string Var2XmlOptions::BOOL_TRUE = "1";
   const std::string Var2XmlOptions::BOOL_FALSE = "0";
   const std::string Var2XmlOptions::ATTR_KEY_DEFAULT = "$";

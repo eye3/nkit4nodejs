@@ -690,7 +690,7 @@ Output:
 Following options are supported:
 
 - **rootname**: name of root element;
-- **itemname**: default element name for JavaScript array items;
+- **itemname**: default element name for JavaScript array items. Default - 'item';
 - **xmldec**: XML declaration. Default - NO XML declaration.
 If no *rootname* has been provided then *xmldec* has no effect.
 If no *xmldec* or *rootname* has been provided then *itemname* will be used as name for root objects.

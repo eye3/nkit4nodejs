@@ -28,6 +28,7 @@ namespace nkit
   struct Var2XmlOptions
   {
     static const size_t DEFAULT_FLOAT_PRECISION;
+    static const std::string ITEM_NAME_DEFAULT;
     static const std::string BOOL_TRUE;
     static const std::string BOOL_FALSE;
     static const std::string ATTR_KEY_DEFAULT;
@@ -52,7 +53,7 @@ namespace nkit
       bool standalone;
       op
         .Get(".rootname", &res->root_name_, S_EMPTY_)
-        .Get(".itemname", &res->item_name_, S_EMPTY_)
+        .Get(".itemname", &res->item_name_, ITEM_NAME_DEFAULT)
         .Get(".attrkey", &res->attr_key_, ATTR_KEY_DEFAULT)
         .Get(".textkey", &res->text_key_, TEXT_KEY_DEFAULT)
         .Get(".xmldec.version", &version, S_EMPTY_)
