@@ -689,31 +689,30 @@ Output:
 
 Following options are supported:
 
-- **rootname**: name of root element
-- **itemname**: element name for each item of JavaScript array
+- **rootname**: name of root element;
+- **itemname**: element name for each item of JavaScript array;
 - **xmldec**: XML declaration. Default - NO XML declaration.
 If no *rootname* has been provided then *xmldec* has no effect.
 If no *xmldec* or *rootname* has been provided then *itemname* will be used as name for root objects.
 Sub-options:
 
-    - *version*: xml version (always 1.0)
-    - *encoding*: "UTF-8" or some other encodings (see /deps/nkit/src/encoding/langs.inc)
-    - *standalone*: true or false
+    - *version*: xml version (always 1.0);
+    - *encoding*: "UTF-8" or some other encodings (see /deps/nkit/src/encoding/langs.inc);
+    - *standalone*: true or false;
 
 - **pretty**: pretty XML - with indents and custom newlines. Default - NO pretty print, i.e. print XML in single line. Sub-options:
 
-    - *indent*: any string for indentation
-    - *newline*: any string for line ending (default '\n')
+    - *indent*: any string for indentation;
+    - *newline*: any string for line ending (default '\n');
     
-- **attrkey**: any string for Object key name, that holds attributes for element
-- **textkey**: any string for Object key name, that holds text for element
-- **cdata**: array of key names whose values mast be print to XML string as CDATA
-- **float_precision**: for float numbers - number of symbols after '.' to be printed
-- **date_time_format**: format string of Date objects
-- **bool_true**: representation for 'true' boolean value
-- **bool_false**: representation for 'false' boolean value 
+- **attrkey**: any string for Object key name, that holds attributes for element. Default '$';
+- **textkey**: any string for Object key name, that holds text for element. Default '_';
+- **cdata**: array of key names whose values mast be print to XML string as CDATA;
+- **float_precision**: for float numbers - number of symbols after '.' to be printed;
+- **date_time_format**: format string of Date objects;
+- **bool_true**: representation for 'true' boolean value;
+- **bool_false**: representation for 'false' boolean value; 
 
-If no xmldec and rootname 
 
 # Author
 

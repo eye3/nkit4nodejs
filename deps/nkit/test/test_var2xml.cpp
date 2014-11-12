@@ -22,8 +22,8 @@ namespace nkit_test
                "indent" << "  "
             << "newline" << "\n"
          )
-      << "attrkey" << "$"
-      << "textkey" << "_"
+//      << "attrkey" << "$"
+//      << "textkey" << "_"
       << "cdata" << DLIST("cdata")
       << "bool_true" << "TRUE"
       << "bool_false" << "FALSE"

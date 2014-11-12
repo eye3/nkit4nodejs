@@ -252,7 +252,7 @@ data = [{
 }];
 
 options = {
-//    "rootname": "ROOT",
+    "rootname": "ROOT",
     "itemname": "item",
     "xmldec": {
         "version": "1.0",

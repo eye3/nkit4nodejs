@@ -194,9 +194,16 @@ namespace nkit
       const std::string & white_spaces);
 
   bool starts_with(const std::string & what, const std::string & with);
+  bool istarts_with(const std::string & what, const std::string & with,
+      const std::locale & loc = std::locale());
   bool starts_with(const std::string & what, const char * with);
+  bool istarts_with(const std::string & what, const char * with,
+      const std::locale & loc = std::locale());
   bool ends_with(const std::string & what, const std::string & with);
+  bool iends_with(const std::string & what, const std::string & with,
+      const std::locale & loc = std::locale());
   bool ends_with(const std::string & what, const char * with);
+  bool iends_with(const std::string & what, const char * with);
 
   //----------------------------------------------------------------------------
   template<typename T>

@@ -12,6 +12,8 @@ namespace nkit
   const size_t Var2XmlOptions::DEFAULT_FLOAT_PRECISION = 2;
   const std::string Var2XmlOptions::BOOL_TRUE = "1";
   const std::string Var2XmlOptions::BOOL_FALSE = "0";
+  const std::string Var2XmlOptions::ATTR_KEY_DEFAULT = "$";
+  const std::string Var2XmlOptions::TEXT_KEY_DEFAULT = "_";
 
   //----------------------------------------------------------------------------
   std::ostream & operator <<(std::ostream & stream, const Path & path)

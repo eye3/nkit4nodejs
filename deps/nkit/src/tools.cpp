@@ -406,42 +406,21 @@ namespace nkit
     if (newline)
       out << '\n';
   }
-/*
-  void print(std::ostream & out, const StringMap & map, std::string offset)
-  {
-    out << offset << "<STRING_MAP>\n";
-    StringMap::const_iterator it = map.begin(), end = map.end();
-    for (; it != end; ++it)
-    {
-      std::string item_offset = offset + "  ";
-      print(out, it->first, item_offset, false);
-      out << ": ";
-      print(out, it->second, item_offset, true);
-    }
-    out << offset << "</STRING_MAP>\n";
-  }
 
-  template <typename K, typename V>
-  void print(std::ostream & out, const typename std::map<K, V> & map,
-      std::string offset)
-  {
-    out << "<MAP>\n";
-    typename std::map<K, V>::const_iterator it = map.begin(), end = map.end();
-    for (; it != end; ++it)
-    {
-      std::string item_offset = offset + "  ";
-      print(out, it->first, item_offset, false);
-      out << ": ";
-      print(out, it->second, item_offset, true);
-    }
-    out << offset << "</MAP>\n";
-  }
-*/
   bool starts_with(const std::string & what, const std::string & with)
   {
     if (what.size() < with.size())
       return false;
     return std::equal(with.begin(), with.end(), what.begin());
+  }
+
+  bool istarts_with(const std::string & what, const std::string & with,
+      const std::locale & loc)
+  {
+    if (what.size() < with.size())
+      return false;
+    return std::equal(with.begin(), with.end(), what.begin(),
+        icharequal<char>(loc));
   }
 
   bool starts_with(const std::string & what, const char * with)
@@ -452,11 +431,30 @@ namespace nkit
     return std::equal(with, with + len, what.begin());
   }
 
+  bool istarts_with(const std::string & what, const char * with,
+      const std::locale & loc)
+  {
+    size_t len = strlen(with);
+    if (what.size() < len)
+      return false;
+    return std::equal(with, with + len, what.begin(),
+        icharequal<char>(loc));
+  }
+
   bool ends_with(const std::string & what, const std::string & with)
   {
     if (what.size() < with.size())
       return false;
     return std::equal(with.rbegin(), with.rend(), what.rbegin());
+  }
+
+  bool iends_with(const std::string & what, const std::string & with,
+      const std::locale & loc)
+  {
+    if (what.size() < with.size())
+      return false;
+    return std::equal(with.rbegin(), with.rend(), what.rbegin(),
+        icharequal<char>(loc));
   }
 
   bool ends_with(const std::string & what, const char * with)
@@ -465,6 +463,14 @@ namespace nkit
     if (what.size() < len)
       return false;
     return strncmp(what.c_str() + (what.size() - len), with, len) == 0;
+  }
+
+  bool iends_with(const std::string & what, const char * with)
+  {
+    size_t len = strlen(with);
+    if (what.size() < len)
+      return false;
+    return NKIT_STRNCASECMP(what.c_str() + (what.size() - len), with, len) == 0;
   }
 
   //----------------------------------------------------------------------------

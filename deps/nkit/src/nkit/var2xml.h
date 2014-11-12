@@ -30,6 +30,8 @@ namespace nkit
     static const size_t DEFAULT_FLOAT_PRECISION;
     static const std::string BOOL_TRUE;
     static const std::string BOOL_FALSE;
+    static const std::string ATTR_KEY_DEFAULT;
+    static const std::string TEXT_KEY_DEFAULT;
 
     struct Pretty
     {
@@ -51,8 +53,8 @@ namespace nkit
       op
         .Get(".rootname", &res->root_name_, S_EMPTY_)
         .Get(".itemname", &res->item_name_, S_EMPTY_)
-        .Get(".attrkey", &res->attr_key_, S_EMPTY_)
-        .Get(".textkey", &res->text_key_, S_EMPTY_)
+        .Get(".attrkey", &res->attr_key_, ATTR_KEY_DEFAULT)
+        .Get(".textkey", &res->text_key_, TEXT_KEY_DEFAULT)
         .Get(".xmldec.version", &version, S_EMPTY_)
         .Get(".xmldec.encoding", &encoding, S_UTF_8_)
         .Get(".xmldec.standalone", &standalone, true)
@@ -209,6 +211,28 @@ namespace nkit
       , begin_(true)
     {}
 
+//    bool check_xml_name(const std::string & name)
+//    {
+//      static const char * NOT_IN = "!@#$%^&*()=+?/\\|'\"`~,; \t\r\n";
+//      static const std::string NOT_FIRST = std::string("1234567890:-.") + NOT_IN;
+//
+//      if (unlikely(nkit::istarts_with(name, "xml")))
+//        return false;
+//      else if (unlikely(NOT_FIRST.find(name[0]) != NOT_FIRST.npos))
+//        return false;
+//      else if (unlikely(name.find(" ") != name.npos))
+//        return false;
+//
+//      size_t size = name.size();
+//      for (size_t i=1; i < size; ++i)
+//      {
+//        if (strchr(NOT_IN, name[i]) != NULL)
+//          return false;
+//      }
+//
+//      return true;
+//    }
+//
     //--------------------------------------------------------------------------
     bool Convert(const std::string & item_name, const DataType & data,
         Var2XmlConverter & builder, std::string * out, std::string * error)
@@ -219,9 +243,15 @@ namespace nkit
         for (; it != end; ++it)
         {
           std::string key(T::First(it));
-          if (options_->attr_key_ == key
-              || options_->text_key_ == key)
+          if (options_->attr_key_ == key || options_->text_key_ == key)
             continue;
+
+//          if (!check_xml_name(key))
+//          {
+//            *error = "Wrong name for XML element: " + key;
+//            return false;
+//          }
+//
           DataType v = T::Second(it);
           if (!T::IsList(v))
             builder.BeginElement(key, v, out);
