@@ -7,7 +7,7 @@ Node.js server. There is the same port to Python - [nkit4py](https://github.com/
 
 With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
-### With XML-to-JavaScript-Data possibilities you can:
+### With XML-to-JavaScript-data possibilities you can:
 
 - Create JavaScript data structures, which are different from the structure 
   of XML source.
@@ -90,7 +90,7 @@ or
     npm install nkit4nodejs
 
     
-# XML to JavaScript Data conversion
+# XML to JavaScript data conversion
 
 Suppose, we have this xml string:
 
@@ -690,7 +690,7 @@ Output:
 Following options are supported:
 
 - **rootname**: name of root element;
-- **itemname**: element name for each item of JavaScript array;
+- **itemname**: default element name for JavaScript array items;
 - **xmldec**: XML declaration. Default - NO XML declaration.
 If no *rootname* has been provided then *xmldec* has no effect.
 If no *xmldec* or *rootname* has been provided then *itemname* will be used as name for root objects.
