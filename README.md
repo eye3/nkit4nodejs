@@ -173,6 +173,8 @@ Suppose, we have this xml string:
 </any_name>
 ```
 
+With this script we cat generate two data structures:
+
 ```JavaScript
 var nkit = require('nkit4nodejs');
 
