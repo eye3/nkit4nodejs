@@ -609,7 +609,7 @@ If you want to change key names, use this notation:
 ```javascript
 var nkit = require('nkit4nodejs');
 
-data = {
+var data = {
     "$": {"p1": "в1&v2\"'", "p2": "v2"},
     "_": "Hello(Привет) world(мир)",
     "int_число": 1,
@@ -629,7 +629,10 @@ data = {
     }
 };
 
-options = {
+var ENC = "UTF-8";
+//var ENC = "cp1251";
+
+var options = {
     "rootname": "ROOT",
     "itemname": "item",
     "xmldec": {
