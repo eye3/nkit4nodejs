@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/eye3/nkit4nodejs.svg?branch=master)](https://travis-ci.org/eye3/nkit4nodejs)
 
-
-
 <!-- toc -->
 
 * [Introduction](#introduction)
