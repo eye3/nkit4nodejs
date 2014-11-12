@@ -5,8 +5,6 @@
 <!-- toc -->
 
 * [Introduction](#introduction)
-    * [With XML-to-JavaScript-data possibilities you can:](#with-xml-to-javascript-data-possibilities-you-can)
-    * [With JavaScript-Data-to-XML possibilities you can:](#with-javascript-data-to-xml-possibilities-you-can)
 * [Installation](#installation)
   * [Requirements](#requirements)
   * [On Linux & Mac OS](#on-linux-mac-os)
@@ -67,7 +65,7 @@ JavaScript. For example, nkit4nodejs is about 10 times faster than popular
 Module supports not only native Expat XML encodings, but also many others
 (see /deps/nkit/src/encoding/langs.inc)
 
-### With JavaScript-Data-to-XML possibilities you can:
+### With JavaScript-Data-to-XML possibilities you can
 
 - Create xml string with the same structure as JavaScript data
 - Define root element name of result xml string
