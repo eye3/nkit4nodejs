@@ -34,7 +34,7 @@ Node.js server. There is the same port to Python - [nkit4py](https://github.com/
 
 With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
-### With XML-to-JavaScript-data possibilities you can:
+**With XML-to-JavaScript-data possibilities you can:**
 
 - Create JavaScript data structures, which are different from the structure 
   of XML source.
@@ -65,7 +65,7 @@ JavaScript. For example, nkit4nodejs is about 10 times faster than popular
 Module supports not only native Expat XML encodings, but also many others
 (see /deps/nkit/src/encoding/langs.inc)
 
-### With JavaScript-Data-to-XML possibilities you can
+**With JavaScript-Data-to-XML possibilities you can:**
 
 - Create xml string with the same structure as JavaScript data
 - Define root element name of result xml string
