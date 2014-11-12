@@ -46,7 +46,7 @@ With nkit4nodejs module you can convert XML string to JavaScript data and vise v
 - Explicitly define Javascript type of scalar (primitive) data, fetched from XML source.
   Integers, numbers, strings, datetimes and booleans are supported.
   
-- Control progress of chunked download of big XML string and cancel this download
+- Control progress of chunked download and parsing of big XML string
 
 - With extra options you can tune some aspects of conversion:
 	- trim strings
@@ -68,8 +68,6 @@ Module supports not only native Expat XML encodings, but also many others
 - Create xml string with the same structure as JavaScript data
 - Define root element name of result xml string
 - Define item element name for arrays
-- Define key name for attributes
-- Define key name for text nodes
 - Define encoding of result xml string
 - Pretty print with custom indentation and newline characters
 - Define special object key name for attributes
