@@ -40,8 +40,11 @@ Module supports not only native Expat XML encodings, but also many others
 
 ### With JavaScript-Data-to-XML possibilities you can:
 
+- Create xml string with the same structure as JavaScript data
 - Define root element name of result xml string
-- Define item element name for lists
+- Define item element name for arrays
+- Define key name for attributes
+- Define key name for text nodes
 - Define encoding of result xml string
 - Pretty print with custom indentation and newline characters
 - Define special object key name for attributes
@@ -49,6 +52,7 @@ Module supports not only native Expat XML encodings, but also many others
 - Define which element of result xml string must contain CDATA section
 - Define precision for float numbers
 - Define format for Date objects
+- Define representation for *true* and *false* values
 
 # Installation
 
