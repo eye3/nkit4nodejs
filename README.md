@@ -610,19 +610,22 @@ If you want to change key names, use this notation:
 var nkit = require('nkit4nodejs');
 
 data = {
-    "$": {"p1": "v1 < > & \" '", "p3": "v3"},
-    "_": "Hello world",
-    "int": 1,
+    "$": {"p1": "в1&v2\"'", "p2": "v2"},
+    "_": "Hello(Привет) world(мир)",
+    "int_число": 1,
+    "true": true,
+    "false": false,
     "float": 1.123456789,
-    "cdata": "text < > & \" '",
-    "list": [[1, 2.333], 2, 3],
-    "datetime": new Date(1979, 1, 28, 12, 13, 14),
+    "cdata1": "text < > & \" '",
+    "cdata2": "%^&*()-=+ < > & \" '",
+    "list": [[1, 2], 2, 3],
+    "datetime": new Date(1979, 2, 28, 12, 13, 14),
     "dict": {
         "$": {"a1": "V1", "a2": "V2"},
-        "sub_int": 1,
-        "sub_float": 1.11234567891234,
+        "int": 1,
+        "float": 1.11234567891234,
         "sub_string": "text < > & \" '",
-        "sub_list": [[1], 2, 3]
+        "list": [[1], 2, 3]
     }
 };
 
@@ -631,7 +634,7 @@ options = {
     "itemname": "item",
     "xmldec": {
         "version": "1.0",
-        "encoding": "UTF-8",
+        "encoding": ENC,
         "standalone": true
     },
     "pretty": {
@@ -640,12 +643,46 @@ options = {
     },
     "attrkey": "$",
     "textkey": "_",
-    "cdata": ["cdata", "float"],
+    "cdata": ["cdata1", "cdata2"],
     "float_precision": 10,
-    "date_time_format": "%Y-%m-%d %H:%M:%S %z"
+    "date_time_format": "%Y-%m-%d %H:%M:%S",
+    "bool_true": "Yes",
+    "bool_false": "No"
 };
 
 console.log(nkit.var2xml(data, options).toString());
+```
+
+Output:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ROOT p1="в1&amp;v2&quot;&apos;" p2="v2">
+  <int_число>1</int_число>
+  <true>Yes</true>
+  <false>No</false>
+  <float>1.1234567890</float>
+  <cdata1><![CDATA[text < > & " ']]></cdata1>
+  <cdata2><![CDATA[%^&*()-=+ < > & " ']]></cdata2>
+  <list>
+    <item>1</item>
+    <item>2</item>
+  </list>
+  <list>2</list>
+  <list>3</list>
+  <datetime>1979-03-28 12:13:14</datetime>
+  <dict a1="V1" a2="V2">
+    <int>1</int>
+    <float>1.1123456789</float>
+    <sub_string>text &lt; &gt; &amp; &quot; &apos;</sub_string>
+    <list>
+      <item>1</item>
+    </list>
+    <list>2</list>
+    <list>3</list>
+  </dict>
+  Hello(Привет) world(мир)
+</ROOT>
 ```
 
 ## Options
@@ -673,6 +710,8 @@ Sub-options:
 - **cdata**: array of key names whose values mast be print to XML string as CDATA
 - **float_precision**: for float numbers - number of symbols after '.' to be printed
 - **date_time_format**: format string of Date objects
+- **bool_true**: representation for 'true' boolean value
+- **bool_false**: representation for 'false' boolean value 
 
 If no xmldec and rootname 
 

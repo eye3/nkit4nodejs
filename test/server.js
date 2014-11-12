@@ -30,8 +30,11 @@ if (cluster.isMaster) {
         "$": {"p1": "в1&v2\"'", "p2": "v2"},
         "_": "Hello(Привет) world(мир)",
         "int_число": 1,
+        "true": true,
+        "false": false,
         "float": 1.123456789,
-        "cdata": "text < > & \" '",
+        "cdata1": "text < > & \" '",
+        "cdata2": "%^&*()-=+ < > & \" '",
         "list": [[1, 2], 2, 3],
         "datetime": new Date(1979, 2, 28, 12, 13, 14),
         "dict": {
@@ -43,8 +46,8 @@ if (cluster.isMaster) {
         }
     };
 
-    //ENC = "UTF-8";
-    ENC = "cp1251";
+    ENC = "UTF-8";
+    //ENC = "cp1251";
 
     OPTIONS = {
         "rootname": "ROOT",
@@ -60,9 +63,11 @@ if (cluster.isMaster) {
         },
         "attrkey": "$",
         "textkey": "_",
-        "cdata": ["cdata"],
+        "cdata": ["cdata1", "cdata2"],
         "float_precision": 10,
-        "date_time_format": "%Y-%m-%d %H:%M:%S"
+        "date_time_format": "%Y-%m-%d %H:%M:%S",
+        "bool_true": "Yes",
+        "bool_false": "No"
     };
 
     http.createServer(function (req, res) {

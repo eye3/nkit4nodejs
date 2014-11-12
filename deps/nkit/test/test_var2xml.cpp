@@ -25,13 +25,17 @@ namespace nkit_test
       << "attrkey" << "$"
       << "textkey" << "_"
       << "cdata" << DLIST("cdata")
+      << "bool_true" << "TRUE"
+      << "bool_false" << "FALSE"
     );
 
     Dynamic data = DDICT(
          "$" << DDICT("p1" << "в1&v2\"'" << "p2" << "v2")
       << "_" << "Hello(Привет) world(мир)"
-      << "int(число)" << 1
+      << "int_число" << 1
       << "float" << 1.1
+      << "true" << true
+      << "false" << false
       << "cdata" << "text < > & \" '"
       << "list" << DLIST(DLIST(1) << 2 << 3)
       << "dict" << DDICT(

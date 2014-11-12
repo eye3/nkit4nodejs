@@ -306,18 +306,23 @@ namespace nkit
 
     static bool IsString(const type & data)
     {
-      return data->IsString();
+      return data->IsString() || data->IsStringObject();
     }
 
     static bool IsFloat(const type & data)
     {
-      return data->IsNumber() && !(data->IsInt32() || data->IsUint32());
+      return (data->IsNumber() || data->IsNumberObject()) &&
+          !(data->IsInt32() || data->IsUint32());
     }
 
     static bool IsDateTime(const type & data)
     {
-      bool ret = data->IsDate();
-      return ret;
+      return data->IsDate();
+    }
+
+    static bool IsBool(const type & data)
+    {
+      return data->IsBoolean() || data->IsBooleanObject();
     }
 
     static std::string GetString(const type & data)
@@ -349,6 +354,13 @@ namespace nkit
     {
       NanScope();
       return string_cast(data->ToNumber()->NumberValue(), precision);
+    }
+
+    static const std::string & GetStringAsBool(const type & data,
+        const std::string & true_format, const std::string & false_format)
+    {
+      return data->ToBoolean()->BooleanValue() ?
+          true_format: false_format;
     }
 
     static type GetByKey(const type & data, const std::string & _key,

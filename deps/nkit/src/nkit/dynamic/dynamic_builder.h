@@ -182,6 +182,11 @@ namespace nkit
       return data.IsDateTime();
     }
 
+    static bool IsBool(const Dynamic & data)
+    {
+      return data.IsBool();
+    }
+
     static std::string GetString(const Dynamic & data)
     {
       return data.GetString();
@@ -197,6 +202,13 @@ namespace nkit
             size_t precision)
     {
       return string_cast(data.GetFloat(), precision);
+    }
+
+    static const std::string & GetStringAsBool(const Dynamic & data,
+        const std::string & bool_true_format,
+        const std::string & bool_false_format)
+    {
+      return data ? bool_true_format: bool_false_format;
     }
 
     static Dynamic GetByKey(const Dynamic & data, const std::string & key,
