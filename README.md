@@ -10,7 +10,7 @@
   * [On Linux & Mac OS](#on-linux-mac-os)
   * [On Windows](#on-windows)
 * [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
-  * [Quick start](#quick-start)
+  * [Getting started](#getting-started)
   * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
   * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
   * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
@@ -123,6 +123,8 @@ or
     
 # XML to JavaScript data conversion
 
+## Getting started
+
 Suppose, we have this xml string:
 
 ```xml
@@ -170,8 +172,6 @@ Suppose, we have this xml string:
     </person>
 </any_name>
 ```
-
-## Quick start
 
 ```JavaScript
 var nkit = require('nkit4nodejs');
