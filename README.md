@@ -707,8 +707,8 @@ Sub-options:
     
 - **attrkey**: any string for Object key name, that holds attributes for element. Default '$';
 - **textkey**: any string for Object key name, that holds text for element. Default '_';
-- **cdata**: array of key names whose values mast be print to XML string as CDATA;
-- **float_precision**: for float numbers - number of symbols after '.' to be printed;
+- **cdata**: array of key names whose values mast be print to XML string as CDATA. Default - empty array;
+- **float_precision**: for float numbers - number of symbols after '.' to be printed. Default - 2;
 - **date_time_format**: format string of Date objects.
 See [man strftime](http://www.cplusplus.com/reference/ctime/strftime/?kw=strftime) for datetime formatting syntax.
 Default "%Y-%m-%d %H:%M:%S";
