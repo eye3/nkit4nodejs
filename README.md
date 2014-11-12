@@ -19,7 +19,7 @@
   * [If you want some JSON](#if-you-want-some-json)
   * [Options](#options)
   * [Notes](#notes)
-* [JavaScript Data to XML conversion](#javascript-data-to-xml-conversion)
+* [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start)
   * [Options](#options)
 * [Author](#author)
@@ -633,7 +633,7 @@ If you want to change key names, use this notation:
     "/path/to/element -> newKeyName": ...
     "/path/to/element/@attribute -> newKeyName": ...
 
-# JavaScript Data to XML conversion
+# JavaScript data to XML conversion
 
 ## Quick start
 
