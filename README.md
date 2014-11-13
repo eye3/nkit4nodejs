@@ -82,7 +82,7 @@ Module supports not only native Expat XML encodings, but also many others
 - Pretty print with custom indentation and newline characters
 - Define special object key name for attributes
 - Define special object key name for text
-- Define which element of result xml string must contain CDATA section
+- Define which elements of result xml string must contain CDATA section
 - Define precision for float numbers
 - Define format for Date objects
 - Define representation for *true* and *false* values
@@ -417,7 +417,11 @@ var nkit = require('nkit4nodejs');
 
 mapping = ["/person",
     {
-        "/address -> cities": ["/city", "string"]
+        "/address/city -> cities": ["/", "string"]
+        // or:
+        // "/address -> cities": ["/city", "string"]
+        // or:
+        // "/ -> cities": ["/address/city", "string"]
         "/photos": ["/*", "string"],
         "/name": "string"
     }
