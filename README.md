@@ -35,7 +35,7 @@
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
-Node.js server. There is the same port to Python - [nkit4py](https://github.com/eye3/nkit4py.git)
+Node.js server.
 
 With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
@@ -733,7 +733,7 @@ Following options are supported:
 - **encoding**: "UTF-8" or some other encodings (see */deps/nkit/src/encoding/langs.inc* for list of supported encodings). Default - "UTF-8";
 - **xmldec**: XML declaration. Default - NO XML declaration. Sub-options:
 
-    - *version*: xml version (always 1.0);
+    - *version*: xml version;
     - *standalone*: true or false;
 
 - **pretty**: pretty XML - with indents and custom newlines. Default - NO pretty print, i.e. print XML in single line. Sub-options:
