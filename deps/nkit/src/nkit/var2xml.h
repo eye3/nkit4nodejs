@@ -171,18 +171,20 @@ namespace nkit
 
       if (T::IsDict(data))
       {
-        if (op->root_name_.empty())
-          op->root_name_ = op->item_name_.empty() ? "root": op->item_name_;
+//        if (op->root_name_.empty())
+//          op->root_name_ = op->item_name_.empty() ? "root": op->item_name_;
+//
+//        const std::string & item_name =
+//            op->item_name_.empty() ? op->root_name_: op->item_name_;
 
-        const std::string & item_name =
-            op->item_name_.empty() ? op->root_name_: op->item_name_;
+        if (!op->root_name_.empty())
+          builder.BeginElement(op->root_name_, data, out);
 
-        builder.BeginElement(op->root_name_, data, out);
-
-        if (!builder.Convert(item_name, data, builder, out, error))
+        if (!builder.Convert(op->item_name_, data, builder, out, error))
           return false;
 
-        builder.EndElement(out);
+        if (!op->root_name_.empty())
+          builder.EndElement(out);
       }
       else if (T::IsList(data))
       {
@@ -419,7 +421,7 @@ namespace nkit
       }
       else
       {
-        bool found =
+        bool found = !path_.empty() &&
                 options_->cdata_.find(path_.top()) != options_->cdata_.end();
         if (( found && !options_->cdata_exclude_) ||
             (!found &&  options_->cdata_exclude_))
