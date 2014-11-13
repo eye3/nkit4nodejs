@@ -46,15 +46,15 @@ if (cluster.isMaster) {
         }
     };
 
-    ENC = "UTF-8";
-    //ENC = "cp1251";
+    //ENC = "UTF-8";
+    ENC = "cp1251";
 
     OPTIONS = {
         "rootname": "ROOT",
         "itemname": "item",
+        "encoding": ENC,
         "xmldec": {
             "version": "1.0",
-            "encoding": ENC,
             "standalone": true
         },
         "pretty": {

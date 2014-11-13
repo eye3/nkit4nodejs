@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/eye3/nkit4nodejs.svg?branch=master)](https://travis-ci.org/eye3/nkit4nodejs)
 
+
+
 <!-- toc -->
 
 * [Introduction](#introduction)
 * [Installation](#installation)
   * [Requirements](#requirements)
-  * [On Linux & Mac OS](#on-linux--mac-os)
+  * [On Linux and Mac OS](#on-linux-and-mac-os)
   * [On Windows](#on-windows)
 * [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
   * [Getting started](#getting-started)
@@ -23,6 +25,7 @@
 * [Author](#author)
 
 <!-- toc stop -->
+
 
 
 # Introduction
@@ -100,7 +103,7 @@ nkit4nodejs module must be compiled, so you have to install "build essentials"
 	
 - in Mac OS use XCode & brew
 
-## On Linux & Mac OS
+## On Linux and Mac OS
 
     npm install nkit4nodejs
     
@@ -664,9 +667,9 @@ var ENC = "UTF-8";
 var options = {
     "rootname": "ROOT",
     "itemname": "item",
+    "encoding": ENC,
     "xmldec": {
         "version": "1.0",
-        "encoding": ENC,
         "standalone": true
     },
     "pretty": {
@@ -723,10 +726,10 @@ Following options are supported:
 
 - **rootname**: name of root element. If not provided then result XML will be w/o xmldec and root element;
 - **itemname**: default element name for JavaScript array items. Default - 'item';
+- **encoding**: "UTF-8" or some other encodings (see */deps/nkit/src/encoding/langs.inc* for list of supported encodings). Default - "UTF-8";
 - **xmldec**: XML declaration. Default - NO XML declaration. Sub-options:
 
     - *version*: xml version (always 1.0);
-    - *encoding*: "UTF-8" or some other encodings (see */deps/nkit/src/encoding/langs.inc* for list of supported encodings);
     - *standalone*: true or false;
 
 - **pretty**: pretty XML - with indents and custom newlines. Default - NO pretty print, i.e. print XML in single line. Sub-options:
@@ -749,6 +752,21 @@ If **data** is Object (not Array) then *attrkey* will no effect for root Object.
 
 If **data** is Array then *itemname* will be used as element name for its items.
 
+
+# Change log
+
+- 2.2:
+    - Options changes for nkit4nodejs.var2xml(): standalone 'encoding' option.
+      In previous version 'encoding' option was in 'xmldec'
+      
+- 2.1:
+    - nkit4nodejs.var2xml() method for converting JavaScript data to XML
+    
+- 2.0:
+    - Multi-mappings and options for nkit4nodejs.Xml2VarBuilder class
+    
+- 1.X:
+    - nkit4nodejs.Xml2VarBuilder class for converting XML to JavaScript data
 
 # Author
 

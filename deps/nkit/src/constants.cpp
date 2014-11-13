@@ -49,6 +49,8 @@ namespace nkit
   int16_t MAX_INT16_VALUE = std::numeric_limits<int16_t>::max();
   int16_t MIN_INT16_VALUE = std::numeric_limits<int16_t>::min();
 
+  NKIT_DEFINE_CONST_STRING(S_LF_, "\n")
+  NKIT_DEFINE_CONST_STRING(S_CR_, "\r")
   NKIT_DEFINE_CONST_STRING(S_EMPTY_, "")
   NKIT_DEFINE_CONST_STRING(S_ZERO_, "0")
   NKIT_DEFINE_CONST_STRING(S_FALSE_, "false")

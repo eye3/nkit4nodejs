@@ -45,7 +45,7 @@ add_test("list_of_list_of_strings",
 // Building a simple object from xml string (last 'person' element will be used)
 //
 // Here mapping is object, described by set of mappings, each containing
-// key definition and scalar definition.˛
+// key definition and scalar definition.?
 // Keys are described by "/sub/path -> optionalKeyName".
 // If optionalKeyName doesn't provided, then last element name in /sub/path
 // will be used for key name.
@@ -221,7 +221,7 @@ if (!deep_equal.deepEquals(res, builder.get("map_name"))) {
 // -----------------------------------------------------------------------------
 data = [{
     "$": {"p1": "v1 < > & \" '", "p2": "v2"},
-    "_": "Hello world",
+    "_": "Hello(Привет) world(мир)",
     "int": 1,
     "float": 1.123456789,
     "cdata": "text < > & \" '",
@@ -251,12 +251,14 @@ data = [{
     }
 }];
 
+ENC = "windows-1251";
+
 options = {
     "rootname": "ROOT",
     "itemname": "item",
+    "encoding": ENC,
     "xmldec": {
         "version": "1.0",
-        "encoding": "UTF-8",
         "standalone": true
     },
     "pretty": {
@@ -270,9 +272,9 @@ options = {
     "date_time_format": "%Y-%m-%d %H:%M:%S %z"
 };
 
-console.log(nkit.var2xml(data, options).toString());
+console.log(nkit.var2xml(data, options));
 
-console.log(nkit.var2xml([], options).toString());
+console.log(nkit.var2xml([], options));
 
 console.log("ok");
 process.exit(0);
