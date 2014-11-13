@@ -721,12 +721,9 @@ Output:
 
 Following options are supported:
 
-- **rootname**: name of root element;
+- **rootname**: name of root element. If not provided then result XML will be w/o xmldec and root element;
 - **itemname**: default element name for JavaScript array items. Default - 'item';
-- **xmldec**: XML declaration. Default - NO XML declaration.
-If no *rootname* has been provided then *xmldec* has no effect.
-If no *xmldec* or *rootname* has been provided then *itemname* will be used as name for root objects.
-Sub-options:
+- **xmldec**: XML declaration. Default - NO XML declaration. Sub-options:
 
     - *version*: xml version (always 1.0);
     - *encoding*: "UTF-8" or some other encodings (see */deps/nkit/src/encoding/langs.inc* for list of supported encodings);
@@ -746,6 +743,11 @@ See [man strftime](http://www.cplusplus.com/reference/ctime/strftime/?kw=strftim
 Default "%Y-%m-%d %H:%M:%S";
 - **bool_true**: representation for 'true' boolean value. Default '1';
 - **bool_false**: representation for 'false' boolean value. Default '0';
+
+If no *rootname* has been provided then *xmldec* will no effect.
+If **data** is Object (not Array) then *attrkey* will no effect for root Object.
+
+If **data** is Array then *itemname* will be used as element name for its items.
 
 
 # Author
