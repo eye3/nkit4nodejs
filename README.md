@@ -2,6 +2,8 @@
 
 
 
+
+
 <!-- toc -->
 
 * [Introduction](#introduction)
@@ -22,9 +24,11 @@
 * [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start)
   * [Options](#options)
+* [Change log](#change-log)
 * [Author](#author)
 
 <!-- toc stop -->
+
 
 
 
