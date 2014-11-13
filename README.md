@@ -1,5 +1,30 @@
 [![Build Status](https://travis-ci.org/eye3/nkit4nodejs.svg?branch=master)](https://travis-ci.org/eye3/nkit4nodejs)
 
+<!-- toc -->
+
+* [Introduction](#introduction)
+* [Installation](#installation)
+  * [Requirements](#requirements)
+  * [On Linux & Mac OS](#on-linux--mac-os)
+  * [On Windows](#on-windows)
+* [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
+  * [Getting started](#getting-started)
+  * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
+  * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
+  * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
+  * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
+  * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
+  * [If you want some JSON](#if-you-want-some-json)
+  * [Options](#options)
+  * [Notes](#notes)
+* [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
+  * [Quick start](#quick-start)
+  * [Options](#options)
+* [Author](#author)
+
+<!-- toc stop -->
+
+
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
@@ -7,7 +32,7 @@ Node.js server. There is the same port to Python - [nkit4py](https://github.com/
 
 With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
-### With XML-to-JavaScript-data possibilities you can:
+**With XML-to-JavaScript-data possibilities you can:**
 
 - Create JavaScript data structures, which are different from the structure 
   of XML source.
@@ -21,7 +46,7 @@ With nkit4nodejs module you can convert XML string to JavaScript data and vise v
 - Explicitly define Javascript type of scalar (primitive) data, fetched from XML source.
   Integers, numbers, strings, datetimes and booleans are supported.
   
-- Control progress of chunked download of big XML string and cancel this download
+- Control progress of chunked download and parsing of big XML string
 
 - With extra options you can tune some aspects of conversion:
 	- trim strings
@@ -38,10 +63,11 @@ JavaScript. For example, nkit4nodejs is about 10 times faster than popular
 Module supports not only native Expat XML encodings, but also many others
 (see /deps/nkit/src/encoding/langs.inc)
 
-### With JavaScript-Data-to-XML possibilities you can:
+**With JavaScript-Data-to-XML possibilities you can:**
 
+- Create xml string with the same structure as JavaScript data
 - Define root element name of result xml string
-- Define item element name for lists
+- Define item element name for arrays
 - Define encoding of result xml string
 - Pretty print with custom indentation and newline characters
 - Define special object key name for attributes
@@ -49,6 +75,7 @@ Module supports not only native Expat XML encodings, but also many others
 - Define which element of result xml string must contain CDATA section
 - Define precision for float numbers
 - Define format for Date objects
+- Define representation for *true* and *false* values
 
 # Installation
 
@@ -91,6 +118,8 @@ or
 
     
 # XML to JavaScript data conversion
+
+## Getting started
 
 Suppose, we have this xml string:
 
@@ -140,7 +169,7 @@ Suppose, we have this xml string:
 </any_name>
 ```
 
-## Quick start
+With this script we cat generate two data structures:
 
 ```JavaScript
 var nkit = require('nkit4nodejs');
@@ -602,7 +631,7 @@ If you want to change key names, use this notation:
     "/path/to/element -> newKeyName": ...
     "/path/to/element/@attribute -> newKeyName": ...
 
-# JavaScript Data to XML conversion
+# JavaScript data to XML conversion
 
 ## Quick start
 
