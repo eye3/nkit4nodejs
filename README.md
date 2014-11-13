@@ -669,7 +669,6 @@ var data = {
 };
 
 var ENC = "UTF-8";
-//var ENC = "cp1251";
 
 var options = {
     "rootname": "ROOT",
