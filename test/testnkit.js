@@ -272,6 +272,8 @@ options = {
 
 console.log(nkit.var2xml(data, options).toString());
 
+console.log(nkit.var2xml([], options).toString());
+
 console.log("ok");
 process.exit(0);
 

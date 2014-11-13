@@ -1,6 +1,6 @@
 {
   "name": "nkit4nodejs",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Fast XML to Javascript data (and vise versa) converter and filter. Written in C++ using Expat SAX parser.",
   "homepage": "https://github.com/eye3/nkit4nodejs",
   "author": {

@@ -36,8 +36,8 @@ namespace nkit
         v8::Local<v8::Value>(NanUndefined()));
   }
 
-  V8BuilderPolicy::V8BuilderPolicy(const detail::Options & options) :
-      options_(options)
+  V8BuilderPolicy::V8BuilderPolicy(const detail::Options & NKIT_UNUSED(options))
+    //: options_(options)
   {
     NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
   }

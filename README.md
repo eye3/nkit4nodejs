@@ -732,7 +732,7 @@ Following options are supported:
 - **pretty**: pretty XML - with indents and custom newlines. Default - NO pretty print, i.e. print XML in single line. Sub-options:
 
     - *indent*: any string for indentation;
-    - *newline*: any string for line ending (default '\n');
+    - *newline*: any string for line ending;
     
 - **attrkey**: any string for Object key name, that holds attributes for element. Default '$';
 - **textkey**: any string for Object key name, that holds text for element. Default '_';

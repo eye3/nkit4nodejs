@@ -62,7 +62,7 @@ namespace nkit
 
   private:
     type object_;
-    const detail::Options & options_;
+    //const detail::Options & options_;
     static v8::Persistent<v8::Function> date_constructor_;
     static v8::Persistent<v8::Value> undefined_;
   };
@@ -200,6 +200,8 @@ namespace nkit
       {
         NanAssignPersistent(list_, v8::Local<v8::Array>::Cast(list));
         size_ = NanNew(list_)->Length();
+        if (size_ == 0)
+          pos_ = END;
       }
 
       ListConstIterator(const ListConstIterator & copy)
