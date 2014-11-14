@@ -298,12 +298,14 @@ data = [{
     }
 }];
 
-ENC = "windows-1251";
+//ENC = "windows-1251";
+ENC = "utf-8";
 
 options = {
     "rootname": "ROOT",
     "itemname": "item",
     "encoding": ENC,
+    //"asBuffer": false,
     "xmldec": {
         "version": "1.0",
         "standalone": true

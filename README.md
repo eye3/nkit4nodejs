@@ -794,6 +794,8 @@ Following options are supported:
 - **rootname**: name of root element. If not provided then result XML will be w/o xmldec and root element;
 - **itemname**: default element name for JavaScript array items. Default - 'item';
 - **encoding**: "UTF-8" or some other encodings (see */deps/nkit/src/encoding/langs.inc* for list of supported encodings). Default - "UTF-8";
+- **asBuffer**: true or false. If *true* then make XML as Buffer, else make it as String. Default *true*.
+If *encoding* is not "UTF-8", then this option has no effect and XML will be generated as Buffer.
 - **xmldec**: XML declaration. Default - NO XML declaration. Sub-options:
 
     - *version*: xml version;
@@ -821,6 +823,10 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 
 # Change log
+
+- 2.3:
+    - New 'asBuffer' option for nkit4nodejs.var2xml(): UTF-8 encoded XML can be generated as String.
+      Other encodings are generated as node.Buffers.
 
 - 2.2:
     - Options changes for nkit4nodejs.var2xml(): standalone 'encoding' option.

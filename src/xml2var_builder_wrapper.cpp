@@ -77,10 +77,22 @@ namespace nkit
     }
 
     std::string ret, error;
+
+    Dynamic op = DynamicFromJson(options, &error);
+    if (!op.IsDict())
+      return NanThrowError("Options parameter must be JSON-string or Object");
+
     if (!V8ToXmlConverter::Process(options, args[0], &ret, &error))
       return NanThrowError(error.c_str());
 
-    NanReturnValue(NanNewBufferHandle(ret.c_str(), ret.size()));
+    Dynamic * as_buffer;
+    bool to_string = op.Get("asBuffer", &as_buffer) ? !*as_buffer : false;
+
+    if (to_string
+        && istrequal(op["encoding"].GetConstString(), std::string("utf-8")))
+      NanReturnValue(NanNew(ret));
+    else
+      NanReturnValue(NanNewBufferHandle(ret.c_str(), ret.size()));
   }
 
   //------------------------------------------------------------------------------
