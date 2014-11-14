@@ -61,6 +61,7 @@ With nkit4nodejs module you can convert XML string to JavaScript data and vise v
 - With extra options you can tune some aspects of conversion:
 	- trim strings
 	- explicitly define white space characters for trim option
+	- define special key to collect all element attributes
 
 Conversion is carried out using SAX parser Expat, so it's fast and uses less 
 memory when parsing huge XML files.
@@ -612,6 +613,58 @@ Following options are supported:
    String. Default - "\t\n\r ", i.e. tab,
 new line, carriage return and space.
 
+### 'attrkey' option
+
+If defined, this option cause nkit4nodejs module to collect all element attributes for all
+object-mappings (if corresponding elements has attributes, of course).
+
+Example:
+
+```javascript
+var nkit = require('nkit4nodejs');
+
+options = {"attrkey": "$"};
+
+mapping = ["/person",
+    {
+        "/name": "string",
+        "/married": {"/ -> Now": "string"} // Elements '/person/married' has attributes
+                                           // Module will collect them
+    }
+];
+
+mappings = {"married_info": mapping};
+
+builder = nkit.Xml2VarBuilder(options, mappings);
+builder.feed(xml_string);
+result = builder.end();
+married_info = result["married_info"];
+```
+
+Value of married_info:
+
+```json
+[
+  {
+    "married": {
+      "Now": "Yes", 
+      "$": { // <- Key '$' will hold all attributes for '/person/married' elements
+        "firstTime": "No"
+      }
+    }, 
+    "name": "Jack"
+  }, 
+  {
+    "married": {
+      "Now": "Yes", 
+      "$": {
+        "firstTime": "Yes"
+      }
+    }, 
+    "name": "Boris"
+  }
+]
+```
 
 ## Notes
 
@@ -767,7 +820,8 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 - 2.2:
     - Options changes for nkit4nodejs.var2xml(): standalone 'encoding' option.
-      In previous version 'encoding' option was in 'xmldec'
+      In previous version 'encoding' option was in 'xmldec'.
+    - New 'attrkey' option for nkit4nodejs.Xml2VarBuilder for collecting all element attributes.
       
 - 2.1:
     - nkit4nodejs.var2xml() method for converting JavaScript data to XML

@@ -192,7 +192,7 @@ etalon = ['+122233344550',
 if (!deep_equal.deepEquals(res, etalon)) {
     console.error(JSON.stringify(res, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #1");
+    console.error("Error #2");
     process.exit(1);
 }
 
@@ -207,17 +207,64 @@ res = builder.end()["map_name"];
 if (!deep_equal.deepEquals(res, etalon)) {
     console.error(JSON.stringify(res, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #1.1");
+    console.error("Error #3.1");
     process.exit(1);
 }
 
 if (!deep_equal.deepEquals(res, builder.get("map_name"))) {
     console.error(JSON.stringify(res, null, 2));
     console.error(JSON.stringify(builder.get("map_name"), null, 2));
-    console.error("Error #1.2");
+    console.error("Error #3.2");
     process.exit(1);
 }
 
+// -----------------------------------------------------------------------------
+options = {"attrkey": "$"};
+
+mapping = ["/person",
+    {
+        "/name": "string",
+        "/married": {"/ -> Now": "string"} // Elements '/person/married' has attributes
+                                           // Module will collect them
+    }
+];
+
+mappings = {"married_info": mapping};
+
+builder = new nkit.Xml2VarBuilder(options, mappings);
+builder.feed(xmlString);
+result = builder.end();
+married_info = result["married_info"];
+
+etalon = [
+    {
+        "married": {
+            "Now": "Yes",
+            "$": {
+                "firstTime": "No"
+            }
+        },
+        "name": "Jack"
+    },
+    {
+        "married": {
+            "Now": "Yes",
+            "$": {
+                "firstTime": "Yes"
+            }
+        },
+        "name": "Boris"
+    }
+];
+
+if (!deep_equal.deepEquals(married_info, etalon)) {
+    console.error(JSON.stringify(married_info, null, 2));
+    console.error(JSON.stringify(etalon, null, 2));
+    console.error("Error #4");
+    process.exit(1);
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 data = [{
     "$": {"p1": "v1 < > & \" '", "p2": "v2"},
@@ -281,49 +328,49 @@ process.exit(0);
 
 // -----------------------------------------------------------------------------
 // Testing paths with '*'
-mapping = ["/person",
-    {
-        "/*": "string"
-    }
-];
-
-mapping_name = "testing_paths_with_star";
-
-var options = {"trim": true};
-
-builder = new nkit.Xml2VarBuilder(options, {mapping_name: mapping});
-builder.feed(xmlString);
-res = builder.end()[mapping_name];
-
-etalon = [
-    {
-        "name": "Jack",
-        "photos": "",
-        "age": "33",
-        "married": "Yes",
-        "phone": "+122233344551",
-        "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
-        "address": "",
-        "empty": ""
-    },
-    {
-        "name": "Boris",
-        "photos": "",
-        "age": "34",
-        "married": "Yes",
-        "phone": "+122233344554",
-        "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
-        "address": "",
-        "empty": ""
-    }
-];
-
-if (!deep_equal.deepEquals(res, etalon)) {
-    console.error(JSON.stringify(res, null, 2));
-    console.error(JSON.stringify(etalon, null, 2));
-    console.error("Error #4.1");
-    process.exit(1);
-}
-
-console.log("ok");
-process.exit(0);
+//mapping = ["/person",
+//    {
+//        "/*": "string"
+//    }
+//];
+//
+//mapping_name = "testing_paths_with_star";
+//
+//var options = {"trim": true};
+//
+//builder = new nkit.Xml2VarBuilder(options, {mapping_name: mapping});
+//builder.feed(xmlString);
+//res = builder.end()[mapping_name];
+//
+//etalon = [
+//    {
+//        "name": "Jack",
+//        "photos": "",
+//        "age": "33",
+//        "married": "Yes",
+//        "phone": "+122233344551",
+//        "birthday": "Wed, 28 Mar 1979 12:13:14 +0300",
+//        "address": "",
+//        "empty": ""
+//    },
+//    {
+//        "name": "Boris",
+//        "photos": "",
+//        "age": "34",
+//        "married": "Yes",
+//        "phone": "+122233344554",
+//        "birthday": "Mon, 31 Aug 1970 02:03:04 +0300",
+//        "address": "",
+//        "empty": ""
+//    }
+//];
+//
+//if (!deep_equal.deepEquals(res, etalon)) {
+//    console.error(JSON.stringify(res, null, 2));
+//    console.error(JSON.stringify(etalon, null, 2));
+//    console.error("Error #4.1");
+//    process.exit(1);
+//}
+//
+//console.log("ok");
+//process.exit(0);
