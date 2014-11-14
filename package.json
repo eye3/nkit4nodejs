@@ -2,7 +2,7 @@
     "name": "nkit4nodejs",
     "version": "2.2.1",
     "description": "Fast XML to Javascript data (and vise versa) converter and filter. Written in C++ using Expat SAX parser.",
-    "homepage": "https://www.npmjs.org/package/nkit4nodejs",
+    "homepage": "https://github.com/eye3/nkit4nodejs",
     "author": {
         "name": "Boris Darchiev",
         "email": "boris.darchiev@gmail.com",
