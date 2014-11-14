@@ -305,7 +305,7 @@ options = {
     "rootname": "ROOT",
     "itemname": "item",
     "encoding": ENC,
-    //"asBuffer": false,
+    //"as_buffer": true,
     "xmldec": {
         "version": "1.0",
         "standalone": true

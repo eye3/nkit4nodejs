@@ -86,7 +86,7 @@ namespace nkit
       return NanThrowError(error.c_str());
 
     Dynamic * as_buffer;
-    bool to_string = op.Get("asBuffer", &as_buffer) ? !*as_buffer : false;
+    bool to_string = op.Get("as_buffer", &as_buffer) ? !*as_buffer : false;
 
     if (to_string
         && istrequal(op["encoding"].GetConstString(), std::string("utf-8")))
