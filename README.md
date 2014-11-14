@@ -6,6 +6,8 @@
 
 
 
+
+
 <!-- toc -->
 
 * [Introduction](#introduction)
@@ -22,6 +24,7 @@
   * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
   * [If you want some JSON](#if-you-want-some-json)
   * [Options](#options)
+    * ['attrkey' option](#attrkey-option)
   * [Notes](#notes)
 * [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start)
@@ -30,6 +33,7 @@
 * [Author](#author)
 
 <!-- toc stop -->
+
 
 
 
