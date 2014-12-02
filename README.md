@@ -92,6 +92,7 @@ Module supports not only native Expat XML encodings, but also many others
 - Define format for Date objects
 - Define representation for *true* and *false* values
 
+
 # Installation
 
 ## Requirements
