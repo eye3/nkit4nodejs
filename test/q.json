@@ -1,0 +1,16 @@
+{
+  "2407154": {
+    "count": 0,
+    "status": {
+      "img_done": 12,
+      "img_all": 0,
+      "all_img": 12
+    },
+    "uuid": "81fd3488-60e1-11e4-b117-0800277c83a7",
+    "pid": 4813,
+    "agency_id": 2407154,
+    "host": "kpavlov-VirtualBox",
+    "curtime": 8.041359186172485,
+    "starttime": 1414748239.330525
+  }
+}

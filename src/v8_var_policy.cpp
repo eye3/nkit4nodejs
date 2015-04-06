@@ -121,22 +121,22 @@ namespace nkit
       return;
     }
 
-    time_t tz_offset_in_seconds = nkit::timezone_offset() / 60;
+    time_t tz_offset = nkit::timezone_offset() / 60;
     char tz_sign = '-';
-    if (tz_offset_in_seconds < 0)
+    if (tz_offset < 0)
     {
-      tz_offset_in_seconds *= -1;
+      tz_offset *= -1;
       tz_sign = '+';
     }
 
     char tz_offset_hours[3];
     sprintf(tz_offset_hours, "%02u",
-        static_cast<uint32_t>(tz_offset_in_seconds / 60));
+        static_cast<uint32_t>(tz_offset / 60));
     tz_offset_hours[2] = 0;
 
     char tz_offset_minutes[3];
     sprintf(tz_offset_minutes, "%02u",
-        static_cast<uint32_t>(tz_offset_in_seconds % 60));
+        static_cast<uint32_t>(tz_offset % 60));
     tz_offset_minutes[2] = 0;
 
     static const char * WEEK_DAYS[7] =
