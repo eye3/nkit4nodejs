@@ -26,6 +26,7 @@
 
 namespace nkit
 {
+  DynamicToJsonOptions DEFAULT_DYNAMIC_TO_JSON_OPTIONS_;
   namespace detail
   {
     int json::xalloc = ::std::ios_base::xalloc();

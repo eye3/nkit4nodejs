@@ -113,6 +113,28 @@ namespace nkit_test
   }
 
   //---------------------------------------------------------------------------
+  NKIT_TEST_CASE(tools_simple_split_empty_items)
+  {
+    std::string s("\t\t\t");
+    StringVector v;
+    simple_split(s, "\t", &v, WHITE_SPACES_BUT_TAB);
+    NKIT_TEST_ASSERT_WITH_TEXT(v.size() == 4, string_cast(v.size()));
+    NKIT_TEST_ASSERT(v[0].empty());
+    NKIT_TEST_ASSERT(v[1].empty());
+    NKIT_TEST_ASSERT(v[2].empty());
+    NKIT_TEST_ASSERT(v[3].empty());
+
+    s = "   ";
+    v.clear();
+    simple_split(s, " ", &v, WHITE_SPACES_BUT_SPACE);
+    NKIT_TEST_ASSERT_WITH_TEXT(v.size() == 4, string_cast(v.size()));
+    NKIT_TEST_ASSERT(v[0].empty());
+    NKIT_TEST_ASSERT(v[1].empty());
+    NKIT_TEST_ASSERT(v[2].empty());
+    NKIT_TEST_ASSERT(v[3].empty());
+}
+
+  //---------------------------------------------------------------------------
   NKIT_TEST_CASE(tools_simple_split)
   {
     std::string s0("qwe"), s1("asdasd"), s2("zxczxc"), s3("3333"), s4,

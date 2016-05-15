@@ -200,6 +200,12 @@ namespace nkit
     return true;
   }
 
+  bool Transcoder::FromUtf8(const char * src, size_t size,
+      std::string * out) const
+  {
+    return FromUtf8(&src, &size, out);
+  }
+
   bool Transcoder::ToUtf8(const std::string & src, std::string * out) const
   {
     uint16_t utf16[2] = {0,0};

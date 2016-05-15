@@ -29,6 +29,17 @@
 
 namespace nkit
 {
+  struct DynamicToJsonOptions
+  {
+    DynamicToJsonOptions()
+      : date_time_format(DATE_TIME_DEFAULT_FORMAT())
+    {}
+
+    std::string date_time_format;
+    std::string indent_space;
+    std::string indent_newline;
+  };
+
   namespace detail
   {
     enum JsonHumanReadable
@@ -65,23 +76,26 @@ namespace nkit
     };
 
     template<typename T>
-    inline void write_number(const Dynamic & v, T * t)
+    inline void write_number(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & NKIT_UNUSED(options))
     {
       const std::string tmp(v.GetString());
       JsonWriter<T>::write_json(tmp.c_str(), tmp.size(), t);
     }
 
     template<typename T>
-    inline void write_date_time(const Dynamic & v, T * t)
+    inline void write_date_time(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & options)
     {
-      const std::string tmp(v.GetString());
+      const std::string tmp(v.GetString(options.date_time_format.c_str()));
       __NKIT__WRITE__JSON__("\"", t);
       JsonWriter<T>::write_json(tmp.c_str(), tmp.size(), t);
       __NKIT__WRITE__JSON__("\"", t);
     }
 
     template<typename T>
-    void write_string_or_mongodb_oid(const Dynamic & v, T * t)
+    void write_string_or_mongodb_oid(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & NKIT_UNUSED(options))
     {
       std::string::const_iterator it = v.GetConstString().begin(), end =
           v.GetConstString().end(), next;
@@ -153,31 +167,34 @@ namespace nkit
     }
 
     template<typename T>
-    bool write_dict_item(const std::string & key, const Dynamic & v, T * t)
+    bool write_dict_item(const std::string & key, const Dynamic & v, T * t,
+        const DynamicToJsonOptions & options)
     {
       __NKIT__WRITE__JSON__("\"", t);
       JsonWriter<T>::write_json(key.c_str(), key.size(), t);
       __NKIT__WRITE__JSON__("\":", t);
-      return DynamicToJson(v, t);
+      return DynamicToJson(v, t, options);
     }
 
     template<typename T>
     bool write_table_row(const Dynamic & v, const size_t width,
-        const StringVector & column_names, const size_t row, T * t)
+        const StringVector & column_names, const size_t row, T * t,
+        const DynamicToJsonOptions & options)
     {
       __NKIT__WRITE__JSON__("{", t);
       size_t last_col = width - 1;
       for (size_t col = 0; col < last_col; ++col)
       {
         if (unlikely(
-            !write_dict_item(column_names[col], v.GetCellValue(row, col), t)))
+            !write_dict_item(column_names[col], v.GetCellValue(row, col), t,
+                options)))
           return false;
         __NKIT__WRITE__JSON__(",", t);
       }
 
       if (unlikely(
           !write_dict_item(column_names[last_col], v.GetCellValue(row, last_col),
-              t)))
+              t, options)))
         return false;
 
       __NKIT__WRITE__JSON__("}", t);
@@ -185,7 +202,8 @@ namespace nkit
     }
 
     template<typename T>
-    bool write_table(const Dynamic & v, T * t)
+    bool write_table(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & options)
     {
       __NKIT__WRITE__JSON__("[", t);
       size_t height = v.height();
@@ -197,12 +215,14 @@ namespace nkit
 
         for (size_t row = 0; row < last_row; ++row)
         {
-          if (unlikely(!write_table_row(v, width, column_names, row, t)))
+          if (unlikely(!write_table_row(v, width, column_names, row, t,
+              options)))
             return false;
           __NKIT__WRITE__JSON__(",", t);
         }
 
-        if (unlikely(!write_table_row(v, width, column_names, last_row, t)))
+        if (unlikely(!write_table_row(v, width, column_names, last_row, t,
+            options)))
           return false;
       }
 
@@ -211,7 +231,8 @@ namespace nkit
     }
 
     template<typename T>
-    bool write_dict(const Dynamic & v, T * t)
+    bool write_dict(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & options)
     {
       Dynamic::DictConstIterator h_it, end_d;
       size_t size = v.size();
@@ -226,12 +247,14 @@ namespace nkit
         h_it = v.begin_d();
         for (; size > 1; ++h_it, --size)
         {
-          if (unlikely(!write_dict_item(h_it->first, h_it->second, t)))
+          if (unlikely(!write_dict_item(h_it->first, h_it->second, t,
+              options)))
             return false;
           __NKIT__WRITE__JSON__(",", t);
         }
 
-        if (unlikely(!write_dict_item(h_it->first, h_it->second, t)))
+        if (unlikely(!write_dict_item(h_it->first, h_it->second, t,
+            options)))
           return false;
 
         __NKIT__WRITE__JSON__("}", t);
@@ -241,7 +264,8 @@ namespace nkit
     }
 
     template<typename T>
-    bool write_list(const Dynamic & v, T * t)
+    bool write_list(const Dynamic & v, T * t,
+        const DynamicToJsonOptions & options)
     {
       size_t size = v.size();
       if (unlikely(size == 0))
@@ -254,11 +278,11 @@ namespace nkit
         Dynamic::ListConstIterator a = v.begin_l();
         for (; size > 1; ++a, --size)
         {
-          if (unlikely(!DynamicToJson(*a, t)))
+          if (unlikely(!DynamicToJson(*a, t, options)))
             return false;
           __NKIT__WRITE__JSON__(",", t);
         }
-        if (unlikely(!DynamicToJson(*a, t)))
+        if (unlikely(!DynamicToJson(*a, t, options)))
           return false;
         __NKIT__WRITE__JSON__("]", t);
       }
@@ -267,8 +291,11 @@ namespace nkit
     }
   } // namespace detail
 
+  extern DynamicToJsonOptions DEFAULT_DYNAMIC_TO_JSON_OPTIONS_;
+
   template<typename T>
-  inline bool DynamicToJson(const Dynamic & v, T * t)
+  inline bool DynamicToJson(const Dynamic & v, T * t,
+      const DynamicToJsonOptions & options = DEFAULT_DYNAMIC_TO_JSON_OPTIONS_)
   {
     switch (v.type())
     {
@@ -285,25 +312,25 @@ namespace nkit
     case detail::INTEGER:
     case detail::UNSIGNED_INTEGER:
     case detail::FLOAT:
-      detail::write_number(v, t);
+      detail::write_number(v, t, options);
       break;
     case detail::STRING:
     case detail::MONGODB_OID:
-      detail::write_string_or_mongodb_oid(v, t);
+      detail::write_string_or_mongodb_oid(v, t, options);
       break;
     case detail::DATE_TIME:
-      detail::write_date_time(v, t);
+      detail::write_date_time(v, t, options);
       break;
     case detail::LIST:
-      if (unlikely(!detail::write_list(v, t)))
+      if (unlikely(!detail::write_list(v, t, options)))
         return false;
       break;
     case detail::DICT:
-      if (unlikely(!detail::write_dict(v, t)))
+      if (unlikely(!detail::write_dict(v, t, options)))
         return false;
       break;
     case detail::TABLE:
-      if (unlikely(!detail::write_table(v, t)))
+      if (unlikely(!detail::write_table(v, t, options)))
         return false;
       break;
     case detail::NONE:
@@ -317,7 +344,8 @@ namespace nkit
   }
 
   template<typename T>
-  inline bool DynamicToJson(const DynamicVector & v, T * t)
+  inline bool DynamicToJson(const DynamicVector & v, T * t,
+      const DynamicToJsonOptions & options = DEFAULT_DYNAMIC_TO_JSON_OPTIONS_)
   {
     __NKIT__WRITE__JSON__("[", t);
     bool first = true;
@@ -329,7 +357,7 @@ namespace nkit
       else
         __NKIT__WRITE__JSON__(", ", t);
 
-      if (!DynamicToJson(*item, t))
+      if (!DynamicToJson(*item, t, options))
         return false;
     }
 
@@ -339,17 +367,19 @@ namespace nkit
   }
 
   template<typename T>
-  std::string DynamicToJson(const T & v)
+  std::string DynamicToJson(const T & v,
+      const DynamicToJsonOptions & options = DEFAULT_DYNAMIC_TO_JSON_OPTIONS_)
   {
     std::string out;
-    if (!DynamicToJson(v, &out))
+    if (!DynamicToJson(v, &out, options))
       return S_EMPTY_;
     return out;
   }
 
   template<typename T>
   bool DynamicToJsonFile(const T & v, const std::string & file_path,
-      std::string * error)
+      std::string * error,
+      const DynamicToJsonOptions & options = DEFAULT_DYNAMIC_TO_JSON_OPTIONS_)
   {
     std::ofstream file_stream(file_path.c_str(),
         std::fstream::trunc | std::fstream::binary);
@@ -360,19 +390,12 @@ namespace nkit
       return false;
     }
 
-    return DynamicToJson(v, &file_stream);
+    return DynamicToJson(v, &file_stream, options);
   }
 
-  // TODO:
-  // template <typename T>
-  // bool DynamicFromJsonFile(const std::string & path, T * out, std::string * error)
-
-  Dynamic DynamicFromJson(const std::string & json, std::string * const error);
-  Dynamic DynamicFromJsonFile(const std::string & path,
-      std::string * const error);
-
   template <typename T>
-  bool DynamicToJsonStream(std::ostream & os, const T & v)
+  bool DynamicToJsonStream(std::ostream & os, const T & v,
+      const DynamicToJsonOptions & options = DEFAULT_DYNAMIC_TO_JSON_OPTIONS_)
   {
     long mode = os.iword(detail::json::xalloc);
     switch (mode)
@@ -383,7 +406,7 @@ namespace nkit
       return true;
     default:
     case detail::JSON_HR_ONE_LINE:
-      return DynamicToJson(v, &os);
+      return DynamicToJson(v, &os, options);
     }
   }
 
@@ -395,6 +418,10 @@ namespace nkit
     os << Dynamic::DateTimeFromTm(_tm);
     return os;
   }
+
+  Dynamic DynamicFromJson(const std::string & json, std::string * const error);
+  Dynamic DynamicFromJsonFile(const std::string & path,
+      std::string * const error);
 
 } // namespace nkit
 

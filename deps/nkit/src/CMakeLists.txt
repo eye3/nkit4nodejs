@@ -51,13 +51,13 @@ endif()
 
 add_library(${PROJECT_NAME}
             STATIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/tools.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic_path.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic_table.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic_json.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/dynamic/dynamic_table_index_comparators.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/tools.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/constants.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/version.cpp
 	        ${CMAKE_CURRENT_SOURCE_DIR}/encoding/transcode.cpp

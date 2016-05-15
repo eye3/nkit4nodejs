@@ -20,6 +20,7 @@
 #include <iostream>
 #include <algorithm>
 #include <locale>
+#include <deque>
 
 #include <nkit/types.h>
 #include <nkit/ctools.h>
@@ -62,6 +63,8 @@
 namespace nkit
 {
   extern const std::string WHITE_SPACES;
+  extern const std::string WHITE_SPACES_BUT_TAB;
+  extern const std::string WHITE_SPACES_BUT_SPACE;
   //----------------------------------------------------------------------------
   void abort_with_core(const std::string & error);
 
@@ -183,9 +186,10 @@ namespace nkit
 
   //----------------------------------------------------------------------------
   void simple_split(const std::string & src, const std::string & delimeter,
-      StringVector * dst);
+      StringVector * dst, const std::string & white_spaces = WHITE_SPACES);
   bool simple_split(const std::string & src, const std::string & delimeter,
-      std::string * key, std::string * value);
+      std::string * key, std::string * value,
+      const std::string & white_spaces = WHITE_SPACES);
   std::string ltrim(const std::string & src,
       const std::string & white_spaces);
   std::string rtrim(const std::string & src,
@@ -290,6 +294,14 @@ namespace nkit
   }
 
   //----------------------------------------------------------------------------
+  template <typename T>
+  void clear_stack(T & st)
+  {
+    while (!st.empty())
+      st.pop();
+  }
+
+  //----------------------------------------------------------------------------
   class ToolsInitializer;
 
   class TimeMeter
@@ -354,6 +366,38 @@ namespace nkit
       out << "]\n";
     }
   };
+
+  template <typename T>
+  std::ostream & operator << (std::ostream & out,
+      const std::list<T> & container)
+  {
+    Printer<std::list<T> >::_print(out, container, "");
+    return out;
+  }
+
+  template <typename T>
+  std::ostream & operator << (std::ostream & out,
+      const std::vector<T> & container)
+  {
+    Printer<std::vector<T> >::_print(out, container, "");
+    return out;
+  }
+
+  template <typename T>
+  std::ostream & operator << (std::ostream & out,
+      const std::set<T> & container)
+  {
+    Printer<std::set<T> >::_print(out, container, "");
+    return out;
+  }
+
+  template <typename T>
+  std::ostream & operator << (std::ostream & out,
+      const std::deque<T> & container)
+  {
+    Printer<std::deque<T> >::_print(out, container, "");
+    return out;
+  }
 
   template <typename K, typename V>
   struct Printer<std::map<K, V> >

@@ -187,6 +187,29 @@ namespace nkit
     arr->Set(arr->Length(), NanNew(var));
   }
 
+  void V8BuilderPolicy::AppendToDictKeyList(std::string const & _key, type const & var)
+  {
+    NanScope();
+    Local<Value> object(NanNew(object_));
+    assert(object->IsObject());
+    Local<Object> obj = Local<Object>::Cast(object);
+    Local<String> key( NanNew(_key.c_str()) );
+    if (obj->Has(key))
+    {
+      Local<Value> value = obj->Get(key);
+      if (value->IsArray())
+      {
+        Local<Array> arr = Local<Array>::Cast(value);
+        arr->Set(arr->Length(), NanNew(var));
+        return;
+      }
+    }
+
+    Local<Array> arr(NanNew<Array>());
+    arr->Set(0, NanNew(var));
+    obj->Set(key, arr);
+  }
+
   std::string V8BuilderPolicy::ToString() const
   {
     return v8var_to_json(NanNew(object_));

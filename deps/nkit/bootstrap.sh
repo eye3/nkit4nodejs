@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #   Copyright 2014 Vasiliy Soshnikov (dedok.mad@gmail.com)
 #                  Boris T. Darchiev (boris.darchiev@gmail.com)
@@ -50,6 +50,7 @@ usage      :  $0 [-d|-rd|-r] [--with-boost=] [--use-boost]
 --debug | -d            - set build type to debug
 --release | -r          - set build type to release
 --rdebug | -rd          - set build type to release with debug info
+--build-root            - set build root for (Release|Debug|RelWithDebInfo)_build folders
 --with-[boost|yajl]=    - path to non-system Boost|yajl.
 --with-boost            - force to use system Boost (if any)
 --boost-version         - force to use concrete boost version
@@ -99,10 +100,11 @@ EOF
 
 
 CMAKE="env cmake"
-REPO_ROOT=$(pwd)
-BUILD_PATH=$REPO_ROOT
+REPO_ROOT=$(dirname $(readlink -f $BASH_SOURCE))
+BUILD_ROOT=${REPO_ROOT}
 BUILD_TYPE=RelWithDebInfo
 cleanup
+
 
 for option; do
 	case $option in
@@ -117,6 +119,9 @@ for option; do
 			;;
 		--release | --Release)
 			BUILD_TYPE=Release
+			;;
+		--build-root=*)
+			export BUILD_ROOT=`expr "x$option" : "x--build-root=\(.*\)"`
 			;;
 		--with-boost=*)
 			export BOOST_ROOT=`expr "x$option" : "x--with-boost=\(.*\)"`
@@ -163,12 +168,10 @@ done
 
 CMAKE_FLAGS="$CMAKE_FLAGS -Wno-dev"
 
-mkdir -p $BUILD_PATH/$BUILD_TYPE-build || \
-  die "mkdir failed, path '$BUILD_PATH/$BUILD_TYPE-build'"
+mkdir -p $BUILD_ROOT/$BUILD_TYPE-build || \
+  die "mkdir failed, path '$BUILD_ROOT/$BUILD_TYPE-build'"
 
-echo $CMAKE_FLAGS
-
-cd $BUILD_PATH/$BUILD_TYPE-build
+cd $BUILD_ROOT/$BUILD_TYPE-build
 $CMAKE "$CMAKE_FLAGS" "$REPO_ROOT" -DCMAKE_BUILD_TYPE=$BUILD_TYPE || \
       (cd - && die "cmake failed, error code $?")
 cd -

@@ -20,12 +20,78 @@
 
 namespace nkit
 {
+  Dynamic DynamicFromAnyXml(const std::string & xml,
+      const std::string & options,
+      std::string * const root_name,
+      std::string * const error)
+  {
+    AnyXml2VarBuilder<DynamicBuilder>::Ptr builder = AnyXml2VarBuilder<
+        DynamicBuilder>::Create(options, error);
+    if(!builder)
+      return Dynamic();
+    if (!builder->Feed(xml.c_str(), xml.length(), true, error))
+      return Dynamic();
+    *root_name = builder->root_name();
+    return builder->var();
+  }
+
+  Dynamic DynamicFromAnyXml(const std::string & xml,
+      const Dynamic & options,
+      std::string * const root_name,
+      std::string * const error)
+  {
+    AnyXml2VarBuilder<DynamicBuilder>::Ptr builder = AnyXml2VarBuilder<
+        DynamicBuilder>::Create(options, error);
+    if(!builder)
+      return Dynamic();
+    if (!builder->Feed(xml.c_str(), xml.length(), true, error))
+      return Dynamic();
+    *root_name = builder->root_name();
+    return builder->var();
+  }
+
+  Dynamic DynamicFromAnyXmlFile(const std::string & path,
+      const std::string & options,
+      std::string * const root_name,
+      std::string * const error)
+  {
+    std::string xml;
+    if (!path.empty() && !text_file_to_string(path, &xml, error))
+      return Dynamic();
+
+    if (xml.empty())
+    {
+      *error = "Could not open file: '" + path + "'";
+      return Dynamic();
+    }
+
+    return DynamicFromAnyXml(xml, options, root_name, error);
+  }
+
+  Dynamic DynamicFromAnyXmlFile(const std::string & path,
+      const Dynamic & options,
+      std::string * const root_name,
+      std::string * const error)
+  {
+    std::string xml;
+    if (!path.empty() && !text_file_to_string(path, &xml, error))
+      return Dynamic();
+
+    if (xml.empty())
+    {
+      *error = "Could not open file: '" + path + "'";
+      return Dynamic();
+    }
+
+    return DynamicFromAnyXml(xml, options, root_name, error);
+  }
+
   Dynamic DynamicFromXml(const std::string & xml,
       const std::string & options,
       const std::string & mapping,
       std::string * const error)
   {
-    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+    StructXml2VarBuilder<DynamicBuilder>::Ptr builder = StructXml2VarBuilder<
         DynamicBuilder>::Create(options, error);
     if(!builder)
       return Dynamic();
@@ -55,7 +121,7 @@ namespace nkit
       const Dynamic & mapping,
       std::string * const error)
   {
-    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+    StructXml2VarBuilder<DynamicBuilder>::Ptr builder = StructXml2VarBuilder<
         DynamicBuilder>::Create(options, error);
     if(!builder)
       return Dynamic();

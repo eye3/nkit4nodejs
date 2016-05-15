@@ -172,7 +172,7 @@ namespace nkit
         std::mktime(&timeinfo);
 
         if (*format == '\0')
-          format = DATE_TIME_DEFAULT_FORMAT_;
+          format = DATE_TIME_DEFAULT_FORMAT();
 
         const int BUFFER_SIZE(1024);
         char buffer [BUFFER_SIZE];

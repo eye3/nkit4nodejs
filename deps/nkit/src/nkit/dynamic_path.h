@@ -168,10 +168,10 @@ namespace nkit
         switch (kind_)
         {
         case KEY:
-          *out += "." + key_;
+          *out += key_;
           break;
         case KEY_PTR:
-          *out += ".&" + *key_ptr_;
+          *out += "&" + *key_ptr_;
           break;
         case INDEX:
           *out += "[" + string_cast(index_) + "]";
@@ -211,27 +211,47 @@ namespace nkit
   //----------------------------------------------------------------------------
   public: // methods
     DynamicPath()
-    {}
+      : delimiter_('.')
+    {
+      MakeKeyChars();
+    }
 
-    DynamicPath(const char * path,
+    DynamicPath(char delimiter)
+      : delimiter_(delimiter)
+    {
+      MakeKeyChars();
+    }
+
+    DynamicPath(char delimiter, const char * path,
           const PathItem &a1 = PathItem(),
           const PathItem &a2 = PathItem(),
           const PathItem &a3 = PathItem(),
           const PathItem &a4 = PathItem(),
           const PathItem &a5 = PathItem())
+      : delimiter_(delimiter)
     {
+      MakeKeyChars();
       Set(std::string(path), a1, a2, a3, a4, a5);
     }
 
-    DynamicPath(const std::string & path,
+    DynamicPath(char delimiter, const std::string & path,
           const PathItem &a1 = PathItem(),
           const PathItem &a2 = PathItem(),
           const PathItem &a3 = PathItem(),
           const PathItem &a4 = PathItem(),
           const PathItem &a5 = PathItem())
+      : delimiter_(delimiter)
     {
+      MakeKeyChars();
       Set(path, a1, a2, a3, a4, a5);
     }
+
+    void delimiter(char d)
+    {
+      delimiter_ = d;
+      MakeKeyChars();
+    }
+    char delimiter() const { return delimiter_; }
 
     bool ok() const { return error().empty(); }
 
@@ -346,9 +366,13 @@ namespace nkit
       PathItems::const_iterator pitem = path_items_.begin(),
           pend = path_items_.end();
       if (pitem != pend && pitem->IsIndex())
-        *out += ".";
+        *out += delimiter_;
       for (; pitem != pend; ++pitem)
+      {
+        if (!pitem->IsIndex())
+          *out += delimiter_;
         pitem->Print(out);
+      }
     }
 
   //----------------------------------------------------------------------------
@@ -364,11 +388,17 @@ namespace nkit
         std::string * const name);
     bool UpdateState(const char ** const c, State * const state);
     bool MakePath(const std::string &path, const PathItemPtrs & params);
+    void MakeKeyChars()
+    {
+      key_chars_ = std::string("[]") + delimiter_;
+    }
 
   //----------------------------------------------------------------------------
   private: // members
     std::string error_;
     PathItems path_items_;
+    char delimiter_;
+    std::string key_chars_;
   };
 
   //----------------------------------------------------------------------------

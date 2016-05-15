@@ -43,6 +43,7 @@ namespace nkit
     bool FromUtf8(const std::string & src, std::string * out) const;
     bool FromUtf8(const std::string & src, SPECIAL_CHAR_CALLBACK cb,
             std::string * out) const;
+    bool FromUtf8(const char * src, size_t size, std::string * out) const;
     bool ToUtf8(const std::string & src, std::string * out) const;
 
   private:

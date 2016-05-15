@@ -7,6 +7,7 @@ namespace nkit
   {
     const bool Options::TRIM_DEFAULT = false;
     const bool Options::UNICODE_DEFAULT = true;
+    const bool Options::ORDERED_DICT = false;
   }
 
   const size_t Var2XmlOptions::DEFAULT_FLOAT_PRECISION = 2;

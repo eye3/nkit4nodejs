@@ -66,13 +66,13 @@ namespace nkit
     //--------------------------------------------------------------------------
     static const DynamicTypeTableItem types_map_[] =
     {
-      { "STRING"   , STRING },
-      { "UNSIGNED_INTEGER"  , UNSIGNED_INTEGER },
-      { "INTEGER"  , INTEGER },
-      { "FLOAT"    , FLOAT },
-      { "BOOL"     , BOOL },
-      { "DATE_TIME", DATE_TIME },
-      { "", DYNAMIC_TYPES_COUNT }
+      { std::string("STRING")             , STRING },
+      { std::string("UNSIGNED_INTEGER")   , UNSIGNED_INTEGER },
+      { std::string("INTEGER")            , INTEGER },
+      { std::string("FLOAT")              , FLOAT },
+      { std::string("BOOL")               , BOOL },
+      { std::string("DATE_TIME")          , DATE_TIME },
+      { std::string("")                   , DYNAMIC_TYPES_COUNT }
     };
 
     //--------------------------------------------------------------------------

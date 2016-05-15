@@ -1,5 +1,5 @@
 /*
-   Copyright 2010-2014 Boris T. Darchiev (boris.darchiev@gmail.com)
+   Copyright 2010-2015 Boris T. Darchiev (boris.darchiev@gmail.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 #include "nkit/dynamic_path.h"
+#include "nkit/logger_brief.h"
 
 namespace nkit
 {
@@ -23,7 +24,7 @@ namespace nkit
       const PathItem &a2, const PathItem &a3, const PathItem &a4,
       const PathItem &a5)
   {
-    if (unlikely(path == S_DOT_))
+    if ( unlikely( (path.size() == 1) && (path[0] == delimiter_) ) )
     {
       path_items_.clear();
       return;
@@ -38,6 +39,7 @@ namespace nkit
     MakePath(path, in);
   }
 
+  //----------------------------------------------------------------------------
   bool DynamicPath::AddPathItem(const std::string &path,
       PathItemPtrs::const_iterator &path_item,
       PathItemPtrs::const_iterator &pend,
@@ -82,7 +84,7 @@ namespace nkit
     if (begin == end || *begin == ']')
       return false;
 
-    while (*s != end && !strchr("[.]", **s))
+    while (*s != end && !strchr(key_chars_.c_str(), **s))
       ++(*s);
 
     if (begin == *s)
@@ -95,26 +97,30 @@ namespace nkit
   //--------------------------------------------------------------------------
   bool DynamicPath::UpdateState(const char ** const c, State * const state)
   {
-    switch(**c)
+    if (**c == delimiter_)
     {
-    case '.':
       *state = (*state == BRACKET_CLOSE) ? DOT_AFTER_BRACKET_CLOSE : DOT;
-      break;
-    case '[':
-      if (*state == DOT_AFTER_BRACKET_CLOSE)
+    }
+    else
+    {
+      switch(**c)
+      {
+      case '[':
+        if (*state == DOT_AFTER_BRACKET_CLOSE)
+          return false;
+        *state = BRACKET_OPEN;
+        break;
+      case ']':
+        if (*state != BRACKET_OPEN && *state != PARAM)
+          return false;
+        *state = BRACKET_CLOSE;
+        break;
+      case '%':
+        *state = PARAM;
+        break;
+      default:
         return false;
-      *state = BRACKET_OPEN;
-      break;
-    case ']':
-      if (*state != BRACKET_OPEN && *state != PARAM)
-        return false;
-      *state = BRACKET_CLOSE;
-      break;
-    case '%':
-      *state = PARAM;
-      break;
-    default:
-      return false;
+      }
     }
 
     ++(*c);
@@ -123,22 +129,27 @@ namespace nkit
   }
 
   //--------------------------------------------------------------------------
-  bool DynamicPath::MakePath(const std::string &path, const PathItemPtrs & params)
+  bool DynamicPath::MakePath(const std::string &path,
+          const PathItemPtrs & params)
   {
     if (path.empty())
       return true;
 
     const char * c = path.c_str();
     const char *end = c + path.length();
+
     State state(DOT);
-    if (*c == '.')
-      state = DOT;
+    if (*c == delimiter_)
+      ++c;
     else if (*c == '[')
+    {
       state = BRACKET_OPEN;
-    else
-      return InvalidPath(path, c);
-    if (++c == end)
+      ++c;
+    }
+
+    if (c == end)
       return InvalidPath(path, path.c_str());
+
     std::string name;
     size_t index(0);
     PathItemPtrs::const_iterator param = params.begin(), pend = params.end();

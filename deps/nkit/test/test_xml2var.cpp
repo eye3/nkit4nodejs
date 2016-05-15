@@ -376,7 +376,7 @@ namespace nkit_test
     NKIT_TEST_ASSERT_WITH_TEXT(
         text_file_to_string(options_path, &options, &error), error);
 
-    Xml2VarBuilder<DynamicBuilder>::Ptr builder = Xml2VarBuilder<
+    StructXml2VarBuilder<DynamicBuilder>::Ptr builder = StructXml2VarBuilder<
         DynamicBuilder>::Create(options, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(builder, error);
     NKIT_TEST_ASSERT_WITH_TEXT(
@@ -416,6 +416,28 @@ namespace nkit_test
   }
 
   //---------------------------------------------------------------------------
+  NKIT_TEST_CASE(xml2var_attribute_as_key)
+  {
+    //CINFO(__FILE__);
+    std::string error;
+    std::string xml_path("./data/attribute_as_key_sample.xml");
+    std::string xml;
+    NKIT_TEST_ASSERT_WITH_TEXT(
+        text_file_to_string(xml_path, &xml, &error), error);
+
+    Dynamic mapping =
+        DLIST("/Record" << DDICT(
+                  "/Field -> @name" << "string"
+                )
+        );
+
+    Dynamic var = DynamicFromXml(xml, mapping, &error);
+    NKIT_TEST_ASSERT_WITH_TEXT(var, error);
+    NKIT_TEST_EQ(var[size_t(0)]["ARTIST"], Dynamic("Bob Dylan"));
+    NKIT_TEST_EQ(var[size_t(1)]["YEAR"], Dynamic(1988));
+  }
+
+  //---------------------------------------------------------------------------
   NKIT_TEST_CASE(xml2var_sandbox)
   {
     std::string error;
@@ -438,6 +460,63 @@ namespace nkit_test
     NKIT_TEST_ASSERT_WITH_TEXT(var, error);
 
     CINFO(json_hr << var);
+  }
+
+  //---------------------------------------------------------------------------
+  NKIT_TEST_CASE(xml2var_any)
+  {
+    std::string error;
+    std::string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+"<rss version=\"2.0\">\n"
+"  <channel>\n"
+"    <title>FOREX (45 пар валют)</title>\n"
+"    <link>http://stock.rbc.ru/online/forex.0/intraday/index.rus.shtml</link>\n"
+"    <description>FOREX (45 пар валют) :: Realtime</description>\n"
+"    <pubDate>Tue, 09 Dec 2014 10:10:18 GMT</pubDate>\n"
+"    <language>ru-ru</language>\n"
+"    <item>\n"
+"      <title>Австралийский доллар/Канадский доллар</title>\n"
+"      <link>http://stock.rbc.ru/online/forex.0/intraday/AUD_CAD.rus.shtml</link>\n"
+"      <description>AUD/CAD (AUD_CAD); 0.9516 (-0.04%)</description>\n"
+"    </item>\n"
+"    <item>\n"
+"      <title>Австралийский доллар/Гонконгский доллар</title>\n"
+"      <link>http://stock.rbc.ru/online/forex.0/intraday/AUD_HKD.rus.shtml</link>\n"
+"      <description>AUD/HKD (AUD_HKD); 6.4257 (-0.02%)</description>\n"
+"    </item>\n"
+"  </channel>\n"
+"</rss>";
+
+    Dynamic options = DDICT(
+      "trim" << true <<
+      "priority" << DLIST("title"
+                      << "link"
+                      << "description"
+                      << "pubDate"
+                      << "language") <<
+      "attrkey" << "$" <<
+      "textkey" << "_" <<
+      "rootname" << "rss" <<
+      "itemname" << "item" <<
+      "encoding" << "UTF-8" <<
+      "xmldec" << DDICT(
+         "version" << "1.0" <<
+         "standalone" << true
+        ) <<
+      "pretty" << DDICT(
+         "indent" << "  " <<
+         "newline" << "\n"
+        )
+    );
+
+    std::string root_name;
+    Dynamic data = DynamicFromAnyXml(xml, options, &root_name, &error);
+    CINFO(root_name << "\n" << data);
+
+    std::string out;
+    NKIT_TEST_ASSERT_WITH_TEXT(Dynamic2XmlConverter::Process(
+        options, data, &out, &error), error);
+    NKIT_TEST_EQ(xml, out);
   }
 
 } // namespace nkit_test

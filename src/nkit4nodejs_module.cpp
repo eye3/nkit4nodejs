@@ -17,6 +17,7 @@
 #include <nan.h>
 #include <node.h>
 #include "xml2var_builder_wrapper.h"
+#include "anyxml2var_builder_wrapper.h"
 #include "v8_var_policy.h"
 
 namespace nkit
@@ -26,6 +27,7 @@ namespace nkit
   void InitModule(Handle<Object> exports)
   {
     Xml2VarBuilderWrapper::Init(exports);
+    AnyXml2VarBuilderWrapper::Init(exports);
     nkit::V8BuilderPolicy::Init();
   }
 

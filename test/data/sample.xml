@@ -1,54 +1,54 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <any_name>
-	<person>
-		<phone>+122233344550</phone>
-		<name>Jack</name>
-		<phone>+122233344551</phone>
-		<photos>
-			<photo>img1</photo>
-			<photo>img2</photo>
-			<ph>img3</ph>
-		</photos>
-		<age>33</age>
-		<married firstTime="No">Yes</married>
-		<birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
-        <empty/>
-		<address>
-			<city>New York</city>
-			<street>Park Ave</street>
-			<buildingNo>1</buildingNo>
-			<flatNo>1</flatNo>
-		</address>
-		<address>
-			<city>Boston</city>
-			<street>Centre St</street>
-			<buildingNo>33</buildingNo>
-			<flatNo>24</flatNo>
-		</address>
-	</person>
-	<person>
-		<phone>+122233344553</phone>
-		<name>Boris</name>
-		<phone>+122233344554</phone>
-		<photos>
-			<photo>img3</photo>
-			<photo>img4</photo>
-		</photos>
-		<age>34</age>
-		<married firstTime="Yes">Yes</married>
-		<birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
-        <empty/>
-		<address>
-			<city>Moscow</city>
-			<street>Kahovka</street>
-			<buildingNo>1</buildingNo>
-			<flatNo>2</flatNo>
-		</address>
-		<address>
-			<city>Tula</city>
-			<street>Lenina</street>
-			<buildingNo>3</buildingNo>
-			<flatNo>78</flatNo>
-		</address>
-	</person>
+  <person>
+    <name>Jack</name>
+    <phone>+122233344550</phone>
+    <phone>+122233344551</phone>
+    <photos>
+      <photo>img1</photo>
+      <photo>img2</photo>
+      <ph>img3</ph>
+    </photos>
+    <age>33</age>
+    <married firstTime="No">Yes</married>
+    <birthday>Wed, 28 Mar 1979 12:13:14 +0300</birthday>
+    <empty></empty>
+    <address>
+      <city>New York</city>
+      <street>Park Ave</street>
+      <buildingNo>1</buildingNo>
+      <flatNo>1</flatNo>
+    </address>
+    <address>
+      <city>Boston</city>
+      <street>Centre St</street>
+      <buildingNo>33</buildingNo>
+      <flatNo>24</flatNo>
+    </address>
+  </person>
+  <person>
+    <name>Boris</name>
+    <phone>+122233344553</phone>
+    <phone>+122233344554</phone>
+    <photos>
+      <photo>img3</photo>
+      <photo>img4</photo>
+    </photos>
+    <age>34</age>
+    <married firstTime="Yes">Yes</married>
+    <birthday>Mon, 31 Aug 1970 02:03:04 +0300</birthday>
+    <empty></empty>
+    <address>
+      <city>Moscow</city>
+      <street>Kahovka</street>
+      <buildingNo>1</buildingNo>
+      <flatNo>2</flatNo>
+    </address>
+    <address>
+      <city>Tula</city>
+      <street>Lenina</street>
+      <buildingNo>3</buildingNo>
+      <flatNo>78</flatNo>
+    </address>
+  </person>
 </any_name>

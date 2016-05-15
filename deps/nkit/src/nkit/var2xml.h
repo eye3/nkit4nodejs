@@ -48,6 +48,7 @@ namespace nkit
       DynamicGetter op(options);
 
       static const StringSet EMPTY_STRING_SET;
+      static const StringList EMPTY_STRING_LIST;
 
       std::string version, encoding, indent, nweline;
       bool standalone;
@@ -62,6 +63,7 @@ namespace nkit
         .Get(".pretty.indent", &res->pretty_.indent_, S_EMPTY_)
         .Get(".pretty.newline", &res->pretty_.newline_, S_EMPTY_)
         .Get(".cdata", &res->cdata_, EMPTY_STRING_SET)
+        .Get(".priority", &res->priority_list_, EMPTY_STRING_LIST)
         .Get(".float_precision", &res->float_precision_,
                 DEFAULT_FLOAT_PRECISION)
         .Get(".date_time_format", &res->date_time_format_,
@@ -75,6 +77,9 @@ namespace nkit
         *error = op.error();
         return Ptr();
       }
+
+      std::copy(res->priority_list_.begin(), res->priority_list_.end(),
+          std::inserter(res->priority_set_, res->priority_set_.begin()));
 
       if (res->cdata_.empty())
       {
@@ -133,6 +138,8 @@ namespace nkit
     std::string xml_dec_;
     Pretty pretty_;
     StringSet cdata_;
+    StringSet priority_set_;
+    StringList priority_list_;
     bool cdata_exclude_;
     size_t float_precision_;
     std::string date_time_format_;
@@ -171,12 +178,6 @@ namespace nkit
 
       if (T::IsDict(data))
       {
-//        if (op->root_name_.empty())
-//          op->root_name_ = op->item_name_.empty() ? "root": op->item_name_;
-//
-//        const std::string & item_name =
-//            op->item_name_.empty() ? op->root_name_: op->item_name_;
-
         if (!op->root_name_.empty())
           builder.BeginElement(op->root_name_, data, out);
 
@@ -214,47 +215,55 @@ namespace nkit
       , begin_(true)
     {}
 
-//    bool check_xml_name(const std::string & name)
-//    {
-//      static const char * NOT_IN = "!@#$%^&*()=+?/\\|'\"`~,; \t\r\n";
-//      static const std::string NOT_FIRST = std::string("1234567890:-.") + NOT_IN;
-//
-//      if (unlikely(nkit::istarts_with(name, "xml")))
-//        return false;
-//      else if (unlikely(NOT_FIRST.find(name[0]) != NOT_FIRST.npos))
-//        return false;
-//      else if (unlikely(name.find(" ") != name.npos))
-//        return false;
-//
-//      size_t size = name.size();
-//      for (size_t i=1; i < size; ++i)
-//      {
-//        if (strchr(NOT_IN, name[i]) != NULL)
-//          return false;
-//      }
-//
-//      return true;
-//    }
-//
     //--------------------------------------------------------------------------
     bool Convert(const std::string & item_name, const DataType & data,
         Var2XmlConverter & builder, std::string * out, std::string * error)
     {
       if (T::IsDict(data))
       {
+        bool dict_is_empty = true;
+//        bool dict_has_attrkey = false;
+        StringList::const_iterator pr_it = options_->priority_list_.begin(),
+            pr_end = options_->priority_list_.end();
+        for (; pr_it != pr_end; ++pr_it)
+        {
+          std::string key(*pr_it);
+          if (options_->attr_key_ == key)
+          {
+//            dict_has_attrkey = true;
+            continue;
+          }
+          else if (options_->text_key_ == key)
+            continue;
+          bool found = false;
+          DataType v = T::GetByKey(data, key, &found);
+          if (found)
+          {
+            dict_is_empty = false;
+            if (!T::IsList(v))
+              builder.BeginElement(key, v, out);
+            if (!Convert(key, v, builder, out, error))
+              return false;
+            if (!T::IsList(v))
+              builder.EndElement(out);
+          }
+        }
+
+        StringSet::const_iterator prset_end = options_->priority_set_.end();
         DictConstIterator it = T::begin_d(data), end = T::end_d(data);
         for (; it != end; ++it)
         {
           std::string key(T::First(it));
-          if (options_->attr_key_ == key || options_->text_key_ == key)
+          if (options_->attr_key_ == key)
+          {
+//            dict_has_attrkey = true;
+            continue;
+          }
+          else if ( options_->text_key_ == key ||
+              (options_->priority_set_.find(key) != prset_end) )
             continue;
 
-//          if (!check_xml_name(key))
-//          {
-//            *error = "Wrong name for XML element: " + key;
-//            return false;
-//          }
-//
+          dict_is_empty = false;
           DataType v = T::Second(it);
           if (!T::IsList(v))
             builder.BeginElement(key, v, out);
@@ -268,7 +277,12 @@ namespace nkit
         bool found(false);
         DataType text = T::GetByKey(data, options_->text_key_, &found);
         if (found)
-          builder.PutText(text, true, out);
+        {
+          bool newline = // dict_has_attrkey ||
+              !dict_is_empty;
+          builder.PutText(text, newline, out);
+          first_end_after_begin_ = !newline;
+        }
       }
       else if (T::IsList(data))
       {
@@ -329,7 +343,6 @@ namespace nkit
             out->append("=\"");
             PutText(T::Second(pair), out);
             (*out) += '\"';
-
           }
         }
       }
@@ -365,6 +378,15 @@ namespace nkit
         options_->transcoder_->FromUtf8(text, out);
       else
         out->append(text);
+    }
+
+    //--------------------------------------------------------------------------
+    void AppendTranscoded(const char * text, size_t len, std::string * out)
+    {
+      if (options_->transcoder_)
+        options_->transcoder_->FromUtf8(text, len, out);
+      else
+        out->append(text, len);
     }
 
     //--------------------------------------------------------------------------
@@ -479,9 +501,76 @@ namespace nkit
     //--------------------------------------------------------------------------
     void PutCdata(const std::string & cdata, std::string * out)
     {
-      out->append("<![CDATA[");
-      AppendTranscoded(cdata, out);
-      out->append("]]>");
+      out->append(S_CDATA_BEGIN_);
+
+      size_t total = cdata.size();
+      size_t b_len = S_CDATA_BEGIN_.size();
+      size_t e_len = S_CDATA_END_.size();
+      char b_0 = S_CDATA_BEGIN_[0];
+      char b_1 = S_CDATA_BEGIN_[1];
+      char b_2 = S_CDATA_BEGIN_[2];
+      char b_3 = S_CDATA_BEGIN_[3];
+      char b_4 = S_CDATA_BEGIN_[4];
+      char b_5 = S_CDATA_BEGIN_[5];
+      char b_6 = S_CDATA_BEGIN_[6];
+      char b_7 = S_CDATA_BEGIN_[7];
+      char b_8 = S_CDATA_BEGIN_[8];
+      char e_0 = S_CDATA_END_[0];
+      char e_1 = S_CDATA_END_[1];
+      char e_2 = S_CDATA_END_[2];
+      size_t first = 0, len = 0;
+      for(size_t i = 0, rest = total;
+          i != total;
+          ++i, --rest)
+      {
+        if ((rest >= b_len) &&
+            (cdata[i] == b_0) &&
+            (cdata[i+1] == b_1) &&
+            (cdata[i+2] == b_2) &&
+            (cdata[i+3] == b_3) &&
+            (cdata[i+4] == b_4) &&
+            (cdata[i+5] == b_5) &&
+            (cdata[i+6] == b_6) &&
+            (cdata[i+7] == b_7) &&
+            (cdata[i+8] == b_8)
+            )
+        {
+          AppendTranscoded(&cdata.at(first), len, out);
+          i += b_len;
+          first = i;
+          --i; // compensate increment in 'for' statement
+          len = 0;
+          rest -= (b_len-1);
+          out->append("<![");
+          out->append(S_CDATA_END_);
+          out->append(S_CDATA_BEGIN_);
+          out->append("CDATA[");
+        }
+        else if ((rest >= e_len) &&
+            (cdata[i] == e_0) &&
+            (cdata[i+1] == e_1) &&
+            (cdata[i+2] == e_2)
+            )
+        {
+          AppendTranscoded(&cdata.at(first), len, out);
+          i += e_len;
+          first = i;
+          --i; // compensate increment in 'for' statement
+          len = 0;
+          rest -= (e_len-1);
+          out->append("]]");
+          out->append(S_CDATA_END_);
+          out->append(S_CDATA_BEGIN_);
+          out->append(">");
+        }
+        else
+          ++len;
+      }
+
+      if (len)
+        AppendTranscoded(&cdata.at(first), len, out);
+
+      out->append(S_CDATA_END_);
     }
 
   private:

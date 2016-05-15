@@ -24,6 +24,43 @@ namespace nkit_test
 {
   using namespace nkit;
 
+  NKIT_TEST_CASE(DynamicJsonDateTimeFormat)
+  {
+    std::string short_format = "%Y-%m-%d";
+    Dynamic dt = Dynamic::DateTimeLocal();
+    std::string s_dt_default = dt.GetString();
+    std::string s_dt_short_format = dt.GetString(short_format.c_str());
+    Dynamic d = DDICT("dt" << dt
+        << "list" << DLIST(dt)
+        << "tbl" <<
+          DTBL("dt:DATE_TIME,s:STRING",
+               dt << "str"));
+
+    std::string etalon_default = "{\"dt\":\"" +
+        s_dt_default +
+        "\",\"list\":[\"" +
+        s_dt_default +
+        "\"],\"tbl\":[{\"dt\":\"" +
+        s_dt_default +
+        "\",\"s\":\"str\"}]}";
+    std::string out;
+    DynamicToJsonOptions options;
+    DynamicToJson(d, &out, options);
+    NKIT_TEST_EQ(etalon_default, out);
+
+    std::string etalon_short_format = "{\"dt\":\"" +
+        s_dt_short_format +
+        "\",\"list\":[\"" +
+        s_dt_short_format +
+        "\"],\"tbl\":[{\"dt\":\"" +
+        s_dt_short_format +
+        "\",\"s\":\"str\"}]}";
+    out.clear();
+    options.date_time_format = short_format;
+    DynamicToJson(d, &out, options);
+    NKIT_TEST_EQ(etalon_short_format, out);
+  }
+
   NKIT_TEST_CASE(DynamicJsonVector)
   {
     DynamicVector dv;

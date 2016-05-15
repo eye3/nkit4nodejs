@@ -67,8 +67,12 @@ if (cluster.isMaster) {
         "float_precision": 10,
         "date_time_format": "%Y-%m-%d %H:%M:%S",
         "bool_true": "Yes",
-        "bool_false": "No"
+        "bool_false": "No",
+        "trim": true
     };
+
+    var xmlString = fs.readFileSync(__dirname
+    		+ "/data/sample.xml", "utf8");
 
     http.createServer(function (req, res) {
         var parsed_url = url.parse(req.url, true);
@@ -96,6 +100,16 @@ if (cluster.isMaster) {
             res.writeHead(200,
                 {'Content-Type': 'text/xml; charset="' + ENC + '"'});
             res.end(nkit.var2xml(DATA, OPTIONS));
+        } else if (pathname.indexOf("/any_xml") > -1) {
+        	var builder = new nkit.AnyXml2VarBuilder(OPTIONS)
+        	builder.feed(xmlString)
+        	var result = builder.end()
+        	
+            result = JSON.stringify(result, null, "  ");
+
+            res.writeHead(200,
+                {'Content-Type': 'application/json; charset="utf-8"'});
+            res.end(result);
         }
     }).listen(1337, '127.0.0.1');
 

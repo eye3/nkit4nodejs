@@ -44,9 +44,11 @@ define_example(example_dynamic_int)
 add_executable(dynamic
   ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_int.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_boolean.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_table.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_json.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_datetime.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic_getter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_tools.cpp
   ${CMAKE_SOURCE_DIR}/src/encoding/encodings_inc_gen.cpp
   ${TEST_VX_SOURCES}

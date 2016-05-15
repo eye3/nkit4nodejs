@@ -16,11 +16,31 @@
 
 #include <iostream>
 #include <iomanip>
+#include <deque>
 
 #include "nkit/test.h"
 #include <nkit/version.h>
-#include <nkit/logger.h>
+#include <nkit/logger_brief.h>
 #include <nkit/tools.h>
+
+NKIT_TEST_CASE(OstreamOperator)
+{
+  nkit::StringList list;
+  list.push_back("list");
+  CINFO(list);
+
+  nkit::StringVector vector;
+  vector.push_back("vector");
+  CINFO(vector);
+
+  nkit::StringSet set;
+  set.insert("set");
+  CINFO(set);
+
+  std::deque<std::string> deque;
+  deque.push_back("deque");
+  CINFO(deque);
+}
 
 static std::string big_string;
 

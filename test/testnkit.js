@@ -163,7 +163,7 @@ var builder = new nkit.Xml2VarBuilder(mappings);
 builder.feed(xmlString);
 var res = builder.end();
 
-counter = 0;
+var counter = 0;
 for (name in etalons) {
     counter += 1;
     if (!deep_equal.deepEquals(res[name], etalons[name])) {
@@ -171,7 +171,7 @@ for (name in etalons) {
         console.error(JSON.stringify(etalons[name], null, 2));
         console.error("RESULT of " + name + ":");
         console.error(JSON.stringify(res[name], null, 2));
-        console.error("Error #1." + str(counter));
+        console.error("Error #1." + parseInt(counter));
         process.exit(1);
     }
 }
@@ -219,6 +219,7 @@ if (!deep_equal.deepEquals(res, builder.get("map_name"))) {
 }
 
 // -----------------------------------------------------------------------------
+// collecting attributes
 options = {"attrkey": "$"};
 
 mapping = ["/person",
@@ -261,6 +262,90 @@ if (!deep_equal.deepEquals(married_info, etalon)) {
     console.error(JSON.stringify(married_info, null, 2));
     console.error(JSON.stringify(etalon, null, 2));
     console.error("Error #4");
+    process.exit(1);
+}
+
+//-----------------------------------------------------------------------------
+// attribute value as key name in Object
+var xmlString = fs.readFileSync(__dirname
+		+ "/../deps/nkit/test/data/attribute_as_key_sample.xml");
+var mapping = fs.readFileSync(__dirname
+		+ "/../deps/nkit/test/data/attribute_as_key_mapping.json");
+var mappings = {"main": JSON.parse(mapping)}
+var options = {"attrkey": "$"}
+
+var builder = new nkit.Xml2VarBuilder(options, mappings)
+builder.feed(xmlString)
+var result = builder.end()
+result = result["main"]
+if (result[0]["ARTIST"] != "Bob Dylan") {
+    console.error(JSON.stringify(result, null, 2));
+    console.error("Error #5.1");
+    process.exit(1);
+}
+	
+if (result[1]["YEAR"] != "1988") {
+    console.error(JSON.stringify(result, null, 2));
+    console.error("Error #5.2");
+    process.exit(1);
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Any xml
+var xmlString = fs.readFileSync(__dirname
+		+ "/data/sample.xml", "utf8");
+
+var options = {"attrkey": "$", "trim": true}
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(xmlString)
+var result1 = builder.end()
+
+options = {
+	    "rootname": "any_name",
+	    "itemname": "item",
+	    "encoding": "utf-8",
+	    "as_buffer": false,
+	    "xmldec": {
+	        "version": "1.0",
+	        "standalone": true
+	    },
+	    "pretty": {
+	        "indent": "  ",
+	        "newline": "\n"
+	    },
+        "priority": ["title",
+                     "link",
+                     "description",
+                     "pubDate",
+                     "language",
+                     "name",
+                     "phone"
+        ],
+	    "attrkey": "$",
+	    "textkey": "_",
+	    "cdata": ["cdata", "float"],
+	    "float_precision": 10,
+	    "date_time_format": "%Y-%m-%d %H:%M:%S %z"
+	};
+
+tmp = nkit.var2xml(result1, options)
+if (tmp != xmlString) {
+    console.error(xmlString);
+    console.error(tmp);
+    console.error("Error #6.1");
+    process.exit(1);
+}
+
+var options = {"attrkey": "$", "trim": true}
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(tmp)
+var result2 = builder.end()
+
+if (!deep_equal.deepEquals(result1, result2)) {
+    console.error(JSON.stringify(result1, null, 2));
+    console.error(JSON.stringify(result2, null, 2));
+    console.error("Error #6.1");
     process.exit(1);
 }
 

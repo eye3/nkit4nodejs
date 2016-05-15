@@ -14,8 +14,8 @@
    limitations under the License.
 */
 
-#ifndef XML2VAR_BUILDER_H
-#define XML2VAR_BUILDER_H
+#ifndef ANYXML2VAR_BUILDER_H
+#define ANYXML2VAR_BUILDER_H
 
 #include <node_object_wrap.h>
 #include <nan.h>
@@ -25,29 +25,30 @@ namespace nkit
 {
   typedef VarBuilder<V8BuilderPolicy> V8VarBuilder;
 
-  class Xml2VarBuilderWrapper: public node::ObjectWrap
+  class AnyXml2VarBuilderWrapper: public node::ObjectWrap
   {
   public:
     static void Init(v8::Handle<v8::Object> exports);
 
   private:
-    explicit Xml2VarBuilderWrapper(StructXml2VarBuilder<V8VarBuilder>::Ptr builder)
+    explicit AnyXml2VarBuilderWrapper(AnyXml2VarBuilder<V8VarBuilder>::Ptr builder)
       : builder_(builder)
     {}
 
-    ~Xml2VarBuilderWrapper()
+    ~AnyXml2VarBuilderWrapper()
     {}
 
     static NAN_METHOD(New);
     static NAN_METHOD(Feed);
     static NAN_METHOD(Get);
+    static NAN_METHOD(GetRootName);
     static NAN_METHOD(End);
 
     static v8::Persistent<v8::Function> constructor;
 
-    StructXml2VarBuilder<V8VarBuilder>::Ptr builder_;
+    AnyXml2VarBuilder<V8VarBuilder>::Ptr builder_;
   };
 
 }  // namespace nkit
 
-#endif // XML2VAR_BUILDER_H
+#endif // ANYXML2VAR_BUILDER_H

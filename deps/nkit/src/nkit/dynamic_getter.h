@@ -106,7 +106,10 @@ namespace nkit
   //----------------------------------------------------------------------------
   inline bool & operator << (bool & b, const Dynamic & d)
   {
-    b = d.GetBoolean();
+    if (unlikely(d.IsString()))
+      b = bool_cast(d.GetConstString());
+    else
+      b = d.GetBoolean();
     return b;
   }
 
@@ -410,18 +413,12 @@ namespace nkit
 #endif
 
   inline bool GetSubDynamic(const Dynamic & data,
-      const DynamicPath & sub_path, bool * out, std::string * error)
+      const DynamicPath & sub_path, bool * out, std::string * NKIT_UNUSED(error))
   {
     const Dynamic * v = sub_path.Get(data);
     if (!v)
       return false;
-    if (!v->IsBool())
-    {
-      *error = "value must be boolean";
-      return false;
-    }
-
-    *out = v->GetBoolean();
+    *out << *v;
     return true;
   }
 
@@ -585,6 +582,7 @@ namespace nkit
       , sub_path_(sub_path)
       , error_(parent.error_)
     {
+      sub_path_.delimiter(parent.delimiter());
       const Dynamic * tmp = sub_path_.Get(parent.data_);
       if (tmp)
         data_ = *tmp;
@@ -620,6 +618,15 @@ namespace nkit
       return *this;
     }
 
+    void delimiter(char d)
+    {
+      if (parent_)
+        parent_->delimiter(d);
+      sub_path_.delimiter(d);
+    }
+
+    char delimiter() const { return sub_path_.delimiter(); }
+
     std::string error() const
     {
       std::string error;
@@ -646,7 +653,8 @@ namespace nkit
     std::string file_path() const { return path_; }
     DynamicPath dynamic_path() const
     {
-      return (parent_ ? parent_->dynamic_path() : DynamicPath()) / sub_path_;
+      DynamicPath empty_path(delimiter());
+      return (parent_ ? parent_->dynamic_path() : empty_path) / sub_path_;
     }
 
     //--------------------------------------------------------------------------
@@ -655,7 +663,7 @@ namespace nkit
     {
       if (ok())
       {
-        DynamicPath _sub_path(sub_path);
+        DynamicPath _sub_path(delimiter(), sub_path);
         if (!_sub_path.ok())
         {
           SetError("Wrong path '" +
@@ -676,7 +684,7 @@ namespace nkit
     {
       if (ok())
       {
-        DynamicPath _sub_path(sub_path);
+        DynamicPath _sub_path(delimiter(), sub_path);
         if (!_sub_path.ok())
         {
           SetError("Wrong path '" +
@@ -709,7 +717,7 @@ namespace nkit
     template <typename T>
     DynamicGetter & Get(const size_t index, T * out)
     {
-      DynamicPath sub_path("[%]", index);
+      DynamicPath sub_path(delimiter(), "[%]", index);
       return Get(sub_path, out);
     }
 
@@ -717,7 +725,7 @@ namespace nkit
     template <typename T>
     DynamicGetter & Get(const size_t index, T * out, const T & def)
     {
-      DynamicPath sub_path("[%]", index);
+      DynamicPath sub_path(delimiter(), "[%]", index);
       return Get(sub_path, out, def);
     }
 
@@ -742,8 +750,30 @@ namespace nkit
 
     //--------------------------------------------------------------------------
     template <typename T>
-    DynamicGetter & Get(const DynamicPath & sub_path,
-      std::vector<T> * out)
+    DynamicGetter & Get(const DynamicPath & sub_path, std::vector<T> * out)
+    {
+      if (ok())
+      {
+        DynamicGetter sub_loader(*this, sub_path);
+        if (!sub_loader.data().IsList())
+        {
+          SetError("Value of option '" +
+            static_cast<std::string>(dynamic_path() / sub_path) +
+              "' in location '" + file_path() + "' must be LIST");
+        }
+        else
+        {
+          out->clear();
+          sub_loader.data().SaveTo(out);
+        }
+      }
+
+      return *this;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename T>
+    DynamicGetter & Get(const DynamicPath & sub_path, std::list<T> * out)
     {
       if (ok())
       {
@@ -789,8 +819,7 @@ namespace nkit
 
     //--------------------------------------------------------------------------
     template <typename T>
-    DynamicGetter & Get(const DynamicPath & sub_path,
-        NKIT_SHARED_PTR(T) * out)
+    DynamicGetter & Get(const DynamicPath & sub_path, NKIT_SHARED_PTR(T) * out)
     {
       if (ok())
       {
@@ -838,6 +867,38 @@ namespace nkit
     }
 
     //--------------------------------------------------------------------------
+    template <typename T>
+    DynamicGetter & Get(const DynamicPath & sub_path,
+      std::list<NKIT_SHARED_PTR(T) > * out)
+    {
+      if (ok())
+      {
+        DynamicGetter sub_loader(*this, sub_path);
+        if (!sub_loader.data().IsList())
+          SetError("Value of option '" +
+            static_cast<std::string>(dynamic_path() / sub_path) +
+              "' in location '" + file_path() + "' must be LIST");
+        else
+        {
+          std::list<NKIT_SHARED_PTR(T) > ltmp;
+          size_t size(sub_loader.data().size());
+          for (size_t counter = 0; counter < size; ++counter)
+          {
+            NKIT_SHARED_PTR(T) tmp;
+            sub_loader.Get(counter, &tmp);
+            if (!sub_loader.ok())
+              break;
+            ltmp.push_back(tmp);
+          }
+
+          *out = ltmp;
+        }
+      }
+
+      return *this;
+    }
+
+    //--------------------------------------------------------------------------
     template <typename K, typename T>
     DynamicGetter & Get(const DynamicPath & sub_path,
         typename std::map<K, NKIT_SHARED_PTR(T) > * out)
@@ -855,7 +916,7 @@ namespace nkit
           DDICT_FOREACH(pair, sub_loader.data())
           {
             NKIT_SHARED_PTR(T) tmp;
-            sub_loader.Get("." + pair->first, &tmp);
+            sub_loader.Get(sub_loader.delimiter() + pair->first, &tmp);
             if (!sub_loader.ok())
               break;
             K k;
@@ -1084,7 +1145,8 @@ namespace nkit
     const Dynamic *v;
     if (var.Get(name, &v))
     {
-      *value = v->GetBoolean();
+      *value << *v;
+      //*value = v->GetBoolean();
       return true;
     }
     return false;
@@ -1183,5 +1245,314 @@ namespace nkit
   }
 
 } // namespace nkit
+
+#define __NKIT_OPTIONS_BEGIN(prefix, line) template <int n>                   \
+  class prefix##Option : public prefix##Option<n-1> {                         \
+  public:                                                                     \
+    bool Init(DynamicGetter & config)                                         \
+    {                                                                         \
+      return prefix##Option<n-1>::Init(config);                               \
+    }                                                                         \
+    void SaveToDynamic(Dynamic * out) const {                                 \
+      prefix##Option<n-1>::SaveToDynamic(out);                                \
+    }                                                                         \
+  };                                                                          \
+  template <> class prefix##Option<line>                                      \
+  {                                                                           \
+  public:                                                                     \
+    bool Init(DynamicGetter & config) { return config.ok(); }                 \
+    void SaveToDynamic(Dynamic * ) const {}                                   \
+  };                                                                          \
+
+#define _NKIT_OPTIONS_BEGIN(prefix, line) __NKIT_OPTIONS_BEGIN(prefix, line)
+#define NKIT_OPTIONS_BEGIN \
+  _NKIT_OPTIONS_BEGIN(NKIT_OPTIONS_CLASS_NAME, __LINE__)
+
+//------------------------------------------------------------------------------
+#define __NKIT_OPTION(prefix, line, type, prop, option) template <>           \
+    class prefix##Option<line> :                                              \
+      public prefix##Option<line-1>                                           \
+    {                                                                         \
+    public:                                                                   \
+      prefix##Option<line>()                                                  \
+        : prop##_option_(option)                                              \
+        , prop##_option_path_(option)                                         \
+        , prop##_value_()                                                     \
+      {}                                                                      \
+      bool Init(DynamicGetter & config)                                       \
+      {                                                                       \
+        config.Get(prop##_option_path_, &prop##_value_);                      \
+        return prefix##Option<line-1>::Init(config);                          \
+      }                                                                       \
+      void SaveToDynamic(Dynamic * dict) const                                \
+      {                                                                       \
+        Dynamic tmp;                                                          \
+        nkit::VarToDynamic<type>::Save(prop##_value_, &tmp);                  \
+        (*dict)[prop##_option_] = tmp;                                        \
+        prefix##Option<line-1>::SaveToDynamic(dict);                          \
+      }                                                                       \
+      const type & prop() const { return prop##_value_; }                     \
+      void prop(const type & v) { prop##_value_ = v; }                        \
+    private:                                                                  \
+      std::string prop##_option_;                                             \
+      std::string prop##_option_path_;                                        \
+      type prop##_value_;                                                     \
+    };
+
+#define _NKIT_OPTION(prefix, line, type, prop, option)                        \
+  __NKIT_OPTION(prefix, line, type, prop, option)
+#define NKIT_OPTION(type, prop, option)                                       \
+  _NKIT_OPTION(NKIT_OPTIONS_CLASS_NAME, __LINE__, type, prop, option)
+
+//------------------------------------------------------------------------------
+#define __NKIT_OPTION_DEFAULT(prefix, line, type, prop, option, def_val)      \
+    template <> class prefix##Option<line> : public prefix##Option<line-1>    \
+    {                                                                         \
+    public:                                                                   \
+      prefix##Option<line>()                                                  \
+        : prop##_option_(option)                                              \
+        , prop##_option_path_(option)                                         \
+        , prop##_def_val_(def_val)                                            \
+        , prop##_value_(def_val)                                              \
+      {}                                                                      \
+      bool Init(DynamicGetter & config)                                       \
+      {                                                                       \
+        config.Get(prop##_option_path_, &prop##_value_, prop##_def_val_);     \
+        return prefix##Option<line-1>::Init(config);                          \
+      }                                                                       \
+      void SaveToDynamic(Dynamic * dict) const                                \
+      {                                                                       \
+        Dynamic tmp;                                                          \
+        nkit::VarToDynamic<type>::Save(prop##_value_, &tmp);                  \
+        (*dict)[prop##_option_] = tmp;                                        \
+        prefix##Option<line-1>::SaveToDynamic(dict);                          \
+      }                                                                       \
+      const type & prop() const { return prop##_value_; }                     \
+      void prop(const type & v) { prop##_value_ = v; }                        \
+    private:                                                                  \
+      std::string prop##_option_;                                             \
+      std::string prop##_option_path_;                                        \
+      type prop##_def_val_;                                                   \
+      type prop##_value_;                                                     \
+    };
+
+#define _NKIT_OPTION_DEFAULT(prefix, line, type, prop, option, def_val)       \
+  __NKIT_OPTION_DEFAULT(prefix, line, type, prop, option, def_val)
+#define NKIT_OPTION_DEFAULT(type, prop, option, def_val)                      \
+  _NKIT_OPTION_DEFAULT                                                        \
+    (NKIT_OPTIONS_CLASS_NAME, __LINE__, type, prop, option, def_val)
+
+  //--------------------------------------------------------------------------
+#define __NKIT_OPTIONS_END(prefix, line) class prefix :                       \
+  public prefix##Option<line-1>                                               \
+  {                                                                           \
+  public:                                                                     \
+    typedef NKIT_SHARED_PTR(prefix) Ptr;                                      \
+    static Ptr Create()                                                       \
+    {                                                                         \
+      return Ptr(new prefix);                                                 \
+    }                                                                         \
+    static Ptr Create(const Dynamic & d, std::string * error)                 \
+    {                                                                         \
+      DynamicGetter getter(d);                                                \
+      Ptr result = Create(getter);                                            \
+      if (!result.get())                                                      \
+        *error = getter.error();                                              \
+      return result;                                                          \
+    }                                                                         \
+    static Ptr Create(const std::string & json, std::string * error)          \
+    {                                                                         \
+      Dynamic d = DynamicFromJson(json, error);                               \
+      DynamicGetter getter(d);                                                \
+      return Create(getter);                                                  \
+    }                                                                         \
+    static Ptr Create(DynamicGetter & getter)                                 \
+    {                                                                         \
+      Ptr result(new prefix);                                                 \
+      if (!result->prefix##Option<line-1>::Init(getter))                      \
+        return Ptr();                                                         \
+      return result;                                                          \
+    }                                                                         \
+    void SaveToJson(std::string * result) const                               \
+    {                                                                         \
+      Dynamic dict = Dynamic::Dict();                                         \
+      prefix##Option<line-1>::SaveToDynamic(&dict);                           \
+      DynamicToJson(dict, result);                                            \
+    }                                                                         \
+    std::string SaveToJson() const                                            \
+    {                                                                         \
+      std::string result;                                                     \
+      SaveToJson(&result);                                                    \
+      return result;                                                          \
+    }                                                                         \
+    Dynamic SaveToDynamic() const                                             \
+    {                                                                         \
+      Dynamic result = Dynamic::Dict();                                       \
+      prefix##Option<line-1>::SaveToDynamic(&result);                         \
+      return result;                                                          \
+    }                                                                         \
+    void SaveToDynamic(Dynamic * out) const                                   \
+    {                                                                         \
+      *out = Dynamic::Dict();                                                 \
+      prefix##Option<line-1>::SaveToDynamic(out);                             \
+    }                                                                         \
+  };
+
+#define _NKIT_OPTIONS_END(prefix, line) \
+    __NKIT_OPTIONS_END(prefix, line)
+#define NKIT_OPTIONS_END _NKIT_OPTIONS_END(NKIT_OPTIONS_CLASS_NAME, __LINE__)
+
+namespace nkit
+{
+  template <typename T>
+  struct VarToDynamic
+  {
+    static void Save(const T & value, Dynamic * out)
+    {
+      *out = Dynamic(value);
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<NKIT_SHARED_PTR(T)>
+  {
+    static void Save(const NKIT_SHARED_PTR(T) & value, Dynamic * out)
+    {
+      *out = Dynamic::Dict();
+      if (value)
+        value->SaveToDynamic(out);
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::vector<NKIT_SHARED_PTR(T)> >
+  {
+    static void Save(const std::vector<NKIT_SHARED_PTR(T)> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::vector<NKIT_SHARED_PTR(T)>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        Dynamic item = Dynamic::Dict();
+        (*it)->SaveToDynamic(&item);
+        out->PushBack(item);
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::vector<T> >
+  {
+    static void Save(const std::vector<T> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::vector<T>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        out->PushBack(Dynamic(*it));
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::list<NKIT_SHARED_PTR(T)> >
+  {
+    static void Save(const std::list<NKIT_SHARED_PTR(T)> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::list<NKIT_SHARED_PTR(T)>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        Dynamic item = Dynamic::Dict();
+        (*it)->SaveToDynamic(&item);
+        out->PushBack(item);
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::list<T> >
+  {
+    static void Save(const std::list<T> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::list<T>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        out->PushBack(Dynamic(*it));
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::set<NKIT_SHARED_PTR(T)> >
+  {
+    static void Save(const std::set<NKIT_SHARED_PTR(T)> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::set<NKIT_SHARED_PTR(T)>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        Dynamic item = Dynamic::Dict();
+        (*it)->SaveToDynamic(&item);
+        out->PushBack(item);
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::set<T> >
+  {
+    static void Save(const std::set<T> & vv, Dynamic * out)
+    {
+      *out = Dynamic::List();
+      typename std::set<T>::const_iterator it = vv.begin(),
+          end = vv.end();
+      for (; it != end; ++it)
+      {
+        out->PushBack(Dynamic(*it));
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::map<std::string, NKIT_SHARED_PTR(T)> >
+  {
+    static void Save(const std::map<std::string, NKIT_SHARED_PTR(T)> & map,
+        Dynamic * out)
+    {
+      *out = Dynamic::Dict();
+      typename std::map<std::string, NKIT_SHARED_PTR(T)>::const_iterator
+          it = map.begin(), end = map.end();
+      for (; it != end; ++it)
+      {
+        Dynamic item = Dynamic::Dict();
+        it->second->SaveToDynamic(&item);
+        (*out)[it->first] = item;
+      }
+    }
+  };
+
+  template <typename T>
+  struct VarToDynamic<std::map<std::string, T> >
+  {
+    static void Save(const std::map<std::string, T> & map,
+        Dynamic * out)
+    {
+      *out = Dynamic::Dict();
+      typename std::map<std::string, T>::const_iterator
+          it = map.begin(), end = map.end();
+      for (; it != end; ++it)
+      {
+        (*out)[it->first] = Dynamic(it->second);
+      }
+    }
+  };
+}  // namespace nkit
 
 #endif // __NKIT__DYNAMIC__JSON__CONFIG__H__

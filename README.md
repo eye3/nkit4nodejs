@@ -28,7 +28,7 @@
   * [Notes](#notes)
 * [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start)
-  * [Options for xml2var](#options-for-xml2var)
+  * [Options for var2xml](#options-for-var2xml)
 * [Change log](#change-log)
 * [Author](#author)
 
@@ -787,7 +787,7 @@ Output:
 </ROOT>
 ```
 
-## Options for xml2var
+## Options for var2xml
 
 Following options are supported:
 

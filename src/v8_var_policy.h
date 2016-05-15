@@ -54,6 +54,7 @@ namespace nkit
     void InitAsUndefined();
     void SetDictKeyValue(std::string const & key, type const & var);
     void AppendToList(type const & obj);
+    void AppendToDictKeyList(std::string const & key, type const & var);
 
     const type & get() const { return object_; }
     std::string ToString() const;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GTSResponse>
+    <Record>
+        <Field name="TITLE">Empire Burlesque</Field>
+        <Field name="ARTIST">Bob Dylan</Field>
+        <Field name="COUNTRY">USA</Field>
+        <Field name="COMPANY">Columbia</Field>
+        <Field name="PRICE">10.90</Field>
+        <Field name="YEAR">1985</Field>
+    </Record>
+    <Record>
+        <Field name="TITLE">Hide your heart</Field>
+        <Field name="ARTIST">Bonnie Tyler</Field>
+        <Field name="COUNTRY">UK</Field>
+        <Field name="COMPANY">CBS Records</Field>
+        <Field name="PRICE">9.90</Field>
+        <Field name="YEAR">1988</Field>
+    </Record>
+</GTSResponse>
