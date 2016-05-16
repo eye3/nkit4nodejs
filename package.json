@@ -44,8 +44,5 @@
     "sax",
     "expat",
     "cpp"
-  ],
-  "dependencies": {
-    "markdown-toc": "^0.12.10"
-  }
+  ]
 }
