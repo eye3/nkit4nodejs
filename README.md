@@ -2,12 +2,6 @@
 
 
 
-
-
-
-
-
-
 <!-- toc -->
 
 * [Introduction](#introduction)
@@ -16,11 +10,13 @@
   * [On Linux and Mac OS](#on-linux-and-mac-os)
   * [On Windows](#on-windows)
 * [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
+  * [Quick start without mappings](#quick-start-without-mappings)
   * [Getting started](#getting-started)
   * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
   * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
   * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
   * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
+  * [Using attribute values to generate Object keys](#using-attribute-values-to-generate-object-keys)
   * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
   * [If you want some JSON](#if-you-want-some-json)
   * [Options](#options)
@@ -35,10 +31,6 @@
 <!-- toc stop -->
 
 
-
-
-
-
 # Introduction
 
 nkit4nodejs - is a [nkit](https://github.com/eye3/nkit.git) C++ library port to 
@@ -47,6 +39,8 @@ Node.js server.
 With nkit4nodejs module you can convert XML string to JavaScript data and vise versa.
 
 **With XML-to-JavaScript-data possibilities you can:**
+
+- Simply convert XML to JavaScript data with the same structure.
 
 - Create JavaScript data structures, which are different from the structure 
   of XML source.
@@ -91,6 +85,9 @@ Module supports not only native Expat XML encodings, but also many others
 - Define precision for float numbers
 - Define format for Date objects
 - Define representation for *true* and *false* values
+- Explicitly define order in which Object keys will be printed to XML text
+- Define type of result: string or node.Buffer
+
 
 # Installation
 
@@ -133,6 +130,105 @@ or
 
     
 # XML to JavaScript data conversion
+
+## Quick start without mappings
+
+Suppose, we have this xml string:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persons type="sample">
+    <person>
+        <name>Jack</name>
+        <phone>+122233344550</phone>
+        <phone>+122233344551</phone>
+    </person>
+    <person>
+        <name>Boris</name>
+        <phone>+122233344553</phone>
+        <phone>+122233344554</phone>
+    </person>
+    any text
+</persons>
+```
+
+If we call this script:
+
+```JavaScript
+var nkit = require('nkit4nodejs');
+
+var options = {
+    "trim": true,
+    "attrkey": "$",
+    "textkey": "_"
+}
+
+var builder = new nkit.AnyXml2VarBuilder(options);
+builder.feed(xmlString);
+var result = builder.end();
+var root_element_name = builder.root_name()
+
+```
+
+we will receive the following structure in 'result':
+
+```json
+{
+  "person": [
+    {
+      "phone": [
+        "+122233344550", 
+        "+122233344551"
+      ], 
+      "name": [
+        "Jack"
+      ]
+    }, 
+    {
+      "phone": [
+        "+122233344553", 
+        "+122233344554"
+      ], 
+      "name": [
+        "Boris"
+      ]
+    }
+  ], 
+  "$": {
+    "type": "sample"
+  }, 
+  "_": "any text"
+}
+```
+
+We can get same XML string back with the following script:
+
+```JavaScript
+
+options = {
+    "rootname": "persons",
+    "encoding": "UTF-8",
+    "xmldec": {
+        "version": "1.0",
+        "standalone": true,
+    },
+    "as_buffer": false,
+    "priority": ["name",
+                 "phone"
+    ],
+    "pretty": {
+        "indent": "    ",
+        "newline": "\n",
+    },
+    "attrkey": "$",
+    "textkey": "_",
+}
+
+xmlString = nkit.var2xml(result, options)
+```
+
+NOTE: 'priority' option is important if you want print XML elements in fixed order
+
 
 ## Getting started
 
@@ -539,6 +635,81 @@ Value of persons:
 ]
 ```
 
+## Using attribute values to generate Object keys
+
+Suppose, we have this XML:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<GTSResponse>
+    <Record>
+        <Field name="TITLE">Empire Burlesque</Field>
+        <Field name="ARTIST">Bob Dylan</Field>
+        <Field name="COUNTRY">USA</Field>
+        <Field name="COMPANY">Columbia</Field>
+        <Field name="PRICE">10.90</Field>
+        <Field name="YEAR">1985</Field>
+    </Record>
+    <Record>
+        <Field name="TITLE">Hide your heart</Field>
+        <Field name="ARTIST">Bonnie Tyler</Field>
+        <Field name="COUNTRY">UK</Field>
+        <Field name="COMPANY">CBS Records</Field>
+        <Field name="PRICE">9.90</Field>
+        <Field name="YEAR">1988</Field>
+    </Record>
+</GTSResponse>
+```
+
+And we want to get such structure:
+
+```json
+{ records: [
+    { "TITLE": "Empire Burlesque",
+      "ARTIST": "Bob Dylan",
+      "COUNTRY": "USA",
+      "COMPANY": "Columbia",
+      "PRICE": "10.90",
+      "YEAR": "1985"
+    },
+    { "TITLE": "Hide your heart",
+      "ARTIST": "Bonnie Tyler",
+      "COUNTRY": "UK",
+      "COMPANY": "CBS Records",
+      "PRICE": "9.90",
+      "YEAR": "1988"
+    }
+  ]
+}
+```
+
+We can do it with this mapping:
+
+
+```json
+["/Record", {"/Field -> @name": "string"} ]
+```
+
+Here object key definition "/Field -> @name" contain key alias '@name',
+that means that module will use 'name' attribute values for keys.
+
+Full example:
+```javascript
+var nkit = require('nkit4nodejs');
+
+mapping = ["/Record", {"/Field -> @name": "string"} ]
+
+mappings = {"main": mapping}
+
+var builder = new nkit.Xml2VarBuilder(mappings);
+builder.feed(xmlString);
+var result = builder.end();
+
+result = result["main"]
+
+```
+
+
 ## Building data structures from big XML source, reading it chunk by chunk
 
 You can use builder.get(mapping_name) method to get currently constructed data.
@@ -815,6 +986,8 @@ See [man strftime](http://www.cplusplus.com/reference/ctime/strftime/?kw=strftim
 Default "%Y-%m-%d %H:%M:%S";
 - **bool_true**: representation for 'true' boolean value. Default '1';
 - **bool_false**: representation for 'false' boolean value. Default '0';
+- **priority**: list of element names. All Object keys are printed to XML in order they
+enumerated in this list. Other Object keys are printed in unexpected order.
 
 If no *rootname* has been provided then *xmldec* will no effect.
 If **data** is Object (not Array) then *attrkey* will no effect for root Object.
@@ -824,9 +997,14 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 # Change log
 
+- 2.4.1 (2016-05-16):
+  - New 'priority' option for nkit4nodejs.var2xml()
+  - New class AnyXml2VarBuilder for converting XML without mapping
+  - AnyXml2VarBuilder.root_name() method
+  - Now we can use XML attribute values to generate Object keys
+
 - 2.3:
-    - New 'as_buffer' option for nkit4nodejs.var2xml(): UTF-8 encoded XML can be generated as String.
-      Other encodings are generated as node.Buffers.
+    - New 'as_buffer' option for nkit4nodejs.var2xml(): UTF-8 encoded XML can be generated as String. Other encodings are generated as node.Buffer.
 
 - 2.2:
     - Options changes for nkit4nodejs.var2xml(): standalone 'encoding' option.

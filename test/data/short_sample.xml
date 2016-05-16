@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persons type="sample">
+    <person>
+        <name>Jack</name>
+        <phone>+122233344550</phone>
+        <phone>+122233344551</phone>
+    </person>
+    <person>
+        <name>Boris</name>
+        <phone>+122233344553</phone>
+        <phone>+122233344554</phone>
+    </person>
+    any text
+</persons>

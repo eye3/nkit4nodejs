@@ -1,48 +1,51 @@
 {
-    "name": "nkit4nodejs",
-    "version": "2.4.1",
-    "description": "Fast XML to Javascript data (and vise versa) converter and filter. Written in C++ using Expat SAX parser.",
-    "homepage": "https://github.com/eye3/nkit4nodejs",
-    "author": {
-        "name": "Boris Darchiev",
-        "email": "boris.darchiev@gmail.com",
-        "url": "https://github.com/eye3"
-    },
-    "main": "index.js",
-    "engines": {
-        "node": ">=0.8.x"
-    },
-    "scripts": {
-        "test": "node test/testnkit.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/eye3/nkit4nodejs.git"
-    },
-    "licenses": [
-        {
-            "type": "Apache-2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0"
-        }
-    ],
-    "readmeFilename": "README.md",
-    "keywords": [
-        "xml",
-        "js",
-        "json",
-        "data",
-        "cdata",
-        "xml2json",
-        "xml2js",
-        "xml2data",
-        "data2xml",
-        "json2xml",
-        "js2xml",
-        "convert",
-        "filter",
-        "nkit",
-        "sax",
-        "expat",
-        "cpp"
-    ]
+  "name": "nkit4nodejs",
+  "version": "2.4.1",
+  "description": "Fast XML to Javascript data (and vise versa) converter and filter. Written in C++ using Expat SAX parser.",
+  "homepage": "https://github.com/eye3/nkit4nodejs",
+  "author": {
+    "name": "Boris Darchiev",
+    "email": "boris.darchiev@gmail.com",
+    "url": "https://github.com/eye3"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "scripts": {
+    "test": "node test/testnkit.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eye3/nkit4nodejs.git"
+  },
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "keywords": [
+    "xml",
+    "js",
+    "json",
+    "data",
+    "cdata",
+    "xml2json",
+    "xml2js",
+    "xml2data",
+    "data2xml",
+    "json2xml",
+    "js2xml",
+    "convert",
+    "filter",
+    "nkit",
+    "sax",
+    "expat",
+    "cpp"
+  ],
+  "dependencies": {
+    "markdown-toc": "^0.12.10"
+  }
 }
