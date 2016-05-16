@@ -664,7 +664,7 @@ Suppose, we have this XML:
 And we want to get such structure:
 
 ```json
-{ records: [
+{ "records": [
     { "TITLE": "Empire Burlesque",
       "ARTIST": "Bob Dylan",
       "COUNTRY": "USA",
