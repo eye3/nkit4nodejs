@@ -25,7 +25,7 @@ namespace nkit
 {
   typedef VarBuilder<V8BuilderPolicy> V8VarBuilder;
 
-  class Xml2VarBuilderWrapper: public node::ObjectWrap
+  class Xml2VarBuilderWrapper: public Nan::ObjectWrap
   {
   public:
     static void Init(v8::Handle<v8::Object> exports);
@@ -43,7 +43,7 @@ namespace nkit
     static NAN_METHOD(Get);
     static NAN_METHOD(End);
 
-    static v8::Persistent<v8::Function> constructor;
+    static Nan::Global<v8::Function> constructor;
 
     StructXml2VarBuilder<V8VarBuilder>::Ptr builder_;
   };

@@ -61,42 +61,44 @@ namespace nkit
   }
 
   //------------------------------------------------------------------------------
-  Persistent<Function> AnyXml2VarBuilderWrapper::constructor;
+  Nan::Global<Function> AnyXml2VarBuilderWrapper::constructor;
 
   //------------------------------------------------------------------------------
   void AnyXml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
     // Prepare constructor template
-    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(
+    Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
             AnyXml2VarBuilderWrapper::New);
-    tpl->SetClassName(NanNew("AnyXml2VarBuilder"));
+    tpl->SetClassName(Nan::New("AnyXml2VarBuilder").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "feed", AnyXml2VarBuilderWrapper::Feed);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "end", AnyXml2VarBuilderWrapper::End);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "get", AnyXml2VarBuilderWrapper::Get);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "root_name", AnyXml2VarBuilderWrapper::GetRootName);
-    NanAssignPersistent(constructor, tpl->GetFunction());
-    exports->Set(NanNew("AnyXml2VarBuilder"), NanNew(constructor));
+    Nan::SetPrototypeMethod(tpl, "feed", AnyXml2VarBuilderWrapper::Feed);
+    Nan::SetPrototypeMethod(tpl, "end", AnyXml2VarBuilderWrapper::End);
+    Nan::SetPrototypeMethod(tpl, "get", AnyXml2VarBuilderWrapper::Get);
+    Nan::SetPrototypeMethod(tpl, "root_name",
+            AnyXml2VarBuilderWrapper::GetRootName);
+    constructor.Reset(tpl->GetFunction());
+    exports->Set(Nan::New("AnyXml2VarBuilder").ToLocalChecked(),
+            Nan::New(constructor));
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::New)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (!args.IsConstructCall())
+    if (!info.IsConstructCall())
     {
       // Invoked as plain function `AnyXml2VarBuilder(...)`
-      return NanThrowError("Can't call constructor as a function");
+      return Nan::ThrowError("Can't call constructor as a function");
     }
 
     std::string options("{}"), mappings;
-    if (1 != args.Length())
-      return NanThrowError("Expected exactly one argument - options");
+    if (1 != info.Length())
+      return Nan::ThrowError("Expected exactly one argument - options");
     else
     {
-      if (!parse_object(args[0], &options))
-        return NanThrowError("Options parameter must be JSON-string or Object");
+      if (!parse_object(info[0], &options))
+        return Nan::ThrowError("Options parameter must be JSON-string or Object");
     }
 
     std::string error;
@@ -104,88 +106,89 @@ namespace nkit
         AnyXml2VarBuilder<V8VarBuilder>::Create(options, &error);
 
     if (!builder)
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
     AnyXml2VarBuilderWrapper* obj = new AnyXml2VarBuilderWrapper(builder);
-    obj->Wrap(args.This());
-    NanReturnValue(args.This());
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::Feed)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (1 > args.Length())
-      return NanThrowError("Expected String or Buffer parameter");
+    if (1 > info.Length())
+      return Nan::ThrowError("Expected String or Buffer parameter");
 
     AnyXml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<AnyXml2VarBuilderWrapper>(
-        args.This());
+        info.This());
 
     bool result = false;
     std::string error;
-    if (node::Buffer::HasInstance(args[0]))
+    if (node::Buffer::HasInstance(info[0]))
     {
       char* data;
       size_t length;
-      get_buffer_data(args[0], &data, &length);
+      get_buffer_data(info[0], &data, &length);
 
       result = obj->builder_->Feed(data, length, false, &error);
     }
-    else if (args[0]->IsString())
+    else if (info[0]->IsString())
     {
-      String::Utf8Value utf8_value(args[0]);
+      String::Utf8Value utf8_value(info[0]);
       result = obj->builder_->Feed(
           *utf8_value, utf8_value.length(), false, &error);
     }
     else
-      return NanThrowTypeError("Expected String or Buffer parameter");
+      return Nan::ThrowTypeError("Expected String or Buffer parameter");
 
     if (!result)
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
-    NanReturnUndefined();
+    info.GetReturnValue().Set(Nan::Undefined());
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::Get)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
     AnyXml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<AnyXml2VarBuilderWrapper>(
-        args.This());
+        info.This());
     Local<Object> result = Local<Object>::Cast(
-        NanNew<Value>(obj->builder_->var()));
-    NanReturnValue(result);
+        Nan::New<Value>(obj->builder_->var()));
+    info.GetReturnValue().Set(result);
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::GetRootName)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
     AnyXml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<AnyXml2VarBuilderWrapper>(
-        args.This());
-    Local<String> result = NanNew<String>(obj->builder_->root_name());
-    NanReturnValue(result);
+        info.This());
+    Local<String> result =
+            Nan::New<String>(obj->builder_->root_name()).ToLocalChecked();
+    info.GetReturnValue().Set(result);
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::End)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
     AnyXml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<AnyXml2VarBuilderWrapper>(
-        args.This());
+        info.This());
 
     std::string empty = "";
     std::string error;
     if (!obj->builder_->Feed(empty.c_str(), empty.size(), true, &error))
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
-    Local<Value> result = NanNew(obj->builder_->var());
+    Local<Value> result = Nan::New(obj->builder_->var());
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
   }
 
 }  // namespace nkit

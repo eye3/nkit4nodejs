@@ -64,84 +64,85 @@ namespace nkit
   //------------------------------------------------------------------------------
   NAN_METHOD(var2xml)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
     std::string options("{}");
-    if (1 > args.Length())
-      return NanThrowError("Expected JavaScript structure"
+    if (1 > info.Length())
+      return Nan::ThrowError("Expected JavaScript structure"
           " and/or options object");
-    else if (2 <= args.Length())
+    else if (2 <= info.Length())
     {
-      if (!parse_object(args[1], &options))
-        return NanThrowError("Options parameter must be JSON-string or Object");
+      if (!parse_object(info[1], &options))
+        return Nan::ThrowError("Options parameter must be JSON-string or Object");
     }
 
     std::string ret, error;
 
     Dynamic op = DynamicFromJson(options, &error);
     if (!op.IsDict())
-      return NanThrowError("Options parameter must be JSON-string or Object");
+      return Nan::ThrowError("Options parameter must be JSON-string or Object");
 
-    if (!V8ToXmlConverter::Process(options, args[0], &ret, &error))
-      return NanThrowError(error.c_str());
+    if (!V8ToXmlConverter::Process(options, info[0], &ret, &error))
+      return Nan::ThrowError(error.c_str());
 
     Dynamic * as_buffer;
     bool to_string = op.Get("as_buffer", &as_buffer) ? !*as_buffer : false;
 
     if (to_string
         && istrequal(op["encoding"].GetConstString(), std::string("utf-8")))
-      NanReturnValue(NanNew(ret));
+      info.GetReturnValue().Set(Nan::New(ret).ToLocalChecked());
     else
-      NanReturnValue(NanNewBufferHandle(ret.c_str(), ret.size()));
+      info.GetReturnValue().Set(Nan::CopyBuffer(ret.c_str(),ret.size()).
+              ToLocalChecked());
   }
 
   //------------------------------------------------------------------------------
-  Persistent<Function> Xml2VarBuilderWrapper::constructor;
+  Nan::Global<Function> Xml2VarBuilderWrapper::constructor;
 
   //------------------------------------------------------------------------------
   void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
     // Prepare constructor template
-    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(
+    Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
             Xml2VarBuilderWrapper::New);
-    tpl->SetClassName(NanNew("Xml2VarBuilder"));
+    tpl->SetClassName(Nan::New("Xml2VarBuilder").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "feed", Xml2VarBuilderWrapper::Feed);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "end", Xml2VarBuilderWrapper::End);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "get", Xml2VarBuilderWrapper::Get);
-    NanAssignPersistent(constructor, tpl->GetFunction());
-    exports->Set(NanNew("Xml2VarBuilder"), NanNew(constructor));
-    exports->Set(NanNew("var2xml"),
-        NanNew<FunctionTemplate>(var2xml)->GetFunction());
+    Nan::SetPrototypeMethod(tpl, "feed", Xml2VarBuilderWrapper::Feed);
+    Nan::SetPrototypeMethod(tpl, "end", Xml2VarBuilderWrapper::End);
+    Nan::SetPrototypeMethod(tpl, "get", Xml2VarBuilderWrapper::Get);
+    constructor.Reset(tpl->GetFunction());
+    exports->Set(Nan::New("Xml2VarBuilder").ToLocalChecked(), Nan::New(constructor));
+    exports->Set(Nan::New("var2xml").ToLocalChecked(),
+        Nan::New<FunctionTemplate>(var2xml)->GetFunction());
 
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::New)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (!args.IsConstructCall())
+    if (!info.IsConstructCall())
     {
       // Invoked as plain function `Xml2VarBuilder(...)`
-      return NanThrowError("Can't call constructor as a function");
+      return Nan::ThrowError("Can't call constructor as a function");
     }
 
     std::string options("{}"), mappings;
-    if (1 > args.Length())
-      return NanThrowError("Expected one or two arguments:"
+    if (1 > info.Length())
+      return Nan::ThrowError("Expected one or two arguments:"
           " 1) mappings or 2) options and mappings");
-    else if (1 == args.Length())
+    else if (1 == info.Length())
     {
-      if (!parse_object(args[0], &mappings))
-        return NanThrowError("Mappings parameter must be JSON-string or Object");
+      if (!parse_object(info[0], &mappings))
+        return Nan::ThrowError("Mappings parameter must be JSON-string or Object");
     }
     else
     {
-      if (!parse_object(args[0], &options))
-        return NanThrowError("Options parameter must be JSON-string or Object");
-      if (!parse_object(args[1], &mappings))
-        return NanThrowError("Mappings parameter must be JSON-string or Object");
+      if (!parse_object(info[0], &options))
+        return Nan::ThrowError("Options parameter must be JSON-string or Object");
+      if (!parse_object(info[1], &mappings))
+        return Nan::ThrowError("Mappings parameter must be JSON-string or Object");
     }
 
     std::string error;
@@ -149,109 +150,109 @@ namespace nkit
         StructXml2VarBuilder<V8VarBuilder>::Create(options, mappings, &error);
 
     if (!builder)
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
     Xml2VarBuilderWrapper* obj = new Xml2VarBuilderWrapper(builder);
-    obj->Wrap(args.This());
-    NanReturnValue(args.This());
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::Feed)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (1 > args.Length())
-      return NanThrowError("Expected String or Buffer parameter");
+    if (1 > info.Length())
+      return Nan::ThrowError("Expected String or Buffer parameter");
 
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
-        args.This());
+        info.This());
 
     bool result = false;
     std::string error;
-    if (node::Buffer::HasInstance(args[0]))
+    if (node::Buffer::HasInstance(info[0]))
     {
       char* data;
       size_t length;
-      get_buffer_data(args[0], &data, &length);
+      get_buffer_data(info[0], &data, &length);
 
       result = obj->builder_->Feed(data, length, false, &error);
     }
-    else if (args[0]->IsString())
+    else if (info[0]->IsString())
     {
-      String::Utf8Value utf8_value(args[0]);
+      String::Utf8Value utf8_value(info[0]);
       result = obj->builder_->Feed(
           *utf8_value, utf8_value.length(), false, &error);
     }
     else
-      return NanThrowTypeError("Expected String or Buffer parameter");
+      return Nan::ThrowTypeError("Expected String or Buffer parameter");
 
     if (!result)
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
-    NanReturnUndefined();
+    info.GetReturnValue().Set(Nan::Undefined());
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::Get)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (1 > args.Length())
-      return NanThrowError("Expected mapping name: String or Buffer");
+    if (1 > info.Length())
+      return Nan::ThrowError("Expected mapping name: String or Buffer");
 
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
-        args.This());
+        info.This());
 
     Local<Object> result;
     std::string error;
-    if (node::Buffer::HasInstance(args[0]))
+    if (node::Buffer::HasInstance(info[0]))
     {
       char* str;
       size_t length;
-      get_buffer_data(args[0], &str, &length);
+      get_buffer_data(info[0], &str, &length);
       std::string mapping_name(str, length);
       result = Local<Object>::Cast(
-          NanNew<Value>(obj->builder_->var(mapping_name)));
+          Nan::New<Value>(obj->builder_->var(mapping_name)));
     }
-    else if (args[0]->IsString())
+    else if (info[0]->IsString())
     {
-      String::Utf8Value utf8_value(args[0]);
+      String::Utf8Value utf8_value(info[0]);
       std::string mapping_name(*utf8_value, utf8_value.length());
       result = Local<Object>::Cast(
-          NanNew<Value>(obj->builder_->var(mapping_name)));
+          Nan::New<Value>(obj->builder_->var(mapping_name)));
     }
     else
-      return NanThrowTypeError("Expected mapping name: String or Buffer");
+      return Nan::ThrowTypeError("Expected mapping name: String or Buffer");
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
   }
 
   //------------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::End)
   {
-    NanScope();
+    Nan::HandleScope scope;
 
     Xml2VarBuilderWrapper* obj = ObjectWrap::Unwrap<Xml2VarBuilderWrapper>(
-        args.This());
+        info.This());
 
     std::string empty = "";
     std::string error;
     if (!obj->builder_->Feed(empty.c_str(), empty.size(), true, &error))
-      return NanThrowError(error.c_str());
+      return Nan::ThrowError(error.c_str());
 
     StringList mapping_names(obj->builder_->mapping_names());
 
-    Local<Object> result = NanNew<Object>();
+    Local<Object> result = Nan::New<Object>();
     StringList::const_iterator mapping_name = mapping_names.begin(),
         end = mapping_names.end();
     for (; mapping_name != end; ++mapping_name)
     {
-      Local<Value> item = NanNew(obj->builder_->var(*mapping_name));
-      result->Set(NanNew(mapping_name->c_str()), item);
+      Local<Value> item = Nan::New(obj->builder_->var(*mapping_name));
+      result->Set(Nan::New(*mapping_name).ToLocalChecked(), item);
     }
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
   }
 
 }  // namespace nkit

@@ -23,41 +23,41 @@ namespace nkit
 {
   using namespace v8;
 
-  v8::Persistent<v8::Function> V8BuilderPolicy::date_constructor_;
-  v8::Persistent<v8::Value> V8BuilderPolicy::undefined_;
+  Nan::Global<v8::Function> V8BuilderPolicy::date_constructor_;
+  Nan::Global<v8::Value> V8BuilderPolicy::undefined_;
 
   void V8BuilderPolicy::Init()
   {
-    NanScope();
-    Handle<Object> global = NanGetCurrentContext()->Global();
-    NanAssignPersistent(date_constructor_,
-        Handle<Function>::Cast(global->Get(NanNew("Date"))));
-    NanAssignPersistent(undefined_,
-        v8::Local<v8::Value>(NanUndefined()));
+    Nan::HandleScope scope;
+    Local<Object> global = Nan::GetCurrentContext()->Global();
+    date_constructor_.Reset(
+            Local<Function>::Cast(
+                    global->Get(Nan::New("Date").ToLocalChecked())));
+    undefined_.Reset(Nan::Undefined());
   }
 
   V8BuilderPolicy::V8BuilderPolicy(const detail::Options & NKIT_UNUSED(options))
     //: options_(options)
   {
-    NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
+    object_.Reset(Nan::New<Object>());
   }
 
   V8BuilderPolicy::~V8BuilderPolicy()
   {
-    NanScope();
-    NanDisposePersistent(object_);
+    Nan::HandleScope scope;
+    object_.Reset();
   }
 
   void V8BuilderPolicy::InitAsDict()
   {
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanNew<Object>()));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::New<Object>());
   }
 
   void V8BuilderPolicy::InitAsList()
   {
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanNew<Array>()));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::New<Array>());
   }
 
   void V8BuilderPolicy::ListCheck() const
@@ -72,23 +72,23 @@ namespace nkit
 
   void V8BuilderPolicy::InitAsBoolean(std::string const & value)
   {
-    NanScope();
-    NanAssignPersistent(object_,
-        Local<Value>(NanNew(nkit::bool_cast(value))));
+    Nan::HandleScope scope;
+    object_.Reset(
+        Nan::New(nkit::bool_cast(value)));
   }
 
   void V8BuilderPolicy::InitAsString(std::string const & value)
   {
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanNew(value.c_str())));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::New(value).ToLocalChecked());
   }
 
   void V8BuilderPolicy::InitAsInteger(const std::string & value)
   {
     int32_t i = !value.empty() ? strtol(value.c_str(), NULL, 10) : 0;
 
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanNew(i)));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::New(i));
   }
 
   void V8BuilderPolicy::InitAsFloatFormat(std::string const & value,
@@ -101,8 +101,8 @@ namespace nkit
         d = 0.0;
     }
 
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanNew(d)));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::New(d));
   }
 
   void V8BuilderPolicy::InitAsDatetimeFormat(const std::string & value,
@@ -155,74 +155,81 @@ namespace nkit
     strncpy(date_time_buf + 27, tz_offset_hours, 2);
     strncpy(date_time_buf + 29, tz_offset_minutes, 2);
 
-    NanScope();
-    Local<Value> argv[1] =
-    { NanNew<String>(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH)) };
-    NanAssignPersistent(object_,
-        Local<Value>(NanNew(date_constructor_)->NewInstance(1, argv)));
+    Nan::HandleScope scope;
+    Local<Value> argv[1] = {
+        Nan::New<String>(std::string(date_time_buf, DATE_TIME_BUFFER_LENGTH)).
+          ToLocalChecked()
+    };
+    object_.Reset(
+        Nan::New(date_constructor_)->NewInstance(1, argv));
   }
 
   void V8BuilderPolicy::InitAsUndefined()
   {
-    NanScope();
-    NanAssignPersistent(object_, Local<Value>(NanUndefined()));
+    Nan::HandleScope scope;
+    object_.Reset(Nan::Undefined());
   }
 
   void V8BuilderPolicy::SetDictKeyValue(std::string const & key,
       type const & var)
   {
-    NanScope();
-    Local<Value> object(NanNew(object_));
+    Nan::HandleScope scope;
+    Local<Value> object(Nan::New(object_));
     assert(object->IsObject());
     Local<Object> obj = Local<Object>::Cast(object);
-    obj->Set(NanNew(key.c_str()), NanNew(var));
+    obj->Set(Nan::New(key).ToLocalChecked(), Nan::New(var));
   }
 
   void V8BuilderPolicy::AppendToList(type const & var)
   {
-    NanScope();
-    Local<Value> object(NanNew(object_));
+    Nan::HandleScope scope;
+    Local<Value> object(Nan::New(object_));
     assert(object->IsArray());
     Local<Array> arr = Local<Array>::Cast(object);
-    arr->Set(arr->Length(), NanNew(var));
+    arr->Set(arr->Length(), Nan::New(var));
   }
 
-  void V8BuilderPolicy::AppendToDictKeyList(std::string const & _key, type const & var)
+  void V8BuilderPolicy::AppendToDictKeyList(std::string const & _key,
+          type const & var)
   {
-    NanScope();
-    Local<Value> object(NanNew(object_));
+    Nan::HandleScope scope;
+    Local<Value> object(Nan::New(object_));
     assert(object->IsObject());
     Local<Object> obj = Local<Object>::Cast(object);
-    Local<String> key( NanNew(_key.c_str()) );
+    Local<String> key( Nan::New(_key).ToLocalChecked());
     if (obj->Has(key))
     {
       Local<Value> value = obj->Get(key);
       if (value->IsArray())
       {
         Local<Array> arr = Local<Array>::Cast(value);
-        arr->Set(arr->Length(), NanNew(var));
+        arr->Set(arr->Length(), Nan::New(var));
         return;
       }
     }
 
-    Local<Array> arr(NanNew<Array>());
-    arr->Set(0, NanNew(var));
+    Local<Array> arr(Nan::New<Array>());
+    arr->Set(0, Nan::New(var));
     obj->Set(key, arr);
   }
 
   std::string V8BuilderPolicy::ToString() const
   {
-    return v8var_to_json(NanNew(object_));
+    return v8var_to_json(Nan::New(object_));
   }
 
   std::string v8var_to_json(const Handle<Value> & var)
   {
-    NanScope();
-    Handle<Object> global = NanGetCurrentContext()->Global();
-    Handle<Object> JSON = global->Get(NanNew<String>("JSON"))->ToObject();
+    Nan::HandleScope scope;
+    Local<Object> global = Nan::GetCurrentContext()->Global();
+    Handle<Object> JSON = global->Get(Nan::New("JSON").ToLocalChecked())->ToObject();
     Handle<Function> JSON_stringify = Handle<Function>::Cast(
-	  JSON->Get(NanNew<String>("stringify")));
-    Handle<Value> argv[3] = { var, NanNull(), NanNew<String>("  ")};
+	  JSON->Get(Nan::New("stringify").ToLocalChecked()));
+    Handle<Value> argv[3] = {
+            var,
+            Nan::Null(),
+            Nan::New<String>("  ").ToLocalChecked()
+    };
     String::Utf8Value ascii(JSON_stringify->Call(JSON, 3, argv));
     return *ascii;
   }

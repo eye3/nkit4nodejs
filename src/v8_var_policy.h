@@ -30,7 +30,7 @@ namespace nkit
   class V8BuilderPolicy: Uncopyable
   {
   public:
-    typedef v8::Persistent<v8::Value> type;
+    typedef Nan::Global<v8::Value> type;
 
     static void Init();
 
@@ -64,8 +64,8 @@ namespace nkit
   private:
     type object_;
     //const detail::Options & options_;
-    static v8::Persistent<v8::Function> date_constructor_;
-    static v8::Persistent<v8::Value> undefined_;
+    static Nan::Global<v8::Function> date_constructor_;
+    static Nan::Global<v8::Value> undefined_;
   };
 
   ////--------------------------------------------------------------------------
@@ -91,10 +91,9 @@ namespace nkit
         , size_(0)
         , pos_(END)
       {
-        NanAssignPersistent(dict_, v8::Local<v8::Object>::Cast(dict));
-        NanAssignPersistent(keys_,
-            NanNew(dict_)->GetOwnPropertyNames());
-        size_ = NanNew(keys_)->Length();
+        dict_.Reset(v8::Local<v8::Object>::Cast(dict));
+        keys_.Reset(Nan::GetOwnPropertyNames(Nan::New(dict_)).ToLocalChecked());
+        size_ = Nan::New(keys_)->Length();
         if (size_ > 0)
         {
           pos_ = 0;
@@ -104,24 +103,24 @@ namespace nkit
 
       DictConstIterator(const DictConstIterator & copy)
         : dict_()
-		, keys_()
-		, key_()
-		, value_()
+        , keys_()
+        , key_()
+        , value_()
         , size_(copy.size_)
         , pos_(copy.pos_)
       {
-        NanAssignPersistent(dict_, copy.dict_);
-        NanAssignPersistent(keys_, copy.keys_);
-        NanAssignPersistent(key_, copy.key_);
-        NanAssignPersistent(value_, copy.value_);
+        dict_.Reset(copy.dict_);
+        keys_.Reset(copy.keys_);
+        key_.Reset(copy.key_);
+        value_.Reset(copy.value_);
       }
 
       DictConstIterator & operator = (const DictConstIterator & copy)
       {
-        NanAssignPersistent(dict_, copy.dict_);
-        NanAssignPersistent(keys_, copy.keys_);
-        NanAssignPersistent(key_, copy.key_);
-        NanAssignPersistent(value_, copy.value_);
+        dict_.Reset(copy.dict_);
+        keys_.Reset(copy.keys_);
+        key_.Reset(copy.key_);
+        value_.Reset(copy.value_);
         size_ = copy.size_;
         pos_ = copy.pos_;
         return *this;
@@ -129,10 +128,10 @@ namespace nkit
 
       ~DictConstIterator()
       {
-        NanDisposePersistent(dict_);
-        NanDisposePersistent(keys_);
-        NanDisposePersistent(key_);
-        NanDisposePersistent(value_);
+        dict_.Reset();
+        keys_.Reset();
+        key_.Reset();
+        value_.Reset();
       }
 
       void FetchKeyValue()
@@ -140,8 +139,8 @@ namespace nkit
         if (pos_ == END)
           return;
 
-        NanAssignPersistent(key_, NanNew(keys_)->Get(pos_));
-        NanAssignPersistent(value_, NanNew(dict_)->Get(NanNew(key_)));
+        key_.Reset(Nan::New(keys_)->Get(pos_));
+        value_.Reset(Nan::New(dict_)->Get(Nan::New(key_)));
       }
 
       bool operator != (const DictConstIterator & another)
@@ -163,24 +162,24 @@ namespace nkit
         if (pos_ == END)
           return S_EMPTY_;
 
-        v8::String::Utf8Value tmp(NanNew(key_));
+        v8::String::Utf8Value tmp(Nan::New(key_));
         std::string ret(*tmp, tmp.length());
         return ret;
       }
 
       type second() const
       {
-        NanEscapableScope();
+        Nan::EscapableHandleScope scope;
         if (unlikely(pos_ == END))
-          return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
+          return scope.Escape(Nan::Undefined());
         else
-          return NanEscapeScope(NanNew(value_));
+          return scope.Escape(Nan::New(value_));
       }
 
-      v8::Persistent<v8::Object> dict_;
-      v8::Persistent<v8::Array> keys_;
-      v8::Persistent<v8::Value> key_;
-      v8::Persistent<v8::Value> value_;
+      Nan::Global<v8::Object> dict_;
+      Nan::Global<v8::Array> keys_;
+      Nan::Global<v8::Value> key_;
+      Nan::Global<v8::Value> value_;
       uint32_t size_;
       uint32_t pos_;
     };
@@ -199,8 +198,8 @@ namespace nkit
         , size_(0)
         , pos_(0)
       {
-        NanAssignPersistent(list_, v8::Local<v8::Array>::Cast(list));
-        size_ = NanNew(list_)->Length();
+        list_.Reset(v8::Local<v8::Array>::Cast(list));
+        size_ = Nan::New(list_)->Length();
         if (size_ == 0)
           pos_ = END;
       }
@@ -210,12 +209,12 @@ namespace nkit
         , size_(copy.size_)
         , pos_(copy.pos_)
       {
-        NanAssignPersistent(list_, copy.list_);
+        list_.Reset(copy.list_);
       }
 
       ListConstIterator & operator = (const ListConstIterator & copy)
       {
-        NanAssignPersistent(list_, copy.list_);
+        list_.Reset(copy.list_);
         size_ = copy.size_;
         pos_ = copy.pos_;
         return *this;
@@ -223,7 +222,7 @@ namespace nkit
 
       ~ListConstIterator()
       {
-        NanDisposePersistent(list_);
+        list_.Reset();
       }
 
       bool operator != (const ListConstIterator & another)
@@ -240,14 +239,14 @@ namespace nkit
 
       type value() const
       {
-        NanEscapableScope();
+        Nan::EscapableHandleScope scope;
         if (unlikely(pos_ == END))
-          return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
+          return scope.Escape(Nan::Undefined());
         else
-          return NanEscapeScope(NanNew(list_)->Get(pos_));
+          return scope.Escape(Nan::New(list_)->Get(pos_));
       }
 
-      v8::Persistent<v8::Array> list_;
+      Nan::Global<v8::Array> list_;
       uint32_t size_;
       uint32_t pos_;
     };
@@ -280,14 +279,14 @@ namespace nkit
 
     static type Second(const DictConstIterator & it)
     {
-      NanEscapableScope();
-      return NanEscapeScope(it.second());
+      Nan::EscapableHandleScope scope;
+      return scope.Escape(it.second());
     }
 
     static type Value(const ListConstIterator & it)
     {
-      NanEscapableScope();
-      return NanEscapeScope(it.value());
+      Nan::EscapableHandleScope scope;
+      return scope.Escape(it.value());
     }
 
     static bool IsList(const type & data)
@@ -338,7 +337,7 @@ namespace nkit
     static std::string GetStringAsDateTime(const type & data,
             const std::string & format)
     {
-      NanScope();
+      Nan::HandleScope scope;
       v8::Local<v8::Date> date = v8::Local<v8::Date>::Cast(data);
       double _timestamp = date->NumberValue();
       time_t timestamp = time_t(_timestamp) / 1000;
@@ -355,7 +354,7 @@ namespace nkit
     static std::string GetStringAsFloat(const type & data,
             size_t precision)
     {
-      NanScope();
+      Nan::HandleScope scope;
       return string_cast(data->ToNumber()->NumberValue(), precision);
     }
 
@@ -369,17 +368,17 @@ namespace nkit
     static type GetByKey(const type & data, const std::string & _key,
         bool * found)
     {
-      NanEscapableScope();
+      Nan::EscapableHandleScope scope;
       v8::Local<v8::Object> dict = v8::Local<v8::Object>::Cast(data);
-      v8::Local<v8::String> key = NanNew(_key.c_str());
+      v8::Local<v8::String> key = Nan::New(_key).ToLocalChecked();
       *found = dict->HasOwnProperty(key);
       if (likely(*found))
-        return NanEscapeScope(dict->Get(NanNew(key)));
+        return scope.Escape(dict->Get(key));
       else
-        return NanEscapeScope(v8::Local<v8::Value>(NanUndefined()));
+        return scope.Escape(Nan::Undefined());
     }
 
-    static v8::Persistent<v8::Function> date_constructor_;
+    static Nan::Global<v8::Function> date_constructor_;
   };
 
   typedef Var2XmlConverter<V8ReaderPolicy> V8ToXmlConverter;
