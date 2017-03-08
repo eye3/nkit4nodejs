@@ -39,6 +39,10 @@
 # define NAN_HAS_CPLUSPLUS_11 (__cplusplus >= 201103L)
 #endif
 
+#define STRING2(x) #x
+#define STRING(x) STRING2(x)
+#pragma message ("__CPLUSPLUS = " STRING(__cplusplus) ", NODE_MODULE_VERSION = " STRING(NODE_MODULE_VERSION))
+
 #if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION && !NAN_HAS_CPLUSPLUS_11
 # error This version of node/NAN/v8 requires a C++11 compiler
 #endif
