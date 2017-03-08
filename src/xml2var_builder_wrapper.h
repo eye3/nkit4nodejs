@@ -43,7 +43,7 @@ namespace nkit
     static NAN_METHOD(Get);
     static NAN_METHOD(End);
 
-    static Nan::Global<v8::Function> constructor;
+    static Nan::Persistent<v8::Function> constructor;
 
     StructXml2VarBuilder<V8VarBuilder>::Ptr builder_;
   };

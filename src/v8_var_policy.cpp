@@ -23,8 +23,8 @@ namespace nkit
 {
   using namespace v8;
 
-  Nan::Global<v8::Function> V8BuilderPolicy::date_constructor_;
-  Nan::Global<v8::Value> V8BuilderPolicy::undefined_;
+  Nan::Persistent<v8::Function> V8BuilderPolicy::date_constructor_;
+  Nan::Persistent<v8::Value> V8BuilderPolicy::undefined_;
 
   void V8BuilderPolicy::Init()
   {
@@ -64,12 +64,12 @@ namespace nkit
 
   void V8BuilderPolicy::ListCheck() const
   {
-    assert(object_->IsArray());
+    assert(Local<Array>::Cast(Nan::New(object_))->IsArray());
   }
 
   void V8BuilderPolicy::DictCheck() const
   {
-    assert(object_->IsObject());
+    assert(Local<Object>::Cast(Nan::New(object_))->IsObject());
   }
 
   void V8BuilderPolicy::InitAsBoolean(std::string const & value)

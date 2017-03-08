@@ -62,7 +62,7 @@ Conversion is carried out using SAX parser Expat, so it's fast and uses less
 memory when parsing huge XML files.
 
 This module faster then any other xml-to-JavaScript module, written in pure
-JavaScript. For example, nkit4nodejs is about 10 times faster than popular 
+JavaScript. For example, nkit4nodejs is about 7 times faster than popular 
 [xml2js](https://www.npmjs.org/package/xml2js) module on parsing 
 20Mb XML file (see test/compare.js for comparison code).
 
@@ -994,7 +994,7 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 # Change log
 
-- 2.4.2 (2017-03-08):
+- 2.4.3 (2017-03-09):
   - Node.js versions v0.8 - v0.12 and v4 - v6 are supported
 
 - 2.4.1 (2016-05-16):

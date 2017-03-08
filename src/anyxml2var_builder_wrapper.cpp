@@ -61,12 +61,13 @@ namespace nkit
   }
 
   //------------------------------------------------------------------------------
-  Nan::Global<Function> AnyXml2VarBuilderWrapper::constructor;
+  Nan::Persistent<Function> AnyXml2VarBuilderWrapper::constructor;
 
   //------------------------------------------------------------------------------
   void AnyXml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
     Nan::HandleScope scope;
+
     // Prepare constructor template
     Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
             AnyXml2VarBuilderWrapper::New);
@@ -79,7 +80,7 @@ namespace nkit
             AnyXml2VarBuilderWrapper::GetRootName);
     constructor.Reset(tpl->GetFunction());
     exports->Set(Nan::New("AnyXml2VarBuilder").ToLocalChecked(),
-            Nan::New(constructor));
+        tpl->GetFunction());
   }
 
   //------------------------------------------------------------------------------

@@ -31,3 +31,4 @@ build
 deps/nkit/src/nkit/detail/config.h
 deps/nkit/src/nkit/version.h
 deps/nkit/src/version.cpp
+node_modules

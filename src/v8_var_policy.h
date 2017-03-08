@@ -30,7 +30,7 @@ namespace nkit
   class V8BuilderPolicy: Uncopyable
   {
   public:
-    typedef Nan::Global<v8::Value> type;
+    typedef Nan::Persistent<v8::Value> type;
 
     static void Init();
 
@@ -64,8 +64,8 @@ namespace nkit
   private:
     type object_;
     //const detail::Options & options_;
-    static Nan::Global<v8::Function> date_constructor_;
-    static Nan::Global<v8::Value> undefined_;
+    static Nan::Persistent<v8::Function> date_constructor_;
+    static Nan::Persistent<v8::Value> undefined_;
   };
 
   ////--------------------------------------------------------------------------
@@ -180,10 +180,10 @@ namespace nkit
           return scope.Escape(Nan::New(value_));
       }
 
-      Nan::Global<v8::Object> dict_;
-      Nan::Global<v8::Array> keys_;
-      Nan::Global<v8::Value> key_;
-      Nan::Global<v8::Value> value_;
+      Nan::Persistent<v8::Object> dict_;
+      Nan::Persistent<v8::Array> keys_;
+      Nan::Persistent<v8::Value> key_;
+      Nan::Persistent<v8::Value> value_;
       uint32_t size_;
       uint32_t pos_;
     };
@@ -251,7 +251,7 @@ namespace nkit
           return scope.Escape(Nan::New(list_)->Get(pos_));
       }
 
-      Nan::Global<v8::Array> list_;
+      Nan::Persistent<v8::Array> list_;
       uint32_t size_;
       uint32_t pos_;
     };
@@ -383,7 +383,7 @@ namespace nkit
         return scope.Escape(Nan::Undefined());
     }
 
-    static Nan::Global<v8::Function> date_constructor_;
+    static Nan::Persistent<v8::Function> date_constructor_;
   };
 
   typedef Var2XmlConverter<V8ReaderPolicy> V8ToXmlConverter;

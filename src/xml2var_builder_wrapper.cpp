@@ -27,7 +27,7 @@ namespace nkit
 {
   using namespace v8;
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   template <typename T>
   void get_buffer_data(const T & buffer, char ** data, size_t * len)
   {
@@ -41,7 +41,7 @@ namespace nkit
   #endif
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   template <typename T>
   bool parse_object(const T & arg, std::string * out)
   {
@@ -61,7 +61,7 @@ namespace nkit
     return true;
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(var2xml)
   {
     Nan::HandleScope scope;
@@ -73,7 +73,8 @@ namespace nkit
     else if (2 <= info.Length())
     {
       if (!parse_object(info[1], &options))
-        return Nan::ThrowError("Options parameter must be JSON-string or Object");
+        return Nan::ThrowError(
+            "Options parameter must be JSON-string or Object");
     }
 
     std::string ret, error;
@@ -96,13 +97,13 @@ namespace nkit
               ToLocalChecked());
   }
 
-  //------------------------------------------------------------------------------
-  Nan::Global<Function> Xml2VarBuilderWrapper::constructor;
+  //----------------------------------------------------------------------------
+  Nan::Persistent<Function> Xml2VarBuilderWrapper::constructor;
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
-    Nan::HandleScope scope;
+//    Nan::HandleScope scope;
 
     // Prepare constructor template
     Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
@@ -113,13 +114,14 @@ namespace nkit
     Nan::SetPrototypeMethod(tpl, "end", Xml2VarBuilderWrapper::End);
     Nan::SetPrototypeMethod(tpl, "get", Xml2VarBuilderWrapper::Get);
     constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("Xml2VarBuilder").ToLocalChecked(), Nan::New(constructor));
+    exports->Set(Nan::New("Xml2VarBuilder").ToLocalChecked(),
+        tpl->GetFunction());
     exports->Set(Nan::New("var2xml").ToLocalChecked(),
         Nan::New<FunctionTemplate>(var2xml)->GetFunction());
 
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::New)
   {
     Nan::HandleScope scope;
@@ -137,14 +139,17 @@ namespace nkit
     else if (1 == info.Length())
     {
       if (!parse_object(info[0], &mappings))
-        return Nan::ThrowError("Mappings parameter must be JSON-string or Object");
+        return Nan::ThrowError(
+            "Mappings parameter must be JSON-string or Object");
     }
     else
     {
       if (!parse_object(info[0], &options))
-        return Nan::ThrowError("Options parameter must be JSON-string or Object");
+        return Nan::ThrowError(
+            "Options parameter must be JSON-string or Object");
       if (!parse_object(info[1], &mappings))
-        return Nan::ThrowError("Mappings parameter must be JSON-string or Object");
+        return Nan::ThrowError(
+            "Mappings parameter must be JSON-string or Object");
     }
 
     std::string error;
@@ -159,7 +164,7 @@ namespace nkit
     info.GetReturnValue().Set(info.This());
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::Feed)
   {
     Nan::HandleScope scope;
@@ -195,7 +200,7 @@ namespace nkit
     info.GetReturnValue().Set(Nan::Undefined());
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::Get)
   {
     Nan::HandleScope scope;
@@ -230,7 +235,7 @@ namespace nkit
     info.GetReturnValue().Set(result);
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(Xml2VarBuilderWrapper::End)
   {
     Nan::HandleScope scope;

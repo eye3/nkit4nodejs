@@ -1,10 +1,11 @@
-var nkit = require('nkit4nodejs');
+//var nkit = require('nkit4nodejs');
+var nkit = require('../index.js');
 var fs = require('fs');
 var xml2js = require('xml2js');
 var async = require('async');
 
 /*
-    You must create XML file of following structure:
+    For this example you have to create XML file of following structure:
 
     <?xml version="1.0"?>
     <commerce>
@@ -27,10 +28,11 @@ var async = require('async');
         </offer>
     </commerce>
 
-    Don't create huge file: 20Mb is enough.
+    Don't create huge file: ~20Mb is enough.
+    You can use this file: https://www.dropbox.com/s/7417kugfwopf792/big.xml?dl=0
 */
 
-var xmlFile = __dirname + "/path/to/your/file.xml";
+var xmlFile = "/path/to/your/file.xml";
 
 var mapping = ["/offer",
     {
@@ -48,11 +50,15 @@ var mapping = ["/offer",
     }
 ];
 
+var mappings = {"main": mapping}
+
 async.series([
     // measuring nkit4nodejs performance
     function(callback){
+//        callback(null);
+    	console.log("Bench nkit");
         var start = new Date();
-        var builder = new nkit.Xml2VarBuilder(mapping);
+        var builder = new nkit.Xml2VarBuilder(mappings);
         var rstream = fs.createReadStream(xmlFile);
         rstream
             .on('data', function (chunk) {
@@ -61,13 +67,16 @@ async.series([
             .on('end', function () {  // done
                 var result = builder.end();
                 var end = new Date() - start;
-                console.log("Offers count: %d", result.length);
+                console.log("Offers count: %d", result["main"].length);
                 console.info("Execution time: %d ms", end);
+                console.info("")
                 callback(null);
             });
     },
     // measuring xml2js performance
     function(callback){
+//        callback(null);
+    	console.log("Bench xml2js");
         var start = new Date();
         var parser = new xml2js.Parser({
             explicitArray: false,
@@ -78,8 +87,9 @@ async.series([
                 var end = new Date() - start;
                 console.log("Offers count: %d", result.offer.length);
                 console.info("Execution time: %d ms", end);
+                console.info("")
                 callback(null);
             });
         });
-    }
+    },
 ]);
