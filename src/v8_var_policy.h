@@ -91,6 +91,8 @@ namespace nkit
         , size_(0)
         , pos_(END)
       {
+        Nan::HandleScope scope;
+
         dict_.Reset(v8::Local<v8::Object>::Cast(dict));
         keys_.Reset(Nan::GetOwnPropertyNames(Nan::New(dict_)).ToLocalChecked());
         size_ = Nan::New(keys_)->Length();
@@ -139,6 +141,7 @@ namespace nkit
         if (pos_ == END)
           return;
 
+        Nan::HandleScope scope;
         key_.Reset(Nan::New(keys_)->Get(pos_));
         value_.Reset(Nan::New(dict_)->Get(Nan::New(key_)));
       }
@@ -162,6 +165,7 @@ namespace nkit
         if (pos_ == END)
           return S_EMPTY_;
 
+        Nan::HandleScope scope;
         v8::String::Utf8Value tmp(Nan::New(key_));
         std::string ret(*tmp, tmp.length());
         return ret;
@@ -198,6 +202,7 @@ namespace nkit
         , size_(0)
         , pos_(0)
       {
+        Nan::HandleScope scope;
         list_.Reset(v8::Local<v8::Array>::Cast(list));
         size_ = Nan::New(list_)->Length();
         if (size_ == 0)

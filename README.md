@@ -93,7 +93,7 @@ Module supports not only native Expat XML encodings, but also many others
 
 ## Requirements
 
-nkit4nodejs module supports node.js v0.8 - v0.11
+nkit4nodejs module supports node.js v0.8 - v0.12 and v4 - v6
 
 nkit4nodejs module must be compiled, so you have to install "build essentials"
 (if not yet):
@@ -996,6 +996,9 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 
 # Change log
+
+- 2.4.2 (2017-03-08):
+  - Node.js versions v0.8 - v0.12 and v4 - v6 are supported
 
 - 2.4.1 (2016-05-16):
   - New 'priority' option for nkit4nodejs.var2xml()

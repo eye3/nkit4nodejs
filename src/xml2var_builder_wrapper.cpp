@@ -102,6 +102,8 @@ namespace nkit
   //------------------------------------------------------------------------------
   void Xml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
+    Nan::HandleScope scope;
+
     // Prepare constructor template
     Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
             Xml2VarBuilderWrapper::New);

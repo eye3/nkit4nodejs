@@ -66,6 +66,7 @@ namespace nkit
   //------------------------------------------------------------------------------
   void AnyXml2VarBuilderWrapper::Init(Handle<Object> exports)
   {
+    Nan::HandleScope scope;
     // Prepare constructor template
     Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(
             AnyXml2VarBuilderWrapper::New);

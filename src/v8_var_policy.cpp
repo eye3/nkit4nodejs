@@ -29,6 +29,7 @@ namespace nkit
   void V8BuilderPolicy::Init()
   {
     Nan::HandleScope scope;
+
     Local<Object> global = Nan::GetCurrentContext()->Global();
     date_constructor_.Reset(
             Local<Function>::Cast(
@@ -39,6 +40,7 @@ namespace nkit
   V8BuilderPolicy::V8BuilderPolicy(const detail::Options & NKIT_UNUSED(options))
     //: options_(options)
   {
+    Nan::HandleScope scope;
     object_.Reset(Nan::New<Object>());
   }
 
@@ -215,6 +217,7 @@ namespace nkit
 
   std::string V8BuilderPolicy::ToString() const
   {
+    Nan::HandleScope scope;
     return v8var_to_json(Nan::New(object_));
   }
 
