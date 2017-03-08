@@ -62,7 +62,7 @@ Conversion is carried out using SAX parser Expat, so it's fast and uses less
 memory when parsing huge XML files.
 
 This module faster then any other xml-to-JavaScript module, written in pure
-JavaScript. For example, nkit4nodejs is about 7 times faster than popular 
+JavaScript. For example, nkit4nodejs is about 5-8 times faster than popular 
 [xml2js](https://www.npmjs.org/package/xml2js) module on parsing 
 20Mb XML file (see test/compare.js for comparison code).
 
