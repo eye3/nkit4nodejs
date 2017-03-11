@@ -350,6 +350,57 @@ if (!deep_equal.deepEquals(result1, result2)) {
 }
 
 // -----------------------------------------------------------------------------
+// explicit_array
+// -----------------------------------------------------------------------------
+var xml = ["<?xml version='1.0' encoding='utf-8'?>",
+           "<root><status>1</status></root>"
+          ].join("\n");
+var options = {
+	attrkey: "$",
+	trim: true,
+    textkey: "_",
+    explicit_array: false
+};
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(xml)
+var result = builder.end()
+if (result["status"] != "1") {
+    console.error("Error #7.1");
+    process.exit(1);
+}
+
+options["explicit_array"] = true
+
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(xml)
+var result = builder.end()
+if (result["status"][0] != "1") {
+    console.error("Error #7.2");
+    process.exit(1);
+}
+
+xml = ["<?xml version='1.0' encoding='utf-8'?>",
+           "<root><status>1</status><status>2</status></root>"
+          ].join("\n");
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(xml)
+var result = builder.end()
+if (result["status"][0] != "1" || result["status"][1] != "2") {
+    console.error("Error #7.3");
+    process.exit(1);
+}
+
+options["explicit_array"] = false
+
+var builder = new nkit.AnyXml2VarBuilder(options)
+builder.feed(xml)
+var result = builder.end()
+if (result["status"][0] != "1" || result["status"][1] != "2") {
+    console.error("Error #7.4");
+    process.exit(1);
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 data = [{
     "$": {"p1": "v1 < > & \" '", "p2": "v2"},

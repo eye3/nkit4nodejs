@@ -2,94 +2,114 @@
 var nkit = require('../index.js');
 var fs = require('fs');
 var xml2js = require('xml2js');
+var rapidx2j = require('rapidx2j');
+var xml2js_expat = require('xml2js-expat');
 var async = require('async');
 
-/*
-    For this example you have to create XML file of following structure:
-
-    <?xml version="1.0"?>
-    <commerce>
-        <offer>
-            <id>150016102</id>
-            <realty_type>F</realty_type>
-            <deal_type>S</deal_type>
-            <location type="П">Адмиралтейский</location>
-            <address>3 Красноармейская ул., д.13</address>
-            <agency_id>2225</agency_id>
-            <area total="147.0" />
-            <currency>RUR</currency>
-            <price>12012000</price>
-            <photo>http://img.eip.ru/img/obj/e/08/59/18949192.jpg</photo>
-            <note>Любое назначение, 2 отдельных входа с улицы. ПП. Возможна сдача помещения в аренду.</note>
-        </offer>
-        ...
-        <offer>
-        ...
-        </offer>
-    </commerce>
-
-    Don't create huge file: ~20Mb is enough.
-    You can use this file: https://www.dropbox.com/s/7417kugfwopf792/big.xml?dl=0
-*/
-
-var xmlFile = "/path/to/your/file.xml";
-
-var mapping = ["/offer",
-    {
-        "/id": "string",
-        "/realty_type": "string",
-        "/deal_type": "string",
-        "/location": "string",
-        "/address": "string",
-        "/agency_id": "string",
-        "/area/@total -> totalArea": "number",
-        "/currency": "string",
-        "/price": "number",
-        "/photo": "string",
-        "/note": "string"
-    }
-];
-
-var mappings = {"main": mapping}
+var fileContents = "<?xml version='1.0' encoding='utf-8'?><commerce>";
+var element = [
+    '<offer>',
+    '  <id>150016102</id>',
+    '  <boolean>True</boolean>',
+    '  <string>String</string>',
+    '  <note>qe qwe qwe qwe qw qe qwe wqe qwe qwe qwe qwe qwe qew q</note>',
+    '</offer>'
+    ].join('\n');
+var footer = "</commerce>";
+for (var i=0; i < 300000; i++)
+	fileContents += element	
+fileContents += footer;
+console.info("fileContents length: %d M", fileContents.length/(1024.0*1024.0));
 
 async.series([
-    // measuring nkit4nodejs performance
+              
+      function(callback){
+      	console.log("Bench rapidx2j");
+          var start = new Date();
+      	var result = rapidx2j.parse(fileContents);
+          var end = new Date() - start;
+          console.info("Execution time: %d ms", end);
+          console.info(result["offer"][0])
+          console.info("")
+          callback(null);
+      },
+
     function(callback){
-//        callback(null);
-    	console.log("Bench nkit");
-        var start = new Date();
+    	console.log("Bench nkit with mappings");
+    	var mapping = ["/offer",
+    	               {
+    	                   "/id": "integer",
+    	                   "/string": "string",
+    	                   "/boolean": "boolean",
+    	                   "/note": "string"
+    	               }
+    	           ];
+        var mappings = {"main": mapping}
         var builder = new nkit.Xml2VarBuilder(mappings);
-        var rstream = fs.createReadStream(xmlFile);
-        rstream
-            .on('data', function (chunk) {
-                builder.feed(chunk);
-            })
-            .on('end', function () {  // done
-                var result = builder.end();
-                var end = new Date() - start;
-                console.log("Offers count: %d", result["main"].length);
-                console.info("Execution time: %d ms", end);
-                console.info("")
-                callback(null);
-            });
+        var start = new Date();
+        builder.feed(fileContents);
+        var result = builder.end()["main"];
+        var end = new Date() - start;
+        console.info("Execution time: %d ms", end);
+        console.info(result[0])
+        console.info("")
+        callback(null);
     },
-    // measuring xml2js performance
+//*
     function(callback){
-//        callback(null);
+    	console.log("Bench nkit w/o mappings");
+    	var options = {
+    			attrkey: "$",
+    			textkey: "_",
+    			trim: true,
+    			explicit_array: false
+    		}
+
+        var start = new Date();
+        var builder = new nkit.AnyXml2VarBuilder(options);
+        builder.feed(fileContents);
+        var result = builder.end();
+        var end = new Date() - start;
+        console.info("Execution time: %d ms", end);
+        console.info(result["offer"][0])
+        console.info("")
+        callback(null);
+    },
+
+    function(callback){
+  	  console.log("Bench xml2js-expat");
+  	  var parser = new xml2js.Parser(function(result, error) {
+  	    if (!error) {
+  	        console.log(util.inspect(result));
+  	    }
+  	    else {
+  	        console.error(error);
+  	    }
+  	    console.log('Done.');
+  	  });
+      var start = new Date();
+  	  parser.parseString(fileContents);
+      var end = new Date() - start;
+      console.info("Execution time: %d ms", end);
+      console.info("")
+      callback(null);
+    },
+
+    function(callback){
     	console.log("Bench xml2js");
         var start = new Date();
         var parser = new xml2js.Parser({
             explicitArray: false,
             explicitRoot: false
         });
-        fs.readFile(xmlFile, function(err, data) {
-            parser.parseString(data, function (err, result) {
-                var end = new Date() - start;
-                console.log("Offers count: %d", result.offer.length);
-                console.info("Execution time: %d ms", end);
-                console.info("")
-                callback(null);
-            });
+        parser.parseString(fileContents, function (err, result) {
+            var end = new Date() - start;
+            console.info("Execution time: %d ms", end);
+            console.info(result["offer"][0])
+            console.info("")
+            callback(null);
         });
     },
+//*/
 ]);
+

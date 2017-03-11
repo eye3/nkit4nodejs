@@ -157,7 +157,8 @@ var nkit = require('nkit4nodejs');
 var options = {
     "trim": true,
     "attrkey": "$",
-    "textkey": "_"
+    "textkey": "_",
+    "explicit_array": true
 }
 
 var builder = new nkit.AnyXml2VarBuilder(options);
@@ -197,6 +198,14 @@ we will receive the following structure in 'result':
   "_": "any text"
 }
 ```
+
+*Options*:
+
+- attrkey (default: $): Prefix that is used to access the attributes
+- textkey (default: _): Prefix that is used to access the character content
+- trim (default: false): Trim the whitespace at the beginning and end of text nodes
+- explicit_array (default - true): Always put child nodes in an array if true; otherwise an array
+  is created only if there is more than one.
 
 We can get same XML string back with the following script:
 
@@ -994,6 +1003,9 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 # Change log
 
+- 2.4.4 (2017-03-11):
+  - 'explicit_array' option for AnyXml2VarBuilder
+  
 - 2.4.3 (2017-03-09):
   - Node.js versions v0.8 - v0.12 and v4 - v6 are supported
 

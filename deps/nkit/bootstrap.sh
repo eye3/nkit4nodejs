@@ -100,7 +100,7 @@ EOF
 
 
 CMAKE="env cmake"
-REPO_ROOT=$(dirname $(readlink -f $BASH_SOURCE))
+REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_ROOT=${REPO_ROOT}
 BUILD_TYPE=RelWithDebInfo
 cleanup

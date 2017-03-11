@@ -63,7 +63,7 @@ namespace nkit
 
   private:
     type object_;
-    //const detail::Options & options_;
+    const detail::Options & options_;
     static Nan::Persistent<v8::Function> date_constructor_;
     static Nan::Persistent<v8::Value> undefined_;
   };
@@ -92,7 +92,6 @@ namespace nkit
         , pos_(END)
       {
         Nan::HandleScope scope;
-
         dict_.Reset(v8::Local<v8::Object>::Cast(dict));
         keys_.Reset(Nan::GetOwnPropertyNames(Nan::New(dict_)).ToLocalChecked());
         size_ = Nan::New(keys_)->Length();

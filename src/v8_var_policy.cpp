@@ -38,7 +38,7 @@ namespace nkit
   }
 
   V8BuilderPolicy::V8BuilderPolicy(const detail::Options & NKIT_UNUSED(options))
-    //: options_(options)
+    : options_(options)
   {
     Nan::HandleScope scope;
     object_.Reset(Nan::New<Object>());
@@ -179,6 +179,7 @@ namespace nkit
     Local<Value> object(Nan::New(object_));
     assert(object->IsObject());
     Local<Object> obj = Local<Object>::Cast(object);
+    assert(obj->IsObject());
     obj->Set(Nan::New(key).ToLocalChecked(), Nan::New(var));
   }
 
@@ -206,13 +207,29 @@ namespace nkit
       {
         Local<Array> arr = Local<Array>::Cast(value);
         arr->Set(arr->Length(), Nan::New(var));
-        return;
+      }
+      else
+      {
+        Local<Array> arr(Nan::New<Array>());
+        arr->Set(0, value);
+        arr->Set(1, Nan::New(var));
+        obj->Set(key, arr);
+      }
+    }
+    else
+    {
+      if (options_.explicit_array_)
+      {
+        Local<Array> arr(Nan::New<Array>());
+        arr->Set(0, Nan::New(var));
+        obj->Set(key, arr);
+      }
+      else
+      {
+        obj->Set(key, Nan::New(var));
       }
     }
 
-    Local<Array> arr(Nan::New<Array>());
-    arr->Set(0, Nan::New(var));
-    obj->Set(key, arr);
   }
 
   std::string V8BuilderPolicy::ToString() const

@@ -19,8 +19,9 @@ namespace nkit
       static const bool TRIM_DEFAULT;
       static const bool UNICODE_DEFAULT;
       static const bool ORDERED_DICT;
+      static const bool EXPLICIT_ARRAY_DEFAULT;
 
-      typedef NKIT_SHARED_PTR(Options)Ptr;
+      typedef NKIT_SHARED_PTR(Options) Ptr;
 
       static Ptr Create()
       {
@@ -53,6 +54,7 @@ namespace nkit
           .Get(".attrkey", &ret->attrkey_, S_EMPTY_)
           .Get(".textkey", &ret->textkey_, S_EMPTY_)
           .Get(".ordered_dict", &ret->ordered_dict_, ORDERED_DICT)
+          .Get(".explicit_array", &ret->explicit_array_, EXPLICIT_ARRAY_DEFAULT)
         ;
 
         if (!config.ok())
@@ -69,6 +71,7 @@ namespace nkit
         , white_spaces_(WHITE_SPACES)
         , unicode_(UNICODE_DEFAULT)
         , ordered_dict_(ORDERED_DICT)
+        , explicit_array_(EXPLICIT_ARRAY_DEFAULT)
       {}
 
       bool trim_;
@@ -77,6 +80,7 @@ namespace nkit
       bool ordered_dict_;
       std::string attrkey_;
       std::string textkey_;
+      bool explicit_array_;
     };
   } // namespace detail
 
@@ -84,11 +88,11 @@ namespace nkit
   class VarBuilder: Uncopyable
   {
   public:
-    typedef NKIT_SHARED_PTR(VarBuilder<Policy>)Ptr;
+    typedef NKIT_SHARED_PTR(VarBuilder<Policy>) Ptr;
     typedef typename Policy::type type;
 
-    VarBuilder(const detail::Options::Ptr & options)
-      : p_(*options)
+    VarBuilder(const detail::Options & options)
+      : p_(options)
       , options_(options)
     {}
 
@@ -166,14 +170,14 @@ namespace nkit
 
     void SetAttrKey(const char ** attrs)
     {
-      if (!options_->attrkey_.empty() && attrs[0])
+      if (!options_.attrkey_.empty() && attrs[0])
       {
         VarBuilder<Policy> attr_builder(options_);
         attr_builder.InitAsDict();
         for (size_t i = 0; attrs[i] && attrs[i + 1]; ++(++i))
         attr_builder.SetDictKeyValue(std::string(attrs[i]),
             std::string(attrs[i + 1]));
-        SetDictKeyValue(options_->attrkey_, attr_builder.get());
+        SetDictKeyValue(options_.attrkey_, attr_builder.get());
       }
     }
 
@@ -220,7 +224,7 @@ namespace nkit
 
   private:
     Policy p_;
-    detail::Options::Ptr options_;
+    const detail::Options & options_;
   };
 
   //----------------------------------------------------------------------------
@@ -440,7 +444,7 @@ namespace nkit
   protected:
     Target(const detail::Options::Ptr & options)
       : options_(options)
-      , var_builder_(options)
+      , var_builder_(*options)
     {}
 
   protected:
@@ -649,6 +653,7 @@ namespace nkit
 
     void OnEnter(const char ** attrs)
     {
+      Clear();
       Target<T>::var_builder_.SetAttrKey(attrs);
     }
 
@@ -791,7 +796,7 @@ namespace nkit
         const std::string & default_value,
         const std::string & format)
       : Target<T>(options)
-      , default_value_(options)
+      , default_value_(*options)
       , use_default_value_(true)
       , has_default_value_(true)
       , value_("")
@@ -816,7 +821,7 @@ namespace nkit
     ScalarTarget(const detail::Options::Ptr & options,
         const std::string & default_value)
       : Target<T>(options)
-      , default_value_(options)
+      , default_value_(*options)
       , use_default_value_(true)
       , has_default_value_(true)
       , value_("")
@@ -827,7 +832,7 @@ namespace nkit
 
     ScalarTarget(const detail::Options::Ptr & options)
       : Target<T>(options)
-      , default_value_(options)
+      , default_value_(*options)
       , use_default_value_(false)
       , has_default_value_(false)
       , value_("")
@@ -1559,7 +1564,7 @@ namespace nkit
 
     void Clear()
     {
-      root_var_builder_ = VarBuilderPtr(new T(options_));
+      root_var_builder_ = VarBuilderPtr(new T(*options_));
       first_ = true;
       root_name_.clear();
       clear_stack(current_text_stack_);
@@ -1597,7 +1602,7 @@ namespace nkit
       else
       {
         is_simple_element_stack_.top() = false;
-        VarBuilderPtr var_builder_(new T(options_));
+        VarBuilderPtr var_builder_(new T(*options_));
         var_builder_->InitAsDict();
         if (has_attrs)
           var_builder_->SetAttrKey(attrs);

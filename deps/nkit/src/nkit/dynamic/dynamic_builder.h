@@ -23,9 +23,8 @@ namespace nkit
   private:
     DynamicBuilderPolicy(const detail::Options & options)
       : object_()
-    {
-      NKIT_FORCE_USED(options);
-    }
+      , options_(options)
+    {}
 
     ~DynamicBuilderPolicy() {}
 
@@ -95,10 +94,19 @@ namespace nkit
     void AppendToDictKeyList( std::string const & key, type const & var )
     {
       Dynamic * list_value;
-      if (object_.Get(key, &list_value) && list_value->IsList())
+      if (object_.Get(key, &list_value))
+      {
+        if (!list_value->IsList())
+          *list_value = DLIST(*list_value);
         list_value->PushBack(var);
+      }
       else
-        SetDictKeyValue(key, DLIST(var));
+      {
+        if (options_.explicit_array_)
+          SetDictKeyValue(key, DLIST(var));
+        else
+          SetDictKeyValue(key, var);
+      }
     }
 
     void SetDictKeyValue( std::string const & key, type const & var )
@@ -118,6 +126,7 @@ namespace nkit
 
   private:
     type object_;
+    const detail::Options & options_;
   };
 
   typedef VarBuilder<DynamicBuilderPolicy> DynamicBuilder;
