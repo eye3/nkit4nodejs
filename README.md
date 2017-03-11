@@ -8,7 +8,7 @@
   * [On Windows](#on-windows)
 * [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
   * [Quick start without mappings](#quick-start-without-mappings)
-  * [Getting started](#getting-started)
+  * [Getting started with mappings](#getting-started-with-mappings)
   * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
   * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
   * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
@@ -236,7 +236,7 @@ xmlString = nkit.var2xml(result, options)
 NOTE: 'priority' option is important if you want print XML elements in fixed order
 
 
-## Getting started
+## Getting started with mappings
 
 Suppose, we have this xml string:
 
