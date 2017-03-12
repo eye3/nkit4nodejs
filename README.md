@@ -1,34 +1,35 @@
 
+
 <!-- toc -->
 
-* [Introduction](#introduction)
-* [Installation](#installation)
+- [Introduction](#introduction)
+- [Installation](#installation)
   * [Requirements](#requirements)
   * [On Linux and Mac OS](#on-linux-and-mac-os)
   * [On Windows](#on-windows)
-* [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
+- [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
   * [Parsing without mappings](#parsing-without-mappings)
-    * [Quick start](#quick-start)
-    * [Options](#options)
+    + [Quick start](#quick-start)
+    + [Options](#options)
   * [Parsing with mappings](#parsing-with-mappings)
-    * [Getting started](#getting-started)
-    * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
-    * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
-    * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
-    * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
-    * [Using attribute values to generate Object keys](#using-attribute-values-to-generate-object-keys)
-    * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
-    * [If you want some JSON](#if-you-want-some-json)
-    * [Options](#options)
-    * [Notes](#notes)
-* [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
-  * [Quick start](#quick-start)
+    + [Getting started](#getting-started)
+    + [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
+    + [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
+    + [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
+    + [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
+    + [Using attribute values to generate Object keys](#using-attribute-values-to-generate-object-keys)
+    + [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
+    + [If you want some JSON](#if-you-want-some-json)
+    + [Options](#options-1)
+    + [Notes](#notes)
+- [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
+  * [Quick start](#quick-start-1)
   * [Options for var2xml](#options-for-var2xml)
-* [Change log](#change-log)
-* [Author](#author)
+- [Change log](#change-log)
+- [Author](#author)
+- [Travis](#travis)
 
-<!-- toc stop -->
-
+<!-- tocstop -->
 
 # Introduction
 
