@@ -7,18 +7,20 @@
   * [On Linux and Mac OS](#on-linux-and-mac-os)
   * [On Windows](#on-windows)
 * [XML to JavaScript data conversion](#xml-to-javascript-data-conversion)
-  * [Quick start without mappings](#quick-start-without-mappings)
-  * [Getting started with mappings](#getting-started-with-mappings)
-  * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
-  * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
-  * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
-  * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
-  * [Using attribute values to generate Object keys](#using-attribute-values-to-generate-object-keys)
-  * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
-  * [If you want some JSON](#if-you-want-some-json)
-  * [Options](#options)
-    * ['attrkey' option](#attrkey-option)
-  * [Notes](#notes)
+  * [Parsing without mappings](#parsing-without-mappings)
+    * [Quick start](#quick-start)
+    * [Options](#options)
+  * [Parsing with mappings](#parsing-with-mappings)
+    * [Getting started](#getting-started)
+    * [Building simple object from xml string (last 'person' xml element will be used)](#building-simple-object-from-xml-string-last-person-xml-element-will-be-used)
+    * [Building list-of-objects from xml string](#building-list-of-objects-from-xml-string)
+    * [Building list-of-objects-with-lists from xml string](#building-list-of-objects-with-lists-from-xml-string)
+    * [Creating keys in object for non-existent xml elements](#creating-keys-in-object-for-non-existent-xml-elements)
+    * [Using attribute values to generate Object keys](#using-attribute-values-to-generate-object-keys)
+    * [Building data structures from big XML source, reading it chunk by chunk](#building-data-structures-from-big-xml-source-reading-it-chunk-by-chunk)
+    * [If you want some JSON](#if-you-want-some-json)
+    * [Options](#options)
+    * [Notes](#notes)
 * [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start)
   * [Options for var2xml](#options-for-var2xml)
@@ -128,7 +130,9 @@ or
     
 # XML to JavaScript data conversion
 
-## Quick start without mappings
+## Parsing without mappings
+
+### Quick start
 
 Suppose, we have this xml string:
 
@@ -199,7 +203,7 @@ we will receive the following structure in 'result':
 }
 ```
 
-*Options*:
+### Options
 
 - attrkey (default: $): Prefix that is used to access the attributes
 - textkey (default: _): Prefix that is used to access the character content
@@ -236,7 +240,9 @@ xmlString = nkit.var2xml(result, options)
 NOTE: 'priority' option is important if you want print XML elements in fixed order
 
 
-## Getting started with mappings
+## Parsing with mappings
+
+### Getting started
 
 Suppose, we have this xml string:
 
@@ -410,7 +416,7 @@ list_of_strings = result["list_of_strings"]
 list_of_lists_of_strings = result["list_of_lists_of_strings"]
 ```
 
-## Building simple object from xml string (last 'person' xml element will be used)
+### Building simple object from xml string (last 'person' xml element will be used)
 
 ```javascript
 var nkit = require('nkit4nodejs');
@@ -467,7 +473,7 @@ Default values for scalars are working only in object-mappings, not in
 list-mappings.
 
 
-## Building list-of-objects from xml string
+### Building list-of-objects from xml string
  
 ```javascript
 var nkit = require('nkit4nodejs');
@@ -516,7 +522,7 @@ Node: datetime scalar-mapping MUST consists of three elements, divided by "|":
     
 Default value MUST correspond to format string
 
-## Building list-of-objects-with-lists from xml string
+### Building list-of-objects-with-lists from xml string
 
  
 ```javascript
@@ -570,7 +576,7 @@ As you can see, you can include list- or object-mappings in each other.
 List-mapping can contain list- or object-submapping and vise-versa.
 Also, it is possible to use '*' char in XPath.
 
-## Creating keys in object for non-existent xml elements 
+### Creating keys in object for non-existent xml elements 
 
 ```javascript
 var nkit = require('nkit4nodejs');
@@ -641,7 +647,7 @@ Value of persons:
 ]
 ```
 
-## Using attribute values to generate Object keys
+### Using attribute values to generate Object keys
 
 Suppose, we have this XML:
 
@@ -716,7 +722,7 @@ result = result["main"]
 ```
 
 
-## Building data structures from big XML source, reading it chunk by chunk
+### Building data structures from big XML source, reading it chunk by chunk
 
 You can use builder.get(mapping_name) method to get currently constructed data.
 
@@ -740,7 +746,11 @@ rstream
     });
 ```
 
-## If you want some JSON
+Also, streaming can be used with nkit.AnyXml2VarBuilder. 
+See test/streaming_example.js.
+
+
+### If you want some JSON
 
 Just wrap the result object in a call to JSON.stringify:
 
@@ -759,7 +769,7 @@ console.error(JSON.stringify(phones, null, 2));
 
 ```
 
-## Options
+### Options
 
 With options you can tune some aspects of conversion:
  
@@ -776,7 +786,9 @@ mappings = {"persons": mapping}
 
 options = {
     "trim": true,
-    "white_spaces": " \t\n\r"
+    "white_spaces": " \t\n\r",
+    "true_variants": ["True", "true", "Foo", "foo"],
+    "false_variants": ["False", "false", "Bar", "bar"]
 }
 
 var builder = new nkit.Xml2VarBuilder(options, mappings);
@@ -791,15 +803,16 @@ Following options are supported:
 - "trim": Trim out whitespaces at the beginning and at ending of strings.
    Boolean. true or false. Default is false.
 - "white_spaces": Characters which are must be considered as white spaces.
-   String. Default - "\t\n\r ", i.e. tab,
-new line, carriage return and space.
+   String. Default - "\t\n\r ", i.e. tab, new line, carriage return and space.
+- "true_variants": Custom array of strings, which will be treated as 'true' when
+   parsed with boolean sub-mapping. Default ["True", "true", "Yes", "yes"] 
+- "false_variants": Custom array of strings, which will be treated as 'false'
+   when parsed with boolean sub-mapping. Default ["False", "false", "No", "no"]
+- "attrkey": If defined, this option cause nkit4nodejs module to collect all
+   element attributes for all object-mappings (if corresponding elements has
+   attributes, of course).
 
-### 'attrkey' option
-
-If defined, this option cause nkit4nodejs module to collect all element attributes for all
-object-mappings (if corresponding elements has attributes, of course).
-
-Example:
+Example for 'attrkey' usage:
 
 ```javascript
 var nkit = require('nkit4nodejs');
@@ -847,7 +860,7 @@ Value of married_info:
 ]
 ```
 
-## Notes
+### Notes
 
 Possible scalar types:
 
@@ -1003,6 +1016,9 @@ If **data** is Array then *itemname* will be used as element name for its items.
 
 # Change log
 
+- 2.5.0 (2017-03-12):
+  - 'true_variants' and 'false_variants' options for Xml2VarBuilder
+  
 - 2.4.4 (2017-03-11):
   - 'explicit_array' option for AnyXml2VarBuilder
   

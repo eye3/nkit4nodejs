@@ -37,7 +37,7 @@ namespace nkit
     undefined_.Reset(Nan::Undefined());
   }
 
-  V8BuilderPolicy::V8BuilderPolicy(const detail::Options & NKIT_UNUSED(options))
+  V8BuilderPolicy::V8BuilderPolicy(const detail::Options & options)
     : options_(options)
   {
     Nan::HandleScope scope;
@@ -72,11 +72,10 @@ namespace nkit
     assert(Local<Object>::Cast(Nan::New(object_))->IsObject());
   }
 
-  void V8BuilderPolicy::InitAsBoolean(std::string const & value)
+  void V8BuilderPolicy::InitAsBoolean(bool value)
   {
     Nan::HandleScope scope;
-    object_.Reset(
-        Nan::New(nkit::bool_cast(value)));
+    object_.Reset(Nan::New(value));
   }
 
   void V8BuilderPolicy::InitAsString(std::string const & value)
@@ -244,7 +243,7 @@ namespace nkit
     Local<Object> global = Nan::GetCurrentContext()->Global();
     Handle<Object> JSON = global->Get(Nan::New("JSON").ToLocalChecked())->ToObject();
     Handle<Function> JSON_stringify = Handle<Function>::Cast(
-	  JSON->Get(Nan::New("stringify").ToLocalChecked()));
+            JSON->Get(Nan::New("stringify").ToLocalChecked()));
     Handle<Value> argv[3] = {
             var,
             Nan::Null(),

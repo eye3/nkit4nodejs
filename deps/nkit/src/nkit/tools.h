@@ -229,6 +229,14 @@ namespace nkit
     }
   }
 
+  template<typename T>
+  std::string join(const T & container, const std::string & delimiter,
+      const std::string & prefix, const std::string & postfix)
+  {
+    std::string out;
+    join(container, delimiter, prefix, postfix, &out);
+    return out;
+  }
   //----------------------------------------------------------------------------
   template<typename T1, typename T2>
   void join_pairs(const T1 & container1, const T2 & container2,

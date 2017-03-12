@@ -45,6 +45,8 @@ namespace nkit
   const std::string S_DATE_TIME_DEFAULT_FORMAT_(DATE_TIME_DEFAULT_FORMAT());
   const std::string S_FLOAT_DEFAULT_(NKIT_FORMAT_DOUBLE);
 
+  const std::set<std::string> EMPTY_STRING_SET_;
+
   uint64_t MAX_UINT64_VALUE = std::numeric_limits<uint64_t>::max();
   uint32_t MAX_UINT32_VALUE = std::numeric_limits<uint32_t>::max();
   uint16_t MAX_UINT16_VALUE = std::numeric_limits<uint16_t>::max();

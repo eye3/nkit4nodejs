@@ -33,6 +33,8 @@ namespace nkit
 
   extern const std::string S_FLOAT_DEFAULT_;
 
+  extern const std::set<std::string> EMPTY_STRING_SET_;
+
   extern uint64_t MAX_UINT64_VALUE;
   extern uint32_t MAX_UINT32_VALUE;
   extern uint16_t MAX_UINT16_VALUE;

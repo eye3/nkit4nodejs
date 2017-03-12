@@ -44,7 +44,7 @@ namespace nkit
 
     void InitAsDict();
     void InitAsList();
-    void InitAsBoolean(std::string const & value);
+    void InitAsBoolean(bool value);
     void InitAsString(std::string const & value);
     void InitAsInteger(const std::string & value);
     void InitAsFloatFormat(std::string const & value,

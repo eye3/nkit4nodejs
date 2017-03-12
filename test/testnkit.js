@@ -401,6 +401,70 @@ if (result["status"][0] != "1" || result["status"][1] != "2") {
 }
 
 // -----------------------------------------------------------------------------
+// true_variants & false_variants
+// -----------------------------------------------------------------------------
+var xml = ["<?xml version='1.0' encoding='utf-8'?>",
+            "<root>",
+            "  <item>",
+            "    <boolean>True</boolean>",
+            "    <custom_boolean>Foo</custom_boolean>",
+            "  </item>",
+            "  <item>",
+            "    <boolean>False</boolean>",
+            "    <custom_boolean>Bar</custom_boolean>",
+            "  </item>",
+            "</root>",
+          ].join("\n");
+var options = {
+    attrkey: "$",
+    trim: true,
+    textkey: "_",
+    explicit_array: false,
+    true_variants: ["Bar", "True"],
+    false_variants: ["Foo", "False"]
+};
+
+var mapping = ["/item", {
+    "/boolean": "boolean|True",
+    "/custom_boolean": "boolean|Foo"
+}]
+
+var mappings = {"main": mapping}
+
+var builder = new nkit.Xml2VarBuilder(options, mappings)
+builder.feed(xml)
+var result = builder.end()
+result = result["main"]
+if (   result[0]["boolean"] != true
+    || result[0]["custom_boolean"] != false
+    || result[1]["boolean"] != false
+    || result[1]["custom_boolean"] != true) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error("Error #8.1");
+    process.exit(1);
+}
+    
+var options = {
+    attrkey: "$",
+    trim: true,
+    textkey: "_",
+    explicit_array: false
+};
+
+var builder = new nkit.Xml2VarBuilder(options, mappings)
+builder.feed(xml)
+var result = builder.end()
+result = result["main"]
+if (   result[0]["boolean"] != true
+    || result[0]["custom_boolean"] != false
+    || result[1]["boolean"] != false
+    || result[1]["custom_boolean"] != false) {
+    console.error(JSON.stringify(result, null, 2));
+    console.error("Error #8.2");
+    process.exit(1);
+}
+    
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 data = [{
     "$": {"p1": "v1 < > & \" '", "p2": "v2"},

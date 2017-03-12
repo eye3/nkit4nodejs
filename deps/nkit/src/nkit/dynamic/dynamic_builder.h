@@ -28,9 +28,9 @@ namespace nkit
 
     ~DynamicBuilderPolicy() {}
 
-    void InitAsBoolean( std::string const & value )
+    void InitAsBoolean( bool value )
     {
-      object_ = nkit::Dynamic(bool_cast(value));
+      object_ = nkit::Dynamic(value);
     }
 
     void InitAsInteger( std::string const & value )

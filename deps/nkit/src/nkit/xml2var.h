@@ -55,6 +55,8 @@ namespace nkit
           .Get(".textkey", &ret->textkey_, S_EMPTY_)
           .Get(".ordered_dict", &ret->ordered_dict_, ORDERED_DICT)
           .Get(".explicit_array", &ret->explicit_array_, EXPLICIT_ARRAY_DEFAULT)
+          .Get(".true_variants", &ret->true_variants_, EMPTY_STRING_SET_)
+          .Get(".false_variants", &ret->false_variants_, EMPTY_STRING_SET_)
         ;
 
         if (!config.ok())
@@ -62,6 +64,9 @@ namespace nkit
           *error = config.error();
           return Ptr();
         }
+
+        ret->use_custom_bool_variants_ = !ret->false_variants_.empty() ||
+                !ret->false_variants_.empty();
 
         return ret;
       }
@@ -72,6 +77,7 @@ namespace nkit
         , unicode_(UNICODE_DEFAULT)
         , ordered_dict_(ORDERED_DICT)
         , explicit_array_(EXPLICIT_ARRAY_DEFAULT)
+        , use_custom_bool_variants_(false)
       {}
 
       bool trim_;
@@ -81,6 +87,9 @@ namespace nkit
       std::string attrkey_;
       std::string textkey_;
       bool explicit_array_;
+      std::set<std::string> true_variants_;
+      std::set<std::string> false_variants_;
+      bool use_custom_bool_variants_;
     };
   } // namespace detail
 
@@ -98,12 +107,17 @@ namespace nkit
 
     void InitAsBoolean( std::string const & value )
     {
-      p_.InitAsBoolean(value);
+      bool v = false;
+      if (unlikely(options_.use_custom_bool_variants_))
+        v = options_.true_variants_.find(value) != options_.true_variants_.end();
+      else
+        v = nkit::bool_cast(value);
+      p_.InitAsBoolean(v);
     }
 
     void InitAsBooleanFormat( std::string const & value, const std::string & )
     {
-      p_.InitAsBoolean(value);
+      InitAsBoolean(value);
     }
 
     void InitAsInteger( std::string const & value )
@@ -1291,7 +1305,27 @@ namespace nkit
             &T::InitAsBoolean,
             &T::InitAsBooleanFormat> BooleanTarget;
         if (spec_list.size() >= 2)
-          target = BooleanTarget::Create(options, spec_list[1]);
+        {
+          std::string boolean_default(spec_list[1]);
+          if (options->use_custom_bool_variants_
+              && (options->true_variants_.find(boolean_default) ==
+                      options->true_variants_.end())
+              && (options->false_variants_.find(boolean_default) ==
+                      options->false_variants_.end())
+              )
+          {
+            *error = "Default value for boolean must one of those, defined in "
+                "'true_variants' or 'false_variants' options, but '" +
+                boolean_default + "' has been provided.\nPossible values:" +
+                "\n- true_variants: " +
+                join(options->true_variants_, ", ", "", "") +
+                "\n- false_variants: " +
+                join(options->false_variants_, ", ", "", "");
+            return TargetItemPtr();
+          }
+
+          target = BooleanTarget::Create(options, boolean_default);
+        }
         else
           target = BooleanTarget::Create(options);
       }
