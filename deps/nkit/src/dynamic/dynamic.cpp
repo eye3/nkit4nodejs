@@ -1122,23 +1122,65 @@ namespace nkit
 
   bool Dynamic::StartsWith(const std::string & text) const
   {
-    if (!IsString())
+    if (unlikely(!IsString()))
       return false;
     return detail::Impl<detail::STRING>::StartsWith(*this, text);
   }
 
   bool Dynamic::EndsWith(const std::string & text) const
   {
-    if (!IsString())
+    if (unlikely(!IsString()))
       return false;
     return detail::Impl<detail::STRING>::EndsWith(*this, text);
   }
 
   bool Dynamic::Replace(const std::string & what, const std::string & with)
   {
-    if (!IsString())
+    if (unlikely(!IsString()))
       return false;
     return detail::Impl<detail::STRING>::Replace(*this, what, with);
+  }
+
+  void Dynamic::Append(const std::string & text)
+  {
+    if (unlikely(!IsString()))
+      return;
+    detail::Impl<detail::STRING>::Append(*this, text);
+  }
+
+  void Dynamic::Append(const char * text, size_t len)
+  {
+    if (unlikely(!IsString()))
+      return;
+    detail::Impl<detail::STRING>::Append(*this, text, len);
+  }
+
+  void Dynamic::Assign(const std::string & text)
+  {
+    if (unlikely(!IsString()))
+      return;
+    detail::Impl<detail::STRING>::Assign(*this, text);
+  }
+
+  void Dynamic::Assign(const char * text, size_t len)
+  {
+    if (unlikely(!IsString()))
+      return;
+    detail::Impl<detail::STRING>::Assign(*this, text, len);
+  }
+
+  std::string Dynamic::TrimCopy(const std::string & white_chars)
+  {
+    if (unlikely(!IsString()))
+      return S_EMPTY_;
+    return detail::Impl<detail::STRING>::TrimCopy(*this, white_chars);
+  }
+
+  void Dynamic::Trim(const std::string & white_chars)
+  {
+    if (unlikely(!IsString()))
+      return;
+    detail::Impl<detail::STRING>::Trim(*this, white_chars);
   }
 
   uint32_t Dynamic::year() const

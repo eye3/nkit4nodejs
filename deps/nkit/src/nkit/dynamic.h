@@ -636,6 +636,12 @@ namespace nkit
     bool StartsWith(const std::string & text) const;
     bool EndsWith(const std::string & text) const;
     bool Replace(const std::string & what, const std::string & with);
+    void Append(const std::string & text);
+    void Append(const char * text, size_t len);
+    void Assign(const std::string & text);
+    void Assign(const char * text, size_t len);
+    std::string TrimCopy(const std::string & white_chars);
+    void Trim(const std::string & white_chars);
 
     // DATE_TIME specific
     uint32_t year() const;

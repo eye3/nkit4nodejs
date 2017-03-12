@@ -519,7 +519,7 @@ namespace nkit_test
   NKIT_TEST_CASE(xml2var_any_explicit_array)
   {
     const char * xml = "<?xml version='1.0' encoding='utf-8'?>"
-            "\n" "<root><status v='O'/></root>"
+            "\n" "<root><status v='0'/></root>"
             ;
 
     Dynamic options = DDICT(
@@ -532,32 +532,41 @@ namespace nkit_test
     std::string root_name, error;
     Dynamic data = DynamicFromAnyXml(xml, options, &root_name, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
+    CINFO(root_name << "\n" << data);
     NKIT_TEST_ASSERT(data["status"].IsDict());
     NKIT_TEST_EQ(root_name, "root");
-    CINFO(root_name << "\n" << data);
+    NKIT_TEST_EQ(data["status"]["$"]["v"], Dynamic("0"));
 
     options["explicit_array"] = Dynamic(true);
     data = DynamicFromAnyXml(xml, options, &root_name, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
-    NKIT_TEST_ASSERT(data["status"].IsList());
-    NKIT_TEST_EQ(root_name, "root");
     CINFO(root_name << "\n" << data);
+    NKIT_TEST_ASSERT(data["status"].IsList());
+    NKIT_TEST_EQ(data["status"].size(), 1);
+    NKIT_TEST_EQ(data["status"][(const size_t )0]["$"]["v"], Dynamic("0"));
+    NKIT_TEST_EQ(root_name, "root");
 
     xml = "<?xml version='1.0' encoding='utf-8'?>"
-          "\n" "<root><status v='O'/><status v='O'/></root>"
+          "\n" "<root><status v='0'/><status v='2'/></root>"
           ;
     data = DynamicFromAnyXml(xml, options, &root_name, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
-    NKIT_TEST_ASSERT(data["status"].IsList());
-    NKIT_TEST_EQ(root_name, "root");
     CINFO(root_name << "\n" << data);
+    NKIT_TEST_ASSERT(data["status"].IsList());
+    NKIT_TEST_EQ(data["status"].size(), 2);
+    NKIT_TEST_EQ(data["status"][(const size_t )0]["$"]["v"], Dynamic("0"));
+    NKIT_TEST_EQ(data["status"][(const size_t )1]["$"]["v"], Dynamic("2"));
+    NKIT_TEST_EQ(root_name, "root");
 
     options["explicit_array"] = Dynamic(false);
     data = DynamicFromAnyXml(xml, options, &root_name, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
-    NKIT_TEST_ASSERT(data["status"].IsList());
-    NKIT_TEST_EQ(root_name, "root");
     CINFO(root_name << "\n" << data);
+    NKIT_TEST_ASSERT(data["status"].IsList());
+    NKIT_TEST_EQ(data["status"].size(), 2);
+    NKIT_TEST_EQ(data["status"][(const size_t )0]["$"]["v"], Dynamic("0"));
+    NKIT_TEST_EQ(data["status"][(const size_t )1]["$"]["v"], Dynamic("2"));
+    NKIT_TEST_EQ(root_name, "root");
   }
 
   //---------------------------------------------------------------------------
@@ -595,13 +604,13 @@ namespace nkit_test
     Dynamic data = DynamicFromXml(xml, options, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
     NKIT_TEST_ASSERT(data.IsList());
-    NKIT_TEST_EQ(data[(const size_t )0][(const char * const )"boolean"],
+    NKIT_TEST_EQ(data[(const size_t )0]["boolean"],
             Dynamic(true));
-    NKIT_TEST_EQ(data[(const size_t )0][(const char * const )"custom_boolean"],
+    NKIT_TEST_EQ(data[(const size_t )0]["custom_boolean"],
             Dynamic(false));
-    NKIT_TEST_EQ(data[(const size_t )1][(const char * const )"boolean"],
+    NKIT_TEST_EQ(data[(const size_t )1]["boolean"],
             Dynamic(false));
-    NKIT_TEST_EQ(data[(const size_t )1][(const char * const )"custom_boolean"],
+    NKIT_TEST_EQ(data[(const size_t )1]["custom_boolean"],
             Dynamic(true));
 
     options = DDICT(
@@ -614,13 +623,13 @@ namespace nkit_test
     data = DynamicFromXml(xml, options, mapping, &error);
     NKIT_TEST_ASSERT_WITH_TEXT(data, error);
     NKIT_TEST_ASSERT(data.IsList());
-    NKIT_TEST_EQ(data[(const size_t )0][(const char * const )"boolean"],
+    NKIT_TEST_EQ(data[(const size_t )0]["boolean"],
             Dynamic(true));
-    NKIT_TEST_EQ(data[(const size_t )0][(const char * const )"custom_boolean"],
+    NKIT_TEST_EQ(data[(const size_t )0]["custom_boolean"],
             Dynamic(false));
-    NKIT_TEST_EQ(data[(const size_t )1][(const char * const )"boolean"],
+    NKIT_TEST_EQ(data[(const size_t )1]["boolean"],
             Dynamic(false));
-    NKIT_TEST_EQ(data[(const size_t )1][(const char * const )"custom_boolean"],
+    NKIT_TEST_EQ(data[(const size_t )1]["custom_boolean"],
             Dynamic(false));
   }
 

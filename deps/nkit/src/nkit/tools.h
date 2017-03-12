@@ -190,12 +190,13 @@ namespace nkit
   bool simple_split(const std::string & src, const std::string & delimeter,
       std::string * key, std::string * value,
       const std::string & white_spaces = WHITE_SPACES);
-  std::string ltrim(const std::string & src,
+  std::string ltrim_copy(const std::string & src,
       const std::string & white_spaces);
-  std::string rtrim(const std::string & src,
+  std::string rtrim_copy(const std::string & src,
       const std::string & white_spaces);
-  std::string trim(const std::string & src,
+  std::string trim_copy(const std::string & src,
       const std::string & white_spaces);
+  void trim(std::string & src, const std::string & white_spaces);
 
   bool starts_with(const std::string & what, const std::string & with);
   bool istarts_with(const std::string & what, const std::string & with,

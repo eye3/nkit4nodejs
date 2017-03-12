@@ -238,6 +238,42 @@ namespace nkit
         return false;
       }
 
+      static void Append(Dynamic & v, const std::string & text)
+      {
+        std::string & value = GetString(v.data_);
+        value.append(text);
+      }
+
+      static void Append(Dynamic & v, const char* text, size_t len)
+      {
+        std::string & value = GetString(v.data_);
+        value.append(text, len);
+      }
+
+      static void Assign(Dynamic & v, const std::string & text)
+      {
+        std::string & value = GetString(v.data_);
+        value.assign(text);
+      }
+
+      static void Assign(Dynamic & v, const char* text, size_t len)
+      {
+        std::string & value = GetString(v.data_);
+        value.assign(text, len);
+      }
+
+      static std::string TrimCopy(Dynamic & v, const std::string & white_chars)
+      {
+        const std::string & value = GetString(v.data_);
+        return trim_copy(value, white_chars);
+      }
+
+      static void Trim(Dynamic & v, const std::string & white_chars)
+      {
+        std::string & value = GetString(v.data_);
+        trim(value, white_chars);
+      }
+
       template<typename T>
       static bool OP_LT(const Dynamic & v, const Dynamic & rv)
       {

@@ -77,7 +77,8 @@ namespace nkit
   }
 
   //----------------------------------------------------------------------------
-  std::string ltrim(const std::string & str, const std::string & white_spaces)
+  std::string ltrim_copy(const std::string & str,
+          const std::string & white_spaces)
   {
     size_t size = str.size();
     size_t first_pos = skip_space_forward(str.c_str(), 0, size, white_spaces);
@@ -87,7 +88,8 @@ namespace nkit
   }
 
   //----------------------------------------------------------------------------
-  std::string rtrim(const std::string & str, const std::string & white_spaces)
+  std::string rtrim_copy(const std::string & str,
+          const std::string & white_spaces)
   {
     size_t size = str.size();
     size_t last_pos = skip_space_backward(str.c_str(), size-1, white_spaces);
@@ -95,7 +97,8 @@ namespace nkit
   }
 
   //----------------------------------------------------------------------------
-  std::string trim(const std::string & str, const std::string & white_spaces)
+  std::string trim_copy(const std::string & str,
+          const std::string & white_spaces)
   {
     size_t size = str.size();
     size_t first_pos = skip_space_forward(str.c_str(), 0, size, white_spaces);
@@ -103,6 +106,51 @@ namespace nkit
       return S_EMPTY_;
     size_t last_pos = skip_space_backward(str.c_str(), size-1, white_spaces);
     return str.substr(first_pos, last_pos - first_pos + 1);
+  }
+
+  //----------------------------------------------------------------------------
+  bool find_first_nonspace(const char * src, size_t & pos,
+      const size_t size, const std::string & white_spaces = WHITE_SPACES)
+  {
+    if (pos >= size)
+      return false;
+    while ((pos < size) && is_white_space(src[pos], white_spaces))
+      ++pos;
+    return pos < size;
+  }
+
+  //----------------------------------------------------------------------------
+  bool find_last_nonspace(const char* src, size_t & pos,
+      const std::string & white_spaces = WHITE_SPACES)
+  {
+    while (is_white_space(src[pos], white_spaces))
+    {
+      if (pos == 0)
+        return false;
+      --pos;
+    }
+    return true;
+  }
+
+  //----------------------------------------------------------------------------
+  void trim(std::string & str, const std::string & white_spaces)
+  {
+    size_t size = str.size();
+    size_t first_pos = 0;
+    bool first_found = find_first_nonspace(str.c_str(), first_pos, size,
+            white_spaces);
+    if (!first_found)
+    {
+      str.clear();
+      return;
+    }
+    size_t last_pos = size-1;
+    bool last_found = find_last_nonspace(str.c_str(), last_pos, white_spaces);
+    assert(last_found);
+    if (last_found)
+      str.erase(last_pos+1);
+    if (first_pos > 0)
+      str.erase(0, first_pos);
   }
 
   //----------------------------------------------------------------------------
