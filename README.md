@@ -24,7 +24,7 @@
     + [Notes](#notes)
 - [JavaScript data to XML conversion](#javascript-data-to-xml-conversion)
   * [Quick start](#quick-start-1)
-  * [Options for var2xml](#options-for-var2xml)
+  * [Options](#options-2)
 - [Change log](#change-log)
 - [Author](#author)
 - [Travis](#travis)
@@ -978,7 +978,7 @@ Output:
 </ROOT>
 ```
 
-## Options for var2xml
+## Options
 
 Following options are supported:
 
