@@ -105,6 +105,9 @@ namespace nkit
       , options_(options)
     {}
 
+    ~VarBuilder()
+    {}
+
     void InitAsBoolean( std::string const & value )
     {
       bool v = false;
@@ -1593,6 +1596,11 @@ namespace nkit
       return Ptr(new AnyXml2VarBuilder<T>(o));
     }
 
+    ~AnyXml2VarBuilder()
+    {
+      Clear();
+    }
+
     const typename T::type & var() const
     {
       return root_var_builder_->get();
@@ -1615,13 +1623,13 @@ namespace nkit
 
     void Clear()
     {
-      root_var_builder_ = new_var_builder();
+      root_var_builder_ = NewVarBuilder();
       first_ = true;
       root_name_.clear();
       current_text_stack_.Reset();
       clear_stack(is_simple_element_stack_);
       clear_stack(var_builder_stack_);
-
+      clear_stack(var_builder_cache_);
       current_text_stack_.PushEmptyString();
       is_simple_element_stack_.push(false);
       root_var_builder_->InitAsDict();
@@ -1645,6 +1653,7 @@ namespace nkit
       bool has_attrs = (attrs[0] != NULL);
       if (unlikely(first_))
       {
+        Clear();
         root_name_.assign(el);
         first_ = false;
         if (has_attrs)
@@ -1653,7 +1662,7 @@ namespace nkit
       else
       {
         is_simple_element_stack_.top() = false;
-        VarBuilderPtr var_builder_ = new_var_builder();
+        VarBuilderPtr var_builder_ = NewVarBuilder();
         var_builder_->InitAsDict();
         if (has_attrs)
           var_builder_->SetAttrKey(attrs);
@@ -1673,7 +1682,7 @@ namespace nkit
 
       if (is_simple_element_stack_.top())
       {
-        pop_var_builder_stack_();
+        PopVarBuilderStack();
         var_builder_stack_.top()->AppendToDictKeyList(el, current_text);
       }
       else
@@ -1681,7 +1690,7 @@ namespace nkit
         VarBuilderPtr last = var_builder_stack_.top();
         if (!current_text.empty())
           last->SetDictKeyValue(options_->textkey_, current_text);
-        pop_var_builder_stack_();
+        PopVarBuilderStack();
         if (!var_builder_stack_.empty())
           var_builder_stack_.top()->AppendToDictKeyList(el, (*last).get());
       }
@@ -1702,7 +1711,7 @@ namespace nkit
       *error = error_;
     }
 
-    VarBuilderPtr new_var_builder()
+    VarBuilderPtr NewVarBuilder()
     {
       if (var_builder_cache_.empty())
         return VarBuilderPtr(new T(*options_));
@@ -1712,7 +1721,7 @@ namespace nkit
       return top;
     }
 
-    void pop_var_builder_stack_()
+    void PopVarBuilderStack()
     {
       VarBuilderPtr top = var_builder_stack_.top();
       var_builder_stack_.pop();

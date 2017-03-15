@@ -115,7 +115,7 @@ namespace nkit
     info.GetReturnValue().Set(info.This());
   }
 
-  //------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   NAN_METHOD(AnyXml2VarBuilderWrapper::Feed)
   {
     Nan::HandleScope scope;
@@ -189,7 +189,7 @@ namespace nkit
       return Nan::ThrowError(error.c_str());
 
     Local<Value> result = Nan::New(obj->builder_->var());
-
+//    obj->builder_->Clear();
     info.GetReturnValue().Set(result);
   }
 

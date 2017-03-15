@@ -48,6 +48,14 @@ namespace nkit
   {
     Nan::HandleScope scope;
     object_.Reset();
+    KeyMap::const_iterator it = keys_.begin(),
+            end = keys_.end();
+    for (; it != end; ++it)
+    {
+      Nan::Persistent<v8::String> * pers_key = it->second;
+      pers_key->Reset();
+      delete pers_key;
+    }
   }
 
   void V8BuilderPolicy::InitAsDict()
@@ -198,7 +206,18 @@ namespace nkit
     Local<Value> object(Nan::New(object_));
     assert(object->IsObject());
     Local<Object> obj = Local<Object>::Cast(object);
-    Local<String> key( Nan::New(_key).ToLocalChecked());
+
+    KeyMap::const_iterator k_it = keys_.find(_key);
+    if (k_it == keys_.end())
+    {
+      Nan::Persistent<v8::String> * pers_key =
+              new Nan::Persistent<v8::String>(Nan::New(_key).ToLocalChecked());
+      keys_[_key] = pers_key;
+      k_it = keys_.find(_key);
+    }
+    Local<String> key = Nan::New(*k_it->second);
+//    Local<String> key = Nan::New(_key).ToLocalChecked();
+
     if (obj->Has(key))
     {
       Local<Value> value = obj->Get(key);
@@ -228,7 +247,6 @@ namespace nkit
         obj->Set(key, Nan::New(var));
       }
     }
-
   }
 
   std::string V8BuilderPolicy::ToString() const

@@ -29,6 +29,8 @@ namespace nkit
 
   class V8BuilderPolicy: Uncopyable
   {
+    typedef std::map<std::string, Nan::Persistent<v8::String> * > KeyMap;
+
   public:
     typedef Nan::Persistent<v8::Value> type;
 
@@ -64,6 +66,7 @@ namespace nkit
   private:
     type object_;
     const detail::Options & options_;
+    KeyMap keys_;
     static Nan::Persistent<v8::Function> date_constructor_;
     static Nan::Persistent<v8::Value> undefined_;
   };
